@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link rel="stylesheet" href="main.css">
+<body onload="init()">
+	<div class="container py-2">
+		<h1 align="center" style="color:#008CBA;">Grace's Compiler</h1>
+		<div class="row py-1">
+			<div class="col">
+				<div class="row">
+					<div class="col">
+						<label><b>Console</b></label>
+					</div>
+					<div class="col">
+						
+					</div>
+					<div class="col-lg-5 col-xs-2">
+						
+					</div>
+				</div>
+			</div>
+			<div class="col">
+				<div class="row">
+					<div class="col-lg col-2">
+						<label><b>Log</b></label>
+					</div>
+					<div class="col col-lg-4">
+						
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<div class="panel panel-default">
+					<textarea id="inputCode" class="form-control" rows="15" autofocus></textarea>
+				</div>
+			</div>
+			<div class="col">
+				<div class="panel panel-default">
+					<textarea readonly id="log" class="form-control" rows="15"></textarea>
+				</div>
+			</div>
+		</div>
+		<div class="row pt-3">
+			<div class="col">
+				<button id="compileButton" class="button buttonC" onclick="">Compile</button>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
