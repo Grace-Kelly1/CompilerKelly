@@ -24,12 +24,13 @@ var TSCompiler;
             //First Print NEED TO ADD WHAT PROGRAM
             _Log_.printMessage("INFO Lexer....\n");
             //Grab Code and trim and split into lines to get length
-            var inputCode = document.getElementById("inputCode").value;
+            var inputCode = document.getElementById("inputTA").value;
+            console.log("Gets inside lexer.ts");
             inputCode = inputCode.trim();
             //Check for $
             if (inputCode[inputCode.length - 1] != '$') {
                 _Log_.printWarning("Missing $ at end of program");
-                document.getElementById("inputCode").value += '$';
+                document.getElementById("inputTA").value += '$';
                 inputCode += '$';
             }
             var inputLines = inputCode.split("\n");

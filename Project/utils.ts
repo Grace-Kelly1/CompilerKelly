@@ -8,20 +8,19 @@ module TSCompiler{
             _Tokens_ = [];
             _CurrentT_ = null;
             _TokenIndex_ = 0;
-            var output: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("output");
-            var inputCode: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("intputCode");
-            console.log(inputCode);
-            //inputCode.value = this.trim(inputCode.value);
-            output.value = "";
-            //console.log("HERE");
+            var log: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("outputTA");
+            var source: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("inputTA");
+            source.value = this.trim(source.value);
+            log.value = "";
 
-            if (inputCode.value === '') {
-                console.log("Found empty");
-                _Log_.printMessage("Empty!!");
+            if (source.value === '') {
+                _Log_.printMessage("Empty Textarea");
+                return;
             }
-            
             _Lexer_.lexerCode();
-            _Log_.printMessage("Lex successful");
+
+            _Log_.printMessage("Lex analysis successful");
+
         }
         //used in some places but specifically typed out in others 
         public static trim(words)      

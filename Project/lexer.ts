@@ -23,12 +23,13 @@ module TSCompiler{
             _Log_.printMessage("INFO Lexer....\n");
 
             //Grab Code and trim and split into lines to get length
-            var inputCode = (<HTMLInputElement>document.getElementById("inputCode")).value;
+            var inputCode = (<HTMLInputElement>document.getElementById("inputTA")).value;
+            console.log("Gets inside lexer.ts");
             inputCode = inputCode.trim();
             //Check for $
             if(inputCode[inputCode.length - 1] != '$'){
                 _Log_.printWarning("Missing $ at end of program");
-                (<HTMLInputElement>document.getElementById("inputCode")).value += '$';
+                (<HTMLInputElement>document.getElementById("inputTA")).value += '$';
                 inputCode += '$';
             }
             var inputLines: Array<String> = inputCode.split("\n");

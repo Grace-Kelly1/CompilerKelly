@@ -11,18 +11,16 @@ var TSCompiler;
             _Tokens_ = [];
             _CurrentT_ = null;
             _TokenIndex_ = 0;
-            var output = document.getElementById("output");
-            var inputCode = document.getElementById("intputCode");
-            console.log(inputCode);
-            //inputCode.value = this.trim(inputCode.value);
-            output.value = "";
-            //console.log("HERE");
-            if (inputCode.value === '') {
-                console.log("Found empty");
-                _Log_.printMessage("Empty!!");
+            var log = document.getElementById("outputTA");
+            var source = document.getElementById("inputTA");
+            source.value = this.trim(source.value);
+            log.value = "";
+            if (source.value === '') {
+                _Log_.printMessage("Empty Textarea");
+                return;
             }
             _Lexer_.lexerCode();
-            _Log_.printMessage("Lex successful");
+            _Log_.printMessage("Lex analysis successful");
         };
         //used in some places but specifically typed out in others 
         utils.trim = function (words) {

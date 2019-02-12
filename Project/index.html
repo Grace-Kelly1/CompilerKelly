@@ -34,12 +34,12 @@
 		<div class="row">
 			<div class="col">
 				<div class="panel panel-default">
-					<textarea id="inputCode" class="form-control" rows="15" autofocus></textarea>
+					<textarea id="inputTA" class="form-control" rows="15" autofocus></textarea>
 				</div>
 			</div>
 			<div class="col">
 				<div class="panel panel-default">
-					<textarea readonly id="output" class="form-control" rows="15"></textarea>
+					<textarea readonly id="outputTA" class="form-control" rows="15"></textarea>
 				</div>
 			</div>
 		</div>
@@ -59,19 +59,13 @@
 <script type="text/javascript">
 	function init() {
 	        // Clear the message box.
-	        document.getElementById("output").value = "";
+			document.getElementById("outputTA").value = "";
+			document.getElementById("inputTA").value = "Enter Code Here...";
 	        // Set the initial values for our globals.
 	        tokens = "";
 	        tokenIndex = 0;
-	        currentT = ' ';       
+	        currentT = '';       
 	}
-	function compile(){
-		_Lexer_.lexerCode();
-	}
-	//output text area works!
-	//function testCode(){
-		//document.getElementById("output").value = "Works!!!!"
-	//}
 </script>
 
 </body>
