@@ -24,12 +24,12 @@ var TSCompiler;
             //First Print NEED TO ADD WHAT PROGRAM
             _Log_.printMessage("INFO Lexer....\n");
             //Grab Code and trim and split into lines to get length
-            var inputCode = document.getElementById('input_Code').value;
+            var inputCode = document.getElementById("inputCode").value;
             inputCode = inputCode.trim();
             //Check for $
             if (inputCode[inputCode.length - 1] != '$') {
                 _Log_.printWarning("Missing $ at end of program");
-                document.getElementById("input_Code").value += '$';
+                document.getElementById("inputCode").value += '$';
                 inputCode += '$';
             }
             var inputLines = inputCode.split("\n");
@@ -81,7 +81,7 @@ var TSCompiler;
                                         _Log_.printMessage("");
                                     }
                                     else if ((token.type === QUOTE.type) && (codeString === false)) {
-                                        _Log_.printError("");
+                                        //_Log_.printError("");
                                         throw new Error("Ending Lex");
                                     }
                                     else {
@@ -117,7 +117,7 @@ var TSCompiler;
                         }
                         //None throw error
                         else {
-                            _Log_.printError("Not Valid Character:'" + currentT + "':", x + 1, 'Lexer');
+                            //_Log_.printError("Not Valid Character:'" + currentT + "':", x + 1, 'Lexer');
                             throw new Error("Not Valid Character");
                         }
                     }

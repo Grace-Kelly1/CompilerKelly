@@ -3,19 +3,10 @@
         "module": "commonjs"
     },
     "files": [
-        "codeTable.ts",
         "globals.ts",
-        "jumpTable.ts",
         "lexer.ts",
         "logger.ts",
-        "node.ts",
-        "parser.ts",
-        "scope.ts",
-        "semanticAnalyzer.ts",
-        "staticTable.ts",
-        "symbol.ts",
         "token.ts",
-        "tree.ts",
         "utils.ts"
     ]
 }

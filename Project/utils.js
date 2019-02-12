@@ -6,17 +6,19 @@ var TSCompiler;
         }
         utils.compile = function () {
             //test line
-            //console.log("YES");
+            //console.log("HERE");
             // Reset everything
             _Tokens_ = [];
             _CurrentT_ = null;
             _TokenIndex_ = 0;
             var output = document.getElementById("output");
-            var inputCode = document.getElementById("intput_Code");
-            inputCode.value = this.trim(inputCode.value);
+            var inputCode = document.getElementById("intputCode");
+            console.log(inputCode);
+            //inputCode.value = this.trim(inputCode.value);
             output.value = "";
+            //console.log("HERE");
             if (inputCode.value === '') {
-                //console.log("YES");
+                console.log("Found empty");
                 _Log_.printMessage("Empty!!");
             }
             _Lexer_.lexerCode();
