@@ -1,7 +1,7 @@
 //Main document for lexer code 
 //Rule Priority: keyword, id, symbol, digit, char
 //Uses regular expressions 
-
+/// <reference path="token.ts"/>
 module TSCompiler{
     export class lexer{
         public static lexerCode(){
@@ -13,8 +13,8 @@ module TSCompiler{
             var digit_RE: RegExp = /0|(^[1-9]([0-9])*)$/;
             //Char and String needed?
             var char_RE: RegExp = /^[a-z]$/;
-            //var string = false;
-            //var string_RE: RegExp = /^"[a-z\s]*"$/;
+            var codeString = false;
+            var string_RE: RegExp = /^"[a-z\s]*"$/;
             //Regular Expression for anything needed?
             var any_RE: RegExp = /[a-z]+|[1-9]|(=)|(==)|(!=)|"[^"]*"|(\s)/;
             //Regular Expression for whitespace or just space needed?
@@ -25,11 +25,18 @@ module TSCompiler{
             //Grab Code and trim and split into lines to get length
             var inputCode = (<HTMLInputElement>document.getElementById('input_Code')).value;
             inputCode = inputCode.trim();
+            //Check for $
+            if(inputCode[inputCode.length - 1] != '$'){
+                _Log_.printWarning("Missing $ at end of program");
+                (<HTMLInputElement>document.getElementById("input_Code")).value += '$';
+                inputCode += '$';
+            }
             var inputLines: Array<String> = inputCode.split("\n");
             var inputLength = inputLines.length;
             for (var x = 0; x < inputLength; x++) {
                 inputLines[x] = (inputLines[x].replace(/^\s+ | \s+$/g, ""));
             }
+            
 
             //Loop through the code 
             for(var x = 0; x < inputLength; x++){
@@ -71,6 +78,19 @@ module TSCompiler{
                                     var tokenType = _Pun_[s].type;
                                     var tokenValue = _Pun_[s].value;
                                     var token = token.newToken(tokenType, tokenValue, x+1);
+                                    if((token.type === QUOTE.type) && (codeString === true)){
+                                        _Tokens_.push(token);
+                                        codeString = !codeString;
+                                        _Log_.printMessage("");
+                                    }
+                                    else if((token.type === QUOTE.type) && (codeString === false)){
+                                        _Log_.printError("");
+                                        throw new Error("Ending Lex");
+                                    }
+                                    else{
+                                        _Tokens_.push(token);
+                                        _Log_.printMessage("");
+                                    }
                                     _Tokens_.push(token);
                                     _Log_.printMessage("DEBUG Lexer -" + token);
                                 }
@@ -96,7 +116,12 @@ module TSCompiler{
                         }
 
                         //Do I need to check strings?
-                        
+                        else if(string_RE.test(currentT)){
+                            codeString = !codeString;
+                            this.sepString(currentT, x + 1);
+                            codeString = !codeString;
+                        }
+
                         //None throw error
                         else{
                             _Log_.printError("Not Valid Character:'" + currentT + "':", x+1, 'Lexer');
@@ -105,7 +130,27 @@ module TSCompiler{
 
                     }
                 }
-            }   
+            } 
+        }
+
+        public static sepString(words: string, line: number){
+            for(var x = 0; x < words.length; x++){
+                if(words[x]=== ''){
+                    var token = TSCompiler.token.newToken(SPACE.type, words[x], line);
+                    _Log_.printMessage("");
+                    _Tokens_.push(token);
+                }
+                else if(words[x] === '"'){
+                    var token = TSCompiler.token.newToken(QUOTE.type, words[x], line);
+                    _Log_.printMessage("");
+                    _Tokens_.push(token);
+                }
+                else{
+                    var token = TSCompiler.token.newToken(CHAR.type, words[x], line);
+                    _Log_.printMessage("");
+                    _Tokens_.push(token);
+                }
+            }
         }
     }
 }

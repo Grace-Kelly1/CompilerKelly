@@ -1,21 +1,21 @@
 var TSCompiler;
 (function (TSCompiler) {
-    var log = /** @class */ (function () {
-        function log() {
+    var logger = /** @class */ (function () {
+        function logger() {
         }
-        log.printMessage = function (message) {
+        logger.printMessage = function (message) {
             var log = document.getElementById("output");
             log.value += message + "\n";
         };
-        log.printError = function (message, module, line) {
+        logger.printError = function (message, module, line) {
             var log = document.getElementById("output");
             log.value += "ERROR: " + module + " Line: " + line + " --> " + message + "\n";
         };
-        log.printWarning = function (message) {
+        logger.printWarning = function (message) {
             var log = document.getElementById("output");
             log.value += "WARNING!!!: " + message + "\n";
         };
-        return log;
+        return logger;
     }());
-    TSCompiler.log = log;
+    TSCompiler.logger = logger;
 })(TSCompiler || (TSCompiler = {}));

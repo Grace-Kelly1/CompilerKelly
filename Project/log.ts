@@ -1,5 +1,6 @@
 module TSCompiler{
-    export class log{
+    export class logger{
+
         public static printMessage(message: string): void{
             var log = <HTMLTextAreaElement> document.getElementById("output");
             log.value += message + "\n";

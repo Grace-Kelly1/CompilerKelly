@@ -2,6 +2,7 @@
 <html lang="en">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 <link rel="stylesheet" href="main.css">
+
 <body onload="init()">
 	<div class="container py-2">
 		<h1 align="center" style="color:#008CBA;">Grace's Compiler</h1>
@@ -44,7 +45,7 @@
 		</div>
 		<div class="row pt-3">
 			<div class="col">
-				<button id="compileButton" class="button buttonC" onclick="">Compile</button>
+				<button id="compileButton" class="button buttonC" onclick="TSCompiler.utils.compile()">Compile</button>
 			</div>
 		</div>
 	</div>
@@ -54,7 +55,26 @@
 <script type="text/javascript" src="globals.js"></script>
 <script type="text/javascript" src="log.js"></script>
 <script type="text/javascript" src="token.js"></script>
+<script type="text/javascript" src="utils.js"></script>
+<script type="text/javascript">
+	function init() {
+	        // Clear the message box.
+	        document.getElementById("output").value = "";
+	        // Set the initial values for our globals.
+	        tokens = "";
+	        tokenIndex = 0;
+	        currentT = ' ';       
+	}
+	function compile(){
+		_Lexer_.lexerCode();
+	}
+	//output text area works!
+	//function testCode(){
+		//document.getElementById("output").value = "Works!!!!"
+	//}
+</script>
 
 </body>
 
 </html>
+

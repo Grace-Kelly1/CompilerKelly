@@ -1,8 +1,11 @@
 var _Lexer_ = TSCompiler.lexer;
 var _Tokens_ = [];
-var _CurrentToken_ = null;
+var _CurrentT_ = null;
 var _TokenIndex_ = 0;
-var _Log_ = TSCompiler.log;
+//Why isnt this working 
+var _Log_ = TSCompiler.logger;
+//Do I need this?
+var _Util_ = TSCompiler.utils;
 //Types of keywords
 var PRINT = { type: 'PRINT', value: 'print' };
 var WHILE = { type: 'WHILE', value: 'while' };
