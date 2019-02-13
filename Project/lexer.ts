@@ -1,24 +1,32 @@
-//Main document for lexer code 
-//Rule Priority: keyword, id, symbol, digit, char
-//Uses regular expressions 
+// Main document for lexer code 
+// Rule Priority: keyword, id, symbol, digit, char
+// Uses regular expressions 
+
 /// <reference path="globals.ts"/>
+/// <reference path="logger.ts"/>
 /// <reference path="token.ts"/>
+
 module TSCompiler{
     export class lexer{
-        public static lexerCode(){
+
+        public lexerCode(){
             //initiate variables for keywords and symbols
             var keywords = ['print', 'while', 'if', 'int', 'string', 'boolean', 'false', 'true'];
             var symbols = ['{', '}', '(', ')', '"', '=', '==', '!=', '+', '$'];
-            //Regular Expressions for id, digit and char
+            
+				//Regular Expressions for id, digit and char
             var id_RE: RegExp = /^[a-z]+$/;
             var digit_RE: RegExp = /0|(^[1-9]([0-9])*)$/;
-            //Char and String needed?
+            
+				//Char and String needed?
             var char_RE: RegExp = /^[a-z]$/;
             var codeString = false;
             var string_RE: RegExp = /^"[a-z\s]*"$/;
-            //Regular Expression for anything needed?
+            
+				//Regular Expression for anything needed?
             var any_RE: RegExp = /[a-z]+|[1-9]|(=)|(==)|(!=)|"[^"]*"|(\s)/;
-            //Regular Expression for whitespace or just space needed?
+            
+				//Regular Expression for whitespace or just space needed?
 
             //First Print NEED TO ADD WHAT PROGRAM
             _Log_.printMessage("INFO Lexer....\n");
@@ -135,7 +143,7 @@ module TSCompiler{
             } 
         }
 
-        public static sepString(words: string, line: number){
+        public sepString(words: string, line: number){
             for(var x = 0; x < words.length; x++){
                 if(words[x]=== ''){
                     var token = TSCompiler.token.newToken(SPACE.type, words[x], line);
