@@ -5,11 +5,13 @@
 /// <reference path="globals.ts"/>
 /// <reference path="logger.ts"/>
 /// <reference path="token.ts"/>
+/// <reference path="utils.ts"/>
 
 module TSCompiler{
     export class lexer{
 
         public lexerCode(){
+            
             //initiate variables for keywords and symbols
             var keywords = ['print', 'while', 'if', 'int', 'string', 'boolean', 'false', 'true'];
             var symbols = ['{', '}', '(', ')', '"', '=', '==', '!=', '+', '$'];
@@ -24,7 +26,7 @@ module TSCompiler{
             var string_RE: RegExp = /^"[a-z\s]*"$/;
             
 				//Regular Expression for anything needed?
-            var any_RE: RegExp = /[a-z]+|[1-9]|(=)|(==)|(!=)|"[^"]*"|(\s)/;
+            var any_RE: RegExp = /[a-z]+|[1-9]|(==)|(!=)|"[^"]*"|(\S)/g;
             
 				//Regular Expression for whitespace or just space needed?
 
@@ -46,12 +48,15 @@ module TSCompiler{
             for (var x = 0; x < inputLength; x++) {
                 inputLines[x] = (inputLines[x].replace(/^\s+ | \s+$/g, ""));
             }
-            
+            console.log(inputCode);
+            console.log(inputLines); //VALUE?
+            //_Tokens_ = new TSCompiler.token;
 
             //Loop through the code 
             for(var x = 0; x < inputLength; x++){
                 //Make sure it is in grammer atleast
                 var checkRE = inputLines[x].match(any_RE);
+                console.log(checkRE);
                 var checkLength = checkRE.length;
                 //Check is matched to any_RE
                 if(checkRE != null){
@@ -66,7 +71,7 @@ module TSCompiler{
                                 if(currentT === _Keywords_[k].value){
                                     var tokenType = _Keywords_[k].type;
                                     var tokenValue =  _Keywords_[k].value;
-                                    var token = token.newToken(tokenType, tokenValue, x+1);
+                                    var token = Token.newToken(tokenType, tokenValue, x+1);
                                     _Tokens_.push(token);
                                     _Log_.printMessage("DEBUG Lexer -" + token);
                                 }
@@ -76,7 +81,7 @@ module TSCompiler{
                         //Check if id 
                         else if(id_RE.test(currentT)){
                             for (var i = 0; i < currentT.length; i++){
-                                    var token = token.newToken('ID', currentT[i], x+1);
+                                    var token = Token.newToken('ID', currentT[i], x+1);
                                     _Tokens_.push(token);
                                     _Log_.printMessage("DEBUG Lexer -" + token);
                             }
@@ -87,7 +92,11 @@ module TSCompiler{
                                 if(currentT === _Pun_[s].value){
                                     var tokenType = _Pun_[s].type;
                                     var tokenValue = _Pun_[s].value;
-                                    var token = token.newToken(tokenType, tokenValue, x+1);
+                                    var token = Token.newToken(tokenType, tokenValue, x+1);
+                                    //_Tokens_ = new TSCompiler.token();
+                                    //let Token = token(tokenType, tokenValue, x + 1);
+                                   // _CurrentT_ = new TSCompiler.token;
+                                    //let token = _CurrentT_.newToken(tokenType, tokenValue, x + 1);
                                     if((token.type === QUOTE.type) && (codeString === true)){
                                         _Tokens_.push(token);
                                         codeString = !codeString;
@@ -110,7 +119,7 @@ module TSCompiler{
                         //Check if digit 
                         else if(digit_RE.test(currentT)){
                             for (var i = 0; i < currentT.length; i++){
-                                var token = token.newToken('DIGIT', currentT[i], x+1);
+                                var token = Token.newToken('DIGIT', currentT[i], x+1);
                                 _Tokens_.push(token);
                                 _Log_.printMessage("DEBUG Lexer -" + token);
                             }
@@ -119,7 +128,7 @@ module TSCompiler{
                         //Check if char
                         else if(char_RE.test(currentT)){
                             for (var i = 0; i < currentT.length; i++){
-                                    var token = token.newToken('CHAR', currentT[i], x+1);
+                                    var token = Token.newToken('CHAR', currentT[i], x+1);
                                     _Tokens_.push(token);
                                     _Log_.printMessage("DEBUG Lexer -" + token);
                             }
@@ -146,17 +155,17 @@ module TSCompiler{
         public sepString(words: string, line: number){
             for(var x = 0; x < words.length; x++){
                 if(words[x]=== ''){
-                    var token = TSCompiler.token.newToken(SPACE.type, words[x], line);
+                    var token = Token.newToken(SPACE.type, words[x], line);
                     _Log_.printMessage("DEBUG Lexer -" + token);
                     _Tokens_.push(token);
                 }
                 else if(words[x] === '"'){
-                    var token = TSCompiler.token.newToken(QUOTE.type, words[x], line);
+                    var token = Token.newToken(QUOTE.type, words[x], line);
                     _Log_.printMessage("DEBUG Lexer -" + token);
                     _Tokens_.push(token);
                 }
                 else{
-                    var token = TSCompiler.token.newToken(CHAR.type, words[x], line);
+                    var token = token.newToken(CHAR.type, words[x], line);
                     _Log_.printMessage("DEBUG Lexer -" + token);
                     _Tokens_.push(token);
                 }

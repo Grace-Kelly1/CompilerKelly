@@ -1,7 +1,11 @@
-module TSCompiler{
-    export class token{
+/// <reference path="globals.ts"/>
+/// <reference path="lexer.ts"/>
+/// <reference path="utils.ts"/>
 
-        public static newToken(type, value, lineNumber){
+module TSCompiler{
+    export class Token{
+
+        public newToken(type, value, lineNumber){
             var token = new token(type, value, lineNumber);
             return token;
         }

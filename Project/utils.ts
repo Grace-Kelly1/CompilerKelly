@@ -11,11 +11,12 @@ module TSCompiler{
             //console.log("HERE");
 
             // Reset everything
-            _Tokens_ = [];
+            //_Tokens_ = [];
             _CurrentT_ = null;
             _TokenIndex_ = 0;
             _Lexer_ = new TSCompiler.lexer();  // We declared these in globals but still have 
-				_Log_   = new TSCompiler.logger(); // to construct them before we can use them.
+                _Log_   = new TSCompiler.logger(); // to construct them before we can use them.
+                
 
             var log: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("outputTA");
             var source: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("inputTA");

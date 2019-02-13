@@ -1,15 +1,12 @@
-///<reference path='utils.ts' />
 ///<reference path='lexer.ts' />
-///<reference path='token.ts' />
 ///<reference path='logger.ts' />
-var _Lexer_ = TSCompiler.lexer;
+///<reference path='token.ts' />
+///<reference path='utils.ts' />
+var _Lexer_; // Remember to construct this later.
+var _Log_; // Remember to construct this later.
 var _Tokens_ = [];
 var _CurrentT_ = null;
 var _TokenIndex_ = 0;
-//Why isnt this working 
-var _Log_ = TSCompiler.logger;
-//Do I need this?
-var _Util_ = TSCompiler.utils;
 //Types of keywords
 var PRINT = { type: 'PRINT', value: 'print' };
 var WHILE = { type: 'WHILE', value: 'while' };

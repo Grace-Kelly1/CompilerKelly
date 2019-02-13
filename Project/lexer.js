@@ -1,14 +1,16 @@
-//Main document for lexer code 
-//Rule Priority: keyword, id, symbol, digit, char
-//Uses regular expressions 
+// Main document for lexer code 
+// Rule Priority: keyword, id, symbol, digit, char
+// Uses regular expressions 
 /// <reference path="globals.ts"/>
+/// <reference path="logger.ts"/>
 /// <reference path="token.ts"/>
+/// <reference path="utils.ts"/>
 var TSCompiler;
 (function (TSCompiler) {
     var lexer = /** @class */ (function () {
         function lexer() {
         }
-        lexer.lexerCode = function () {
+        lexer.prototype.lexerCode = function () {
             //initiate variables for keywords and symbols
             var keywords = ['print', 'while', 'if', 'int', 'string', 'boolean', 'false', 'true'];
             var symbols = ['{', '}', '(', ')', '"', '=', '==', '!=', '+', '$'];
@@ -20,7 +22,7 @@ var TSCompiler;
             var codeString = false;
             var string_RE = /^"[a-z\s]*"$/;
             //Regular Expression for anything needed?
-            var any_RE = /[a-z]+|[1-9]|(=)|(==)|(!=)|"[^"]*"|(\s)/;
+            var any_RE = /[a-z]+|[1-9]|(==)|(!=)|"[^"]*"|(\S)/g;
             //Regular Expression for whitespace or just space needed?
             //First Print NEED TO ADD WHAT PROGRAM
             _Log_.printMessage("INFO Lexer....\n");
@@ -39,10 +41,14 @@ var TSCompiler;
             for (var x = 0; x < inputLength; x++) {
                 inputLines[x] = (inputLines[x].replace(/^\s+ | \s+$/g, ""));
             }
+            console.log(inputCode);
+            console.log(inputLines); //VALUE?
+            //_Tokens_ = new TSCompiler.token;
             //Loop through the code 
             for (var x = 0; x < inputLength; x++) {
                 //Make sure it is in grammer atleast
                 var checkRE = inputLines[x].match(any_RE);
+                console.log(checkRE);
                 var checkLength = checkRE.length;
                 //Check is matched to any_RE
                 if (checkRE != null) {
@@ -56,7 +62,7 @@ var TSCompiler;
                                 if (currentT === _Keywords_[k].value) {
                                     var tokenType = _Keywords_[k].type;
                                     var tokenValue = _Keywords_[k].value;
-                                    var token = token.newToken(tokenType, tokenValue, x + 1);
+                                    var token = _CurrentT_.newToken(tokenType, tokenValue, x + 1);
                                     _Tokens_.push(token);
                                     _Log_.printMessage("DEBUG Lexer -" + token);
                                 }
@@ -77,6 +83,10 @@ var TSCompiler;
                                     var tokenType = _Pun_[s].type;
                                     var tokenValue = _Pun_[s].value;
                                     var token = token.newToken(tokenType, tokenValue, x + 1);
+                                    //_Tokens_ = new TSCompiler.token();
+                                    //let Token = token(tokenType, tokenValue, x + 1);
+                                    // _CurrentT_ = new TSCompiler.token;
+                                    //let token = _CurrentT_.newToken(tokenType, tokenValue, x + 1);
                                     if ((token.type === QUOTE.type) && (codeString === true)) {
                                         _Tokens_.push(token);
                                         codeString = !codeString;
@@ -126,20 +136,20 @@ var TSCompiler;
                 }
             }
         };
-        lexer.sepString = function (words, line) {
+        lexer.prototype.sepString = function (words, line) {
             for (var x = 0; x < words.length; x++) {
                 if (words[x] === '') {
-                    var token = TSCompiler.token.newToken(SPACE.type, words[x], line);
+                    var token = token.newToken(SPACE.type, words[x], line);
                     _Log_.printMessage("DEBUG Lexer -" + token);
                     _Tokens_.push(token);
                 }
                 else if (words[x] === '"') {
-                    var token = TSCompiler.token.newToken(QUOTE.type, words[x], line);
+                    var token = token.newToken(QUOTE.type, words[x], line);
                     _Log_.printMessage("DEBUG Lexer -" + token);
                     _Tokens_.push(token);
                 }
                 else {
-                    var token = TSCompiler.token.newToken(CHAR.type, words[x], line);
+                    var token = token.newToken(CHAR.type, words[x], line);
                     _Log_.printMessage("DEBUG Lexer -" + token);
                     _Tokens_.push(token);
                 }
