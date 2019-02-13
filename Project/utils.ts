@@ -1,4 +1,7 @@
 ///<reference path='globals.ts' />
+///<reference path='lexer.ts' />
+///<reference path='token.ts' />
+///<reference path='logger.ts' />
 module TSCompiler{
     export class utils{
         public static compile() {

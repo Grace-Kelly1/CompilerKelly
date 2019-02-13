@@ -1,6 +1,7 @@
 //Main document for lexer code 
 //Rule Priority: keyword, id, symbol, digit, char
 //Uses regular expressions 
+/// <reference path="globals.ts"/>
 /// <reference path="token.ts"/>
 module TSCompiler{
     export class lexer{
@@ -82,15 +83,15 @@ module TSCompiler{
                                     if((token.type === QUOTE.type) && (codeString === true)){
                                         _Tokens_.push(token);
                                         codeString = !codeString;
-                                        _Log_.printMessage("");
+                                        _Log_.printMessage("DEBUG Lexer -" + token);
                                     }
                                     else if((token.type === QUOTE.type) && (codeString === false)){
                                         //_Log_.printError("");
-                                        throw new Error("Ending Lex");
+                                        throw new Error("...Ending Lexer");
                                     }
                                     else{
                                         _Tokens_.push(token);
-                                        _Log_.printMessage("");
+                                        _Log_.printMessage("DEBUG Lexer -" + token);
                                     }
                                     _Tokens_.push(token);
                                     _Log_.printMessage("DEBUG Lexer -" + token);
@@ -138,17 +139,17 @@ module TSCompiler{
             for(var x = 0; x < words.length; x++){
                 if(words[x]=== ''){
                     var token = TSCompiler.token.newToken(SPACE.type, words[x], line);
-                    _Log_.printMessage("");
+                    _Log_.printMessage("DEBUG Lexer -" + token);
                     _Tokens_.push(token);
                 }
                 else if(words[x] === '"'){
                     var token = TSCompiler.token.newToken(QUOTE.type, words[x], line);
-                    _Log_.printMessage("");
+                    _Log_.printMessage("DEBUG Lexer -" + token);
                     _Tokens_.push(token);
                 }
                 else{
                     var token = TSCompiler.token.newToken(CHAR.type, words[x], line);
-                    _Log_.printMessage("");
+                    _Log_.printMessage("DEBUG Lexer -" + token);
                     _Tokens_.push(token);
                 }
             }

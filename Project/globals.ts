@@ -1,3 +1,8 @@
+///<reference path='utils.ts' />
+///<reference path='lexer.ts' />
+///<reference path='token.ts' />
+///<reference path='logger.ts' />
+
 var _Lexer_ = TSCompiler.lexer;
 var _Tokens_ = [];
 var _CurrentT_: TSCompiler.token = null;

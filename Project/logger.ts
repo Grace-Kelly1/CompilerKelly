@@ -1,3 +1,6 @@
+/// <reference path="globals.ts"/>
+/// <reference path="token.ts"/>
+/// <reference path="utils.ts"/>
 module TSCompiler{
     export class logger{
 
