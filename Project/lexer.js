@@ -62,18 +62,21 @@ var TSCompiler;
                                 if (currentT === _Keywords_[k].value) {
                                     var tokenType = _Keywords_[k].type;
                                     var tokenValue = _Keywords_[k].value;
-                                    var token = _CurrentT_.newToken(tokenType, tokenValue, x + 1);
+                                    var token = new TSCompiler.Token(tokenType, tokenValue, x + 1);
+                                    var stuff = (tokenType + " [ " + tokenValue + " ] " + " one line " + x + 1);
+                                    //var token = token.newToken(tokenType, tokenValue, x+1);
                                     _Tokens_.push(token);
-                                    _Log_.printMessage("DEBUG Lexer -" + token);
+                                    _Log_.printMessage("DEBUG Lexer -" + stuff);
                                 }
                             }
                         }
                         //Check if id 
                         else if (id_RE.test(currentT)) {
                             for (var i = 0; i < currentT.length; i++) {
-                                var token = token.newToken('ID', currentT[i], x + 1);
+                                var token = new TSCompiler.Token('ID', currentT[i], x + 1);
+                                var stuff = ('ID' + " [ " + tokenValue + " ] " + " one line " + x + 1);
                                 _Tokens_.push(token);
-                                _Log_.printMessage("DEBUG Lexer -" + token);
+                                _Log_.printMessage("DEBUG Lexer -" + stuff);
                             }
                         }
                         //Check if symbol 
@@ -81,8 +84,10 @@ var TSCompiler;
                             for (var s = 0; s < _Pun_.length; s++) {
                                 if (currentT === _Pun_[s].value) {
                                     var tokenType = _Pun_[s].type;
+                                    console.log(tokenType);
                                     var tokenValue = _Pun_[s].value;
-                                    var token = token.newToken(tokenType, tokenValue, x + 1);
+                                    var token = new TSCompiler.Token(tokenType, tokenValue, x + 1);
+                                    var stuff = (tokenType + " [ " + tokenValue + " ] " + " one line " + x + 1);
                                     //_Tokens_ = new TSCompiler.token();
                                     //let Token = token(tokenType, tokenValue, x + 1);
                                     // _CurrentT_ = new TSCompiler.token;
@@ -90,7 +95,7 @@ var TSCompiler;
                                     if ((token.type === QUOTE.type) && (codeString === true)) {
                                         _Tokens_.push(token);
                                         codeString = !codeString;
-                                        _Log_.printMessage("DEBUG Lexer -" + token);
+                                        _Log_.printMessage("DEBUG Lexer -" + stuff);
                                     }
                                     else if ((token.type === QUOTE.type) && (codeString === false)) {
                                         //_Log_.printError("");
@@ -98,27 +103,29 @@ var TSCompiler;
                                     }
                                     else {
                                         _Tokens_.push(token);
-                                        _Log_.printMessage("DEBUG Lexer -" + token);
+                                        _Log_.printMessage("DEBUG Lexer -" + stuff);
                                     }
                                     _Tokens_.push(token);
-                                    _Log_.printMessage("DEBUG Lexer -" + token);
+                                    _Log_.printMessage("DEBUG Lexer -" + stuff);
                                 }
                             }
                         }
                         //Check if digit 
                         else if (digit_RE.test(currentT)) {
                             for (var i = 0; i < currentT.length; i++) {
-                                var token = token.newToken('DIGIT', currentT[i], x + 1);
+                                var token = new TSCompiler.Token('DIGIT', currentT[i], x + 1);
+                                var stuff = ('DIGIT' + " [ " + currentT[i] + " ] " + " one line " + x + 1);
                                 _Tokens_.push(token);
-                                _Log_.printMessage("DEBUG Lexer -" + token);
+                                _Log_.printMessage("DEBUG Lexer -" + stuff);
                             }
                         }
                         //Check if char
                         else if (char_RE.test(currentT)) {
                             for (var i = 0; i < currentT.length; i++) {
-                                var token = token.newToken('CHAR', currentT[i], x + 1);
+                                var token = new TSCompiler.Token('CHAR', currentT[i], x + 1);
+                                var stuff = ('CHAR' + " [ " + currentT[i] + " ] " + " one line " + x + 1);
                                 _Tokens_.push(token);
-                                _Log_.printMessage("DEBUG Lexer -" + token);
+                                _Log_.printMessage("DEBUG Lexer -" + stuff);
                             }
                         }
                         //Do I need to check strings?
@@ -139,17 +146,17 @@ var TSCompiler;
         lexer.prototype.sepString = function (words, line) {
             for (var x = 0; x < words.length; x++) {
                 if (words[x] === '') {
-                    var token = token.newToken(SPACE.type, words[x], line);
+                    var token = new TSCompiler.Token(SPACE.type, words[x], line);
                     _Log_.printMessage("DEBUG Lexer -" + token);
                     _Tokens_.push(token);
                 }
                 else if (words[x] === '"') {
-                    var token = token.newToken(QUOTE.type, words[x], line);
+                    var token = new TSCompiler.Token(QUOTE.type, words[x], line);
                     _Log_.printMessage("DEBUG Lexer -" + token);
                     _Tokens_.push(token);
                 }
                 else {
-                    var token = token.newToken(CHAR.type, words[x], line);
+                    var token = new TSCompiler.Token(CHAR.type, words[x], line);
                     _Log_.printMessage("DEBUG Lexer -" + token);
                     _Tokens_.push(token);
                 }
