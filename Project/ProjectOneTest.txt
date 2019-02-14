@@ -1,0 +1,41 @@
+{}$
+
+{
+print("hello world")
+}$
+
+{
+int x
+int y
+x = 5
+y = 5
+while(x = y){
+	print x
+	y++
+}
+}$
+
+{
+int x
+x = 2
+}$
+
+{
+int x
+x = 1
+if(x == 1){
+	x = x + 2
+}
+if(x != 1){
+	x = 8
+}
+}$
+
+{
+	print(if)
+}$
+
+{
+	print("if")
+}$
+
