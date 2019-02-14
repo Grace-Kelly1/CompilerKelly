@@ -22,7 +22,10 @@ var TSCompiler;
             var codeString = false;
             var string_RE = /^"[a-z\s]*"$/;
             //Regular Expression for anything needed?
-            var any_RE = /[a-z]+|[1-9]|(==)|(!=)|"[^"]*"|(")|(\S)/g;
+            //var any_RE: RegExp = /([a-z]+)|([0-9])|("([a-z ])*")|(\/\*[^\/\*]*\*\/)|(==)|(!=)|(\S)|(\n)|(\t)|(\s)/g;
+            var any_RE = /[a-z]+|[1-9]|(==)|(!=)|"[^"]*"|(")|(\/\*[^\/\*]*\*\/)|(\S)/g;
+            //Comments
+            var com_RE = /\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/;
             //Regular Expression for whitespace or just space needed?
             //First Print NEED TO ADD WHAT PROGRAM
             _Log_.printMessage("INFO Lexer....\n");
@@ -160,6 +163,10 @@ var TSCompiler;
                                     _Tokens_.push(token);
                                 }
                             }
+                        }
+                        //ignoring comments
+                        else if (com_RE.test(currentT)) {
+                            console.log("Comment");
                         }
                         //None throw error
                         else {

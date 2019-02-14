@@ -26,7 +26,10 @@ module TSCompiler{
             var string_RE: RegExp = /^"[a-z\s]*"$/;
             
 				//Regular Expression for anything needed?
-            var any_RE: RegExp = /[a-z]+|[1-9]|(==)|(!=)|"[^"]*"|(")|(\S)/g;
+            //var any_RE: RegExp = /([a-z]+)|([0-9])|("([a-z ])*")|(\/\*[^\/\*]*\*\/)|(==)|(!=)|(\S)|(\n)|(\t)|(\s)/g;
+            var any_RE: RegExp = /[a-z]+|[1-9]|(==)|(!=)|"[^"]*"|(")|(\/\*[^\/\*]*\*\/)|(\S)/g;
+            //Comments
+            var com_RE = /\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/;
             
 				//Regular Expression for whitespace or just space needed?
 
@@ -173,6 +176,10 @@ module TSCompiler{
                                     _Tokens_.push(token);
                                 }
                             }
+                        }
+                        //ignoring comments
+                        else if(com_RE.test(currentT)){
+                            console.log("Comment");
                         }
 
                         //None throw error
