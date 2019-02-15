@@ -10,9 +10,9 @@ var TSCompiler;
             var log = document.getElementById("outputTA");
             log.value += message + "\n";
         };
-        logger.prototype.printError = function (message, module, line) {
+        logger.prototype.printError = function (message) {
             var log = document.getElementById("outputTA");
-            log.value += "ERROR: " + module + " Line: " + line + " --> " + message + "\n";
+            log.value += "ERROR: " + message + "\n";
         };
         logger.prototype.printWarning = function (message) {
             var log = document.getElementById("outputTA");

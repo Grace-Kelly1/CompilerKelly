@@ -30,11 +30,14 @@ module TSCompiler{
             var any_RE: RegExp = /[a-z]+|[1-9]|(==)|(!=)|"[^"]*"|(")|(\/\*[^\/\*]*\*\/)|(\S)|(\n)/g;
             //Comments
             var com_RE = /\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/;
+
+            //Trying to implement multiple programs
+            var programCount = 1;
             
 				//Regular Expression for whitespace or just space needed?
 
             //First Print NEED TO ADD WHAT PROGRAM
-            _Log_.printMessage("INFO Lexer....\n");
+            _Log_.printMessage("INFO Lexer - program " + programCount);
 
             //Grab Code and trim and split into lines to get length
             var inputCode = (<HTMLInputElement>document.getElementById("inputTA")).value;
@@ -85,7 +88,7 @@ module TSCompiler{
 
                         //Check if id 
                         else if(id_RE.test(currentT)){
-                            for (var i = 0; i < 2; i++){
+                            for (var i = 0; i < 1; i++){
                                 var token = new Token('ID', currentT[i], x);
                                 var stuff = ('ID' + " [ " + currentT[i] + " ] " + " one line " + x);
                                     _Tokens_.push(token);
@@ -93,6 +96,12 @@ module TSCompiler{
                                     _Log_.printMessage("DEBUG Lexer -" + stuff);
                             }
                         }
+
+                        //multi programs
+                        else if(currentT === '$'){
+                            programCount++;
+                            _Log_.printMessage("\n" + "INFO Lexer - program " + programCount);
+                       }
                         //Check if symbol 
                         else if(symbols.indexOf(currentT) > -1){
                             for (var s = 0; s < _Pun_.length; s++){
@@ -184,7 +193,7 @@ module TSCompiler{
 
                         //None throw error
                         else{
-                            //_Log_.printError("Not Valid Character:" + currentT);
+                            _Log_.printError(" Invalid Token " +"[" + currentT + "]" + " on line " + x);
                             console.log(currentT);
                             throw new Error ("Not Valid");
                         }

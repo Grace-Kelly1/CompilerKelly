@@ -9,9 +9,9 @@ module TSCompiler{
             var log = <HTMLTextAreaElement> document.getElementById("outputTA");
             log.value += message + "\n";
         }
-        public printError(message: string, module: String, line: number): void{
+        public printError(message: string): void{
             var log = <HTMLTextAreaElement> document.getElementById("outputTA");
-            log.value += "ERROR: " + module + " Line: " + line + " --> " + message + "\n";
+            log.value += "ERROR: " + message + "\n";
         }
         public printWarning(message: string): void{
             var log = <HTMLTextAreaElement> document.getElementById("outputTA");
