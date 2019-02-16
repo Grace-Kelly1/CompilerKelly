@@ -179,7 +179,6 @@ var TSCompiler;
                         else {
                             _Log_.printError(" Invalid Token " + "[" + currentT + "]" + " on line " + x);
                             console.log(currentT);
-                            throw new Error("Not Valid");
                         }
                     }
                 }
