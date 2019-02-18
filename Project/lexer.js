@@ -26,6 +26,8 @@ var TSCompiler;
             var any_RE = /[a-z]+|[1-9]|(==)|(!=)|"[^"]*"|(")|(\/\*[^\/\*]*\*\/)|(\S)|(\n)/g;
             //Comments
             var com_RE = /\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/;
+            //new line
+            //var line_RE = /\n/;
             //Trying to implement multiple programs
             var programCount = 1;
             //Regular Expression for whitespace or just space needed?
@@ -54,7 +56,12 @@ var TSCompiler;
                 //Make sure it is in grammer atleast
                 var checkRE = inputLines[x].match(any_RE);
                 console.log(checkRE);
-                var checkLength = checkRE.length;
+                if (checkRE === null) {
+                    console.log("New Line");
+                }
+                else {
+                    var checkLength = checkRE.length;
+                }
                 //Check is matched to any_RE
                 if (checkRE != null) {
                     //Tokens 
