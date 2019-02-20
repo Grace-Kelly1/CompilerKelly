@@ -53,6 +53,9 @@ var TSCompiler;
             //_Tokens_ = new TSCompiler.token;
             //Loop through the code 
             for (var x = 0; x < inputLength; x++) {
+                // if(x > inputLength - 1){
+                //     break;
+                // }
                 //Make sure it is in grammer atleast
                 var checkRE = inputLines[x].match(any_RE);
                 console.log(checkRE);
@@ -152,29 +155,31 @@ var TSCompiler;
                         //      _Log_.printMessage("DEBUG Lexer -" + token);
                         //     _Tokens_.push(stuff);
                         // }
+                        //console.log("STOP");
                         //Do I need to check strings?
                         else if (string_RE.test(currentT)) {
                             // codeString = !codeString;
                             // this.sepString(currentT, x+1);
                             // codeString = !codeString;
-                            for (var x = 0; x < currentT.length; x++) {
-                                if (currentT[x] === '"') {
-                                    var token = new TSCompiler.Token(QUOTE.type, currentT[x], x + 1);
-                                    var stuff = ('QUOTE' + " [ " + currentT[x] + " ] " + " one line " + x);
+                            //break;
+                            for (var i = 0; i < currentT.length; i++) {
+                                if (currentT[i] === '"') {
+                                    var token = new TSCompiler.Token(QUOTE.type, currentT[i], x + 1);
+                                    var stuff = ('QUOTE' + " [ " + currentT[i] + " ] " + " one line " + x);
                                     _Log_.printMessage("DEBUG Lexer -" + stuff);
                                     _Tokens_.push(token);
                                 }
-                                else if (currentT[x] === ' ') {
-                                    var token = new TSCompiler.Token(SPACE.type, currentT[x], x + 1);
-                                    var stuff = ('SPACE' + " [ " + currentT[x] + " ] " + " one line " + x);
+                                else if (currentT[i] === ' ') {
+                                    var token = new TSCompiler.Token(SPACE.type, currentT[i], x + 1);
+                                    var stuff = ('SPACE' + " [ " + currentT[i] + " ] " + " one line " + x);
                                     _Log_.printMessage("DEBUG Lexer -" + stuff);
                                     _Tokens_.push(token);
                                 }
                                 else {
-                                    var token = new TSCompiler.Token(CHAR.type, currentT[x], x + 1);
-                                    var stuff = ('CHAR' + " [ " + currentT[x] + " ] " + " one line " + x);
-                                    _Log_.printMessage("DEBUG Lexer -" + stuff);
+                                    var token = new TSCompiler.Token('CHAR', currentT[i], x);
+                                    var stuff = ('CHAR' + " [ " + currentT[i] + " ] " + " one line " + x);
                                     _Tokens_.push(token);
+                                    _Log_.printMessage("DEBUG Lexer -" + stuff);
                                 }
                             }
                         }
