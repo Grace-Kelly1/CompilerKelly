@@ -16,7 +16,7 @@
 			<div class="col">
 				<div class="row">
 					<div class="col">
-						<label><b>Console</b></label>
+						<label><h3>Console</h3></label>
 					</div>
 					<div class="col">
 						
@@ -29,7 +29,7 @@
 			<div class="col">
 				<div class="row">
 					<div class="col-lg col-2">
-						<label><b>Log</b></label>
+						<label><h3>Log</hs></label>
 					</div>
 					<div class="col col-lg-4">
 						
@@ -49,6 +49,32 @@
 				</div>
 			</div>
 		</div>
+		<break></break>
+		<div class="row">
+                <h4 style="padding-left: 10px;">Concrete Syntax Tree</h4>
+                <textarea id="cst-output" style="resize: none; border: none" readonly></textarea>
+		</div>
+		<div class="row">
+			<div class="col">
+				<div class="panel panel-default">
+					<textarea readonly id="cst_output" class="form-control" rows="15" autofocus></textarea>
+				</div>
+			</div>
+			<div class="col">
+				<h3 >Tokens</h3>
+                <div style="overflow:scroll; height:325px;">
+                    <table id="token_output" style="width: 100%;"
+                           class="table table-condensed table-hover table-bordered">
+                        <tr>
+                            <th>Type</th>
+                            <th>Value</th>
+                            <th>Line</th>
+                        </tr>
+                    </table>
+                </div>
+			</div>
+		</div>
+		<div class="row">
 		<div class="row pt-3">
 			<div class="col">
 				<button id="compileButton" class="button buttonC" onclick="TSCompiler.utils.compile()">Compile</button>

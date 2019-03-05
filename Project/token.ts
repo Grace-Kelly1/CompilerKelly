@@ -1,6 +1,8 @@
 /// <reference path="globals.ts"/>
 /// <reference path="lexer.ts"/>
 /// <reference path="utils.ts"/>
+/// <reference path="cst.ts"/>
+/// <reference path="Node.ts"/>
 
 module TSCompiler{
     export class Token{
@@ -18,7 +20,7 @@ module TSCompiler{
 		              public value: string, 
 						  public line: number) {
             // this.type = type;
-            // this.value = value;
+             //this.value = value;
             // this.line = line;
         }
     }

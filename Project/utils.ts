@@ -31,6 +31,12 @@ module TSCompiler{
 
             _Log_.printMessage("Lex analysis complete.");
 
+            while (_TokenIndex_ < _Tokens_.length) {
+                _Parser_.parse();
+                _Log_.printMessage("Completed parsing program.");
+            }
+            _Log_.printCST();
+
         }
 
         // Used in some places but specifically typed out in others. (TODO: Be consistent about this.)

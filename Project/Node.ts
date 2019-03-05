@@ -1,3 +1,10 @@
+/// <reference path="globals.ts"/>
+/// <reference path="logger.ts"/>
+/// <reference path="token.ts"/>
+/// <reference path="utils.ts"/>
+/// <reference path="lexer.ts"/>
+/// <reference path="cst.ts"/>
+
 module TSCompiler{
     export class Node{
         private isLeaf: boolean;
@@ -48,11 +55,11 @@ module TSCompiler{
             this.parent = parent;
         }
 
-        public getLineNumber(): number {
+        public getLine(): number {
             return this.lineNumber;
         }
 
-        public setLineNumber(number: number): void {
+        public setLine(number: number): void {
             this.lineNumber = number;
         }
 
