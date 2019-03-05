@@ -97,7 +97,9 @@ var TSCompiler;
                         }
                         //multi programs
                         else if (currentT === '$') {
+                            _Log_.printMessage("Lex analysis complete - program" + programCount);
                             programCount++;
+                            _Parser_.parse();
                             _Log_.printMessage("\n" + "INFO Lexer - program " + programCount);
                         }
                         //Check if symbol 

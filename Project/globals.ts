@@ -13,7 +13,7 @@ var _CurrentT_: TSCompiler.Token = null;
 var _TokenIndex_: number = 0;
 var _CST_: TSCompiler.csTree = null;
 //having same priblem from last time
-var _Parser_ : TSCompiler.Parser;
+var _Parser_ : TSCompiler.parse;
 
 
 //Types of keywords

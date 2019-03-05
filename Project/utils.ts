@@ -14,8 +14,10 @@ module TSCompiler{
             //_Tokens_ = [];
             _CurrentT_ = null;
             _TokenIndex_ = 0;
+
             _Lexer_ = new TSCompiler.lexer();  // We declared these in globals but still have 
-                _Log_   = new TSCompiler.logger(); // to construct them before we can use them.
+             _Log_   = new TSCompiler.logger(); // to construct them before we can use them.
+             _Parser_ = new TSCompiler.parse();
                 
 
             var log: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("outputTA");
@@ -29,12 +31,11 @@ module TSCompiler{
             }
             _Lexer_.lexerCode();
 
-            _Log_.printMessage("Lex analysis complete.");
-
-            while (_TokenIndex_ < _Tokens_.length) {
-                _Parser_.parse();
-                _Log_.printMessage("Completed parsing program.");
-            }
+            // while (_TokenIndex_ < _Tokens_.length) {
+            //     _Parser_.parse();
+                
+            //     _Log_.printMessage("Completed parsing program.");
+            // }
             _Log_.printCST();
 
         }

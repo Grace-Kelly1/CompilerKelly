@@ -2,11 +2,17 @@
 ///<reference path='logger.ts' />
 ///<reference path='token.ts' />
 ///<reference path='utils.ts' />
+/// <reference path="cst.ts"/>
+/// <reference path="Node.ts"/>
+/// <reference path="parse.ts"/>
 var _Lexer_; // Remember to construct this later.
 var _Log_; // Remember to construct this later.
 var _Tokens_ = [];
 var _CurrentT_ = null;
 var _TokenIndex_ = 0;
+var _CST_ = null;
+//having same priblem from last time
+var _Parser_;
 //Types of keywords
 var PRINT = { type: 'PRINT', value: 'print' };
 var WHILE = { type: 'WHILE', value: 'while' };

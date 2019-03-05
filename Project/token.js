@@ -1,6 +1,8 @@
 /// <reference path="globals.ts"/>
 /// <reference path="lexer.ts"/>
 /// <reference path="utils.ts"/>
+/// <reference path="cst.ts"/>
+/// <reference path="Node.ts"/>
 var TSCompiler;
 (function (TSCompiler) {
     var Token = /** @class */ (function () {
@@ -16,7 +18,7 @@ var TSCompiler;
             this.value = value;
             this.line = line;
             // this.type = type;
-            // this.value = value;
+            //this.value = value;
             // this.line = line;
         }
         return Token;
