@@ -3,7 +3,6 @@
 /// <reference path="token.ts"/>
 /// <reference path="utils.ts"/>
 /// <reference path="lexer.ts"/>
-/// <reference path ="Tree.js"/>
 var TSCompiler;
 (function (TSCompiler) {
     var parse = /** @class */ (function () {
@@ -15,6 +14,7 @@ var TSCompiler;
             var cst = new Tree();
             cst.addNode("Root", "Branch");
             this.parseProgram(cst);
+            _Log_.printParseMessage("Parse Completed");
         };
         parse.prototype.parseProgram = function (cst) {
             cst.addNode("Program", "branch", "");

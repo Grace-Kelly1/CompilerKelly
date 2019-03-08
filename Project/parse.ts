@@ -3,17 +3,18 @@
 /// <reference path="token.ts"/>
 /// <reference path="utils.ts"/>
 /// <reference path="lexer.ts"/>
-/// <reference path ="Tree.js"/>
 
 module TSCompiler{
     export class parse{
         
         public parse(){
             _CurrentT_ = _Tokens_[_TokenIndex_];
+        
             _Log_.printMessage("\n Beginning Parsing Session...\n");
             var cst = new Tree();
             cst.addNode("Root", "Branch")
             this.parseProgram(cst);
+            _Log_.printParseMessage("Parse Completed");
         }
 
         public parseProgram(cst){

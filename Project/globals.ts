@@ -5,7 +5,7 @@
 // / <reference path="cst.ts"/>
 // / <reference path="Node.ts"/>
 /// <reference path="parse.ts"/>
-/// <reference path ="Tree.js"/>
+
 
 var _Lexer_ : TSCompiler.lexer;  // Remember to construct this later.
 var _Log_   : TSCompiler.logger; // Remember to construct this later.
