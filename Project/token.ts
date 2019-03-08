@@ -1,8 +1,6 @@
 /// <reference path="globals.ts"/>
 /// <reference path="lexer.ts"/>
 /// <reference path="utils.ts"/>
-/// <reference path="cst.ts"/>
-/// <reference path="Node.ts"/>
 
 module TSCompiler{
     export class Token{

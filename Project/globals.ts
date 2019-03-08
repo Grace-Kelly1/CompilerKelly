@@ -2,16 +2,17 @@
 ///<reference path='logger.ts' />
 ///<reference path='token.ts' />
 ///<reference path='utils.ts' />
-/// <reference path="cst.ts"/>
-/// <reference path="Node.ts"/>
+// / <reference path="cst.ts"/>
+// / <reference path="Node.ts"/>
 /// <reference path="parse.ts"/>
+/// <reference path ="Tree.js"/>
 
 var _Lexer_ : TSCompiler.lexer;  // Remember to construct this later.
 var _Log_   : TSCompiler.logger; // Remember to construct this later.
 var _Tokens_ = [];
 var _CurrentT_: TSCompiler.Token = null;  
 var _TokenIndex_: number = 0;
-var _CST_: TSCompiler.csTree = null;
+// var _CST_: TSCompiler.csTree = null;
 //having same priblem from last time
 var _Parser_ : TSCompiler.parse;
 
