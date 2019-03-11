@@ -12,6 +12,8 @@ module TSCompiler{
 
         public lexerCode(){
             
+        //Error Count 
+        var lexerError = 0;
             //initiate variables for keywords and symbols
             var keywords = ['print', 'while', 'if', 'int', 'string', 'boolean', 'false', 'true'];
             var symbols = ['{', '}', '(', ')', '"', '=', '==', '!=', '+', '$'];
@@ -113,8 +115,14 @@ module TSCompiler{
                             programCount++;
                             var token = new Token('EOP', currentT[i], x);
                             _Tokens_.push(token);
-                            _Parser_.parse();
+                            if(lexerError === 0){
+                                _Parser_.parse();
+                            }
+                            else{
+                                _Log_.printParseMessage("\nPARSE - Skipped due to	LEXER error(s)");
+                            }
                             _Log_.printMessage("\n" + "INFO Lexer - program " + programCount);
+                            lexerError = 0;
                        }
                         //Check if symbol 
                         else if(symbols.indexOf(currentT) > -1){
@@ -136,6 +144,7 @@ module TSCompiler{
                                     }
                                     else if((token.type === QUOTE.type) && (codeString === false)){
                                         //_Log_.printError("");
+                                        lexerError = lexerError + 1;
                                         throw new Error("...Ending Lexer");
                                     }
                                     else{
@@ -210,6 +219,7 @@ module TSCompiler{
                         //None throw error
                         else{
                             _Log_.printError(" Invalid Token " +"[" + currentT + "]" + " on line " + x);
+                            lexerError = lexerError + 1;
                             console.log(currentT);
                         }
 

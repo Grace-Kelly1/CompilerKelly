@@ -9,6 +9,7 @@ var TSCompiler;
     var parse = /** @class */ (function () {
         function parse() {
         }
+        //Need to fix where the parse programs print 
         parse.prototype.parse = function () {
             _CurrentT_ = _Tokens_[_TokenIndex_];
             _Log_.printMessage("\nBeginning Parsing Session...");
@@ -75,6 +76,9 @@ var TSCompiler;
                 this.parseStatments();
                 this.parseStatmentL();
                 _Tree_.kick();
+            }
+            else {
+                _Log_.printParseMessage("PARSE - parseStatmentL()");
             }
         };
         parse.prototype.parseVar = function () {

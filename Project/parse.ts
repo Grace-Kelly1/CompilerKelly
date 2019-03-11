@@ -7,7 +7,7 @@
 
 module TSCompiler{
     export class parse{
-        
+        //Need to fix where the parse programs print 
         public parse(){
             _CurrentT_ = _Tokens_[_TokenIndex_];
             _Log_.printMessage("\nBeginning Parsing Session...");
@@ -79,6 +79,9 @@ module TSCompiler{
                 this.parseStatments();
                 this.parseStatmentL();
                 _Tree_ .kick();
+            }
+            else{
+                _Log_.printParseMessage("PARSE - parseStatmentL()");
             }
         }
 
