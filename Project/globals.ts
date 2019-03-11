@@ -5,6 +5,7 @@
 // / <reference path="cst.ts"/>
 // / <reference path="Node.ts"/>
 /// <reference path="parse.ts"/>
+/// <reference path="Tree.ts"/>
 
 
 var _Lexer_ : TSCompiler.lexer;  // Remember to construct this later.
@@ -15,6 +16,7 @@ var _TokenIndex_: number = 0;
 // var _CST_: TSCompiler.csTree = null;
 //having same priblem from last time
 var _Parser_ : TSCompiler.parse;
+var _Tree_: TSCompiler.Tree;
 
 
 //Types of keywords

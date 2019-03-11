@@ -20,7 +20,7 @@ var TSCompiler;
         };
         logger.prototype.printCST = function () {
             var log = document.getElementById('cst_output');
-            log.value = Tree.toString();
+            log.value = TSCompiler.Tree.toString();
         };
         logger.prototype.printParseMessage = function (message) {
             var log = document.getElementById("outputTA");

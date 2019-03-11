@@ -3,6 +3,7 @@
 /// <reference path="token.ts"/>
 /// <reference path="utils.ts"/>
 /// <reference path="lexer.ts"/>
+/// <reference path="Tree.ts"/>
 
 module TSCompiler{
     export class parse{
@@ -12,7 +13,8 @@ module TSCompiler{
         
             _Log_.printMessage("\n Beginning Parsing Session...\n");
             var cst = new Tree();
-            cst.addNode("Root", "Branch")
+            cst.addNode("Root", "branch", "", "", "", "");
+            _Log_.printParseMessage("PARSE - parse()");
             this.parseProgram(cst);
             _Log_.printParseMessage("Parse Completed");
         }
@@ -21,6 +23,7 @@ module TSCompiler{
             cst.addNode("Program", "branch", "");
             this.parseBlock(cst);
             this.matchParse(EOP.type);
+            _Log_.printParseMessage("PARSE - parseProgram()");
             cst.kick();
         }
 
@@ -29,6 +32,7 @@ module TSCompiler{
             this.matchParse(L_BRACE.type);
             this.parseStatmentL(cst);
             this.matchParse(R_BRACE.type);
+            _Log_.printParseMessage("PARSE - parseBlock()");
             cst.kick();
         }
 
@@ -55,6 +59,7 @@ module TSCompiler{
                 default:
                     this.parseBlock(cst);
             }
+            _Log_.printParseMessage("PARSE - parseStatements()");
             cst.kick();
         }
 
@@ -71,6 +76,7 @@ module TSCompiler{
                 cst.addNode("StatementList", "branch");
                 this.parseStatments(cst);
                 this.parseStatmentL(cst);
+                _Log_.printParseMessage("PARSE - parseStatementL()");
                 cst.kick();
             }
         }
@@ -91,7 +97,7 @@ module TSCompiler{
                     this.parseId(cst);
                     break;
                 default:
-                    //_Log_.printError("We should never have gotten to this point.", _CurrentT_.line, 'Parser')
+                    _Log_.printError("We should never have gotten to this point.");
                     throw new Error("Something broke in parser.");
             }
             cst.kick();
@@ -153,7 +159,7 @@ module TSCompiler{
                     this.parseId(cst);
                     break;
                 default:
-                   // _Log_.printError("We should never have gotten to this point.", _CurrentT_.line, 'Parser')
+                    _Log_.printParseError("We should never have gotten to this point.");
                     throw new Error("Something broke in parser.");
             }
             cst.kick();
@@ -225,9 +231,9 @@ module TSCompiler{
 
         public matchParse(type){
             if (_CurrentT_.type === type) {
-                _Log_.printMessage("Successfully matched " + type + " token.");
+                _Log_.printMessage("Parse: Successfully matched " + type + " token.");
             } else {
-               // _Log_.printError("Expected " + type + ", found " + _CurrentT_.type, _CurrentT_.line, 'Parser');
+                _Log_.printParseError("Expected " + type + ", found " + _CurrentT_.type);
                 throw new Error("Error in Parse. Ending execution.");
             }
 

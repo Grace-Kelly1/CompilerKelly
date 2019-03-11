@@ -7,6 +7,8 @@
         "lexer.ts",
         "logger.ts",
         "token.ts",
-        "utils.ts"
+        "utils.ts",
+        "parse.ts",
+        "Tree.ts"
     ]
 }
