@@ -111,6 +111,8 @@ module TSCompiler{
                         else if(currentT === '$'){
                             _Log_.printMessage("Lex analysis complete - program" + programCount);
                             programCount++;
+                            var token = new Token('EOP', currentT[i], x);
+                            _Tokens_.push(token);
                             _Parser_.parse();
                             _Log_.printMessage("\n" + "INFO Lexer - program " + programCount);
                        }

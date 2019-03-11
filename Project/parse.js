@@ -11,7 +11,7 @@ var TSCompiler;
         }
         parse.prototype.parse = function () {
             _CurrentT_ = _Tokens_[_TokenIndex_];
-            _Log_.printMessage("\n Beginning Parsing Session...\n");
+            _Log_.printMessage("\nBeginning Parsing Session...");
             var cst = new TSCompiler.Tree();
             cst.addNode("Root", "branch", "", "", "", "");
             _Log_.printParseMessage("PARSE - parse()");
@@ -21,6 +21,7 @@ var TSCompiler;
         parse.prototype.parseProgram = function (cst) {
             cst.addNode("Program", "branch", "");
             this.parseBlock(cst);
+            console.log(this);
             this.matchParse(EOP.type);
             _Log_.printParseMessage("PARSE - parseProgram()");
             cst.kick();
@@ -217,16 +218,20 @@ var TSCompiler;
         };
         parse.prototype.matchParse = function (type) {
             if (_CurrentT_.type === type) {
-                _Log_.printMessage("Parse: Successfully matched " + type + " token.");
+                //_Log_.printMessage("Parse: Successfully matched " + type + " token.");
+                if (_TokenIndex_ < _Tokens_.length) {
+                    _CurrentT_ = _Tokens_[_TokenIndex_ + 1];
+                    _TokenIndex_++;
+                }
             }
             else {
                 _Log_.printParseError("Expected " + type + ", found " + _CurrentT_.type);
                 throw new Error("Error in Parse. Ending execution.");
             }
-            if (_TokenIndex_ < _Tokens_.length) {
-                _CurrentT_ = _Tokens_[_TokenIndex_ + 1];
-                _TokenIndex_++;
-            }
+            // if (_TokenIndex_ < _Tokens_.length) {
+            //     _CurrentT_ = _Tokens_[_TokenIndex_ + 1];
+            //     _TokenIndex_++;
+            // }
         };
         return parse;
     }());

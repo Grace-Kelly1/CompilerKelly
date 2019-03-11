@@ -11,7 +11,7 @@ module TSCompiler{
         public parse(){
             _CurrentT_ = _Tokens_[_TokenIndex_];
         
-            _Log_.printMessage("\n Beginning Parsing Session...\n");
+            _Log_.printMessage("\nBeginning Parsing Session...");
             var cst = new Tree();
             cst.addNode("Root", "branch", "", "", "", "");
             _Log_.printParseMessage("PARSE - parse()");
@@ -22,6 +22,7 @@ module TSCompiler{
         public parseProgram(cst){
             cst.addNode("Program", "branch", "");
             this.parseBlock(cst);
+            console.log(this);
             this.matchParse(EOP.type);
             _Log_.printParseMessage("PARSE - parseProgram()");
             cst.kick();
@@ -231,16 +232,21 @@ module TSCompiler{
 
         public matchParse(type){
             if (_CurrentT_.type === type) {
-                _Log_.printMessage("Parse: Successfully matched " + type + " token.");
-            } else {
+                //_Log_.printMessage("Parse: Successfully matched " + type + " token.");
+                if (_TokenIndex_ < _Tokens_.length) {
+                    _CurrentT_ = _Tokens_[_TokenIndex_ + 1];
+                    _TokenIndex_++;
+                }
+            } 
+            else {
                 _Log_.printParseError("Expected " + type + ", found " + _CurrentT_.type);
                 throw new Error("Error in Parse. Ending execution.");
             }
 
-            if (_TokenIndex_ < _Tokens_.length) {
-                _CurrentT_ = _Tokens_[_TokenIndex_ + 1];
-                _TokenIndex_++;
-            }
+            // if (_TokenIndex_ < _Tokens_.length) {
+            //     _CurrentT_ = _Tokens_[_TokenIndex_ + 1];
+            //     _TokenIndex_++;
+            // }
         }
     }
 

@@ -1,6 +1,7 @@
 /// <reference path="globals.ts"/>
 /// <reference path="token.ts"/>
 /// <reference path="utils.ts"/>
+/// <reference path="Tree.ts"/>
 
 module TSCompiler{
     export class logger{
@@ -20,6 +21,7 @@ module TSCompiler{
 
         public printCST(): void {
             var log = <HTMLTextAreaElement> document.getElementById('cst_output');
+            //Print code not tree???
             log.value = Tree.toString();
         }
 

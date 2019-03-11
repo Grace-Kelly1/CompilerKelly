@@ -1,6 +1,7 @@
 /// <reference path="globals.ts"/>
 /// <reference path="token.ts"/>
 /// <reference path="utils.ts"/>
+/// <reference path="Tree.ts"/>
 var TSCompiler;
 (function (TSCompiler) {
     var logger = /** @class */ (function () {
