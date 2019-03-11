@@ -12,55 +12,56 @@ var TSCompiler;
         parse.prototype.parse = function () {
             _CurrentT_ = _Tokens_[_TokenIndex_];
             _Log_.printMessage("\nBeginning Parsing Session...");
-            var cst = new TSCompiler.Tree();
-            cst.addNode("Root", "branch", "", "", "", "");
+            _Tree_ = new TSCompiler.Tree();
+            _Tree_.addNode("Root", "branch");
             _Log_.printParseMessage("PARSE - parse()");
-            this.parseProgram(cst);
+            this.parseProgram();
             _Log_.printParseMessage("Parse Completed");
+            _Log_.printCST();
         };
-        parse.prototype.parseProgram = function (cst) {
-            cst.addNode("Program", "branch", "");
-            this.parseBlock(cst);
-            console.log(this);
-            this.matchParse(EOP.type);
+        parse.prototype.parseProgram = function () {
+            _Tree_.addNode("Program", "branch");
             _Log_.printParseMessage("PARSE - parseProgram()");
-            cst.kick();
+            this.parseBlock();
+            //console.log(this);
+            this.matchParse(EOP.type);
+            _Tree_.kick();
         };
-        parse.prototype.parseBlock = function (cst) {
-            cst.addNode("Block");
-            this.matchParse(L_BRACE.type);
-            this.parseStatmentL(cst);
-            this.matchParse(R_BRACE.type);
+        parse.prototype.parseBlock = function () {
+            _Tree_.addNode("Block", "");
             _Log_.printParseMessage("PARSE - parseBlock()");
-            cst.kick();
+            this.matchParse(L_BRACE.type);
+            this.parseStatmentL();
+            this.matchParse(R_BRACE.type);
+            _Tree_.kick();
         };
-        parse.prototype.parseStatments = function (cst) {
-            cst.addNode("Statement", "branch");
+        parse.prototype.parseStatments = function () {
+            _Tree_.addNode("Statement", "branch");
+            _Log_.printParseMessage("PARSE - parseStatements()");
             switch (_CurrentT_.type) {
                 case PRINT.type:
-                    this.parsePrint(cst);
+                    this.parsePrint();
                     break;
                 case ID.type:
-                    this.parseAssign(cst);
+                    this.parseAssign();
                     break;
                 case STRING.type:
                 case INT.type:
                 case BOOLEAN.type:
-                    this.parseVar(cst);
+                    this.parseVar();
                     break;
                 case WHILE.type:
-                    this.parseWhile(cst);
+                    this.parseWhile();
                     break;
                 case IF.type:
-                    this.parseIf(cst);
+                    this.parseIf();
                     break;
                 default:
-                    this.parseBlock(cst);
+                    this.parseBlock();
             }
-            _Log_.printParseMessage("PARSE - parseStatements()");
-            cst.kick();
+            _Tree_.kick();
         };
-        parse.prototype.parseStatmentL = function (cst) {
+        parse.prototype.parseStatmentL = function () {
             if (_CurrentT_.type === PRINT.type ||
                 _CurrentT_.type === ID.type ||
                 _CurrentT_.type === INT.type ||
@@ -69,110 +70,119 @@ var TSCompiler;
                 _CurrentT_.type === L_BRACE.type ||
                 _CurrentT_.type === WHILE.type ||
                 _CurrentT_.type === IF.type) {
-                cst.addNode("StatementList", "branch");
-                this.parseStatments(cst);
-                this.parseStatmentL(cst);
-                _Log_.printParseMessage("PARSE - parseStatementL()");
-                cst.kick();
+                _Tree_.addNode("StatementList", "branch");
+                _Log_.printParseMessage("PARSE - parseStatmentL()");
+                this.parseStatments();
+                this.parseStatmentL();
+                _Tree_.kick();
             }
         };
-        parse.prototype.parseVar = function (cst) {
-            cst.addNode("VariableDeclaration", "branch");
+        parse.prototype.parseVar = function () {
+            _Tree_.addNode("VariableDeclaration", "branch");
+            _Log_.printParseMessage("PARSE - parseVar()");
             switch (_CurrentT_.type) {
                 case STRING.type:
                     this.matchParse(STRING.type);
-                    this.parseId(cst);
+                    this.parseId();
                     break;
                 case INT.type:
                     this.matchParse(INT.type);
-                    this.parseId(cst);
+                    this.parseId();
                     break;
                 case BOOLEAN.type:
                     this.matchParse(BOOLEAN.type);
-                    this.parseId(cst);
+                    this.parseId();
                     break;
                 default:
                     _Log_.printError("We should never have gotten to this point.");
                     throw new Error("Something broke in parser.");
             }
-            cst.kick();
+            _Tree_.kick();
         };
-        parse.prototype.parsePrint = function (cst) {
-            cst.addNode("PrintStatement", "branch");
+        parse.prototype.parsePrint = function () {
+            _Tree_.addNode("PrintStatement", "branch");
+            _Log_.printParseMessage("PARSE - parsePrint()");
             this.matchParse(PRINT.type);
             this.matchParse(L_PAREN.type);
-            this.parseExpr(cst);
+            this.parseExpr();
             this.matchParse(R_PAREN.type);
-            cst.kick();
+            _Tree_.kick();
         };
-        parse.prototype.parseAssign = function (cst) {
-            cst.addNode("AssignmentStatement", "branch");
-            this.parseId(cst);
+        parse.prototype.parseAssign = function () {
+            _Tree_.addNode("AssignmentStatement", "branch");
+            _Log_.printParseMessage("PARSE - parseAssign()");
+            this.parseId();
             this.matchParse(ASSIGN.type);
-            this.parseExpr(cst);
-            cst.kick();
+            this.parseExpr();
+            _Tree_.kick();
         };
-        parse.prototype.parseWhile = function (cst) {
-            cst.addNode("WhileStatement", "branch");
+        parse.prototype.parseWhile = function () {
+            _Tree_.addNode("WhileStatement", "branch");
+            _Log_.printParseMessage("PARSE - parseWhile()");
             this.matchParse(WHILE.type);
-            this.parseBoolean(cst);
-            this.parseBlock(cst);
-            cst.kick();
+            this.parseBoolean();
+            this.parseBlock();
+            _Tree_.kick();
         };
-        parse.prototype.parseIf = function (cst) {
-            cst.addNode("IfStatement", "branch");
+        parse.prototype.parseIf = function () {
+            _Tree_.addNode("IfStatement", "branch");
+            _Log_.printParseMessage("PARSE - parseIf()");
             this.matchParse(IF.type);
-            this.parseBoolean(cst);
-            this.parseBlock(cst);
-            cst.kick();
+            this.parseBoolean();
+            this.parseBlock();
+            _Tree_.kick();
         };
-        parse.prototype.parseExpr = function (cst) {
-            cst.addNode("Expr", "branch");
+        parse.prototype.parseExpr = function () {
+            _Tree_.addNode("Expr", "branch");
+            _Log_.printParseMessage("PARSE - parseExpr()");
             switch (_CurrentT_.type) {
                 // IntExpr
                 case DIGIT.type:
-                    this.parseInt(cst);
+                    this.parseInt();
                     break;
                 // String
                 case QUOTE.type:
-                    this.parseString(cst);
+                    this.parseString();
                     break;
                 // Boolean
                 case L_PAREN.type:
                 case TRUE.type:
                 case FALSE.type:
-                    this.parseBoolean(cst);
+                    this.parseBoolean();
                     break;
                 // ID
                 case ID.type:
-                    this.parseId(cst);
+                    this.parseId();
                     break;
                 default:
                     _Log_.printParseError("We should never have gotten to this point.");
                     throw new Error("Something broke in parser.");
             }
-            cst.kick();
+            _Tree_.kick();
         };
-        parse.prototype.parseInt = function (cst) {
-            cst.addNode("IntExpr", "branch");
+        parse.prototype.parseInt = function () {
+            _Tree_.addNode("IntExpr", "branch");
+            _Log_.printParseMessage("PARSE - parseInt()");
             if (_CurrentT_.type === DIGIT.type) {
                 this.matchParse(DIGIT.type);
                 if (_CurrentT_.type === PLUS.type) {
                     this.matchParse(PLUS.type);
-                    this.parseExpr(cst);
+                    this.parseExpr();
                 }
             }
-            cst.kick();
+            _Tree_.kick();
         };
-        parse.prototype.parseString = function (cst) {
-            cst.addNode("StringExpr", "branch");
+        parse.prototype.parseString = function () {
+            _Tree_.addNode("StringExpr", "branch");
+            _Log_.printParseMessage("PARSE - parseString()");
             this.matchParse(QUOTE.type);
-            this.parseChar(cst);
+            this.parseChar();
             this.matchParse(QUOTE.type);
-            cst.kick();
+            _Tree_.kick();
         };
-        parse.prototype.parseBoolean = function (cst) {
-            cst.addNode("BooleanExpr", "branch");
+        parse.prototype.parseBoolean = function () {
+            _Tree_.addNode("BooleanExpr", "branch");
+            _Log_.printParseMessage("PARSE - parseBoolean()");
             if (_CurrentT_.type === TRUE.type) {
                 this.matchParse(TRUE.type);
             }
@@ -181,39 +191,42 @@ var TSCompiler;
             }
             else {
                 this.matchParse(L_PAREN.type);
-                this.parseExpr(cst);
+                this.parseExpr();
                 if (_CurrentT_.type === EQUAL.type) {
                     this.matchParse(EQUAL.type);
-                    this.parseExpr(cst);
+                    this.parseExpr();
                     this.matchParse(R_PAREN.type);
                 }
                 else if (_CurrentT_.type === N_EQUAL.type) {
                     this.matchParse(N_EQUAL.type);
-                    this.parseExpr(cst);
+                    this.parseExpr();
                     this.matchParse(R_PAREN.type);
                 }
             }
-            cst.kick();
+            _Tree_.kick();
         };
-        parse.prototype.parseId = function (cst) {
-            cst.addNode("Id", "branch");
+        parse.prototype.parseId = function () {
+            _Tree_.addNode("Id", "branch");
+            _Log_.printParseMessage("PARSE - parseId()");
             this.matchParse(ID.type);
-            cst.kick();
+            _Tree_.kick();
         };
-        parse.prototype.parseChar = function (cst) {
+        parse.prototype.parseChar = function () {
             if (_CurrentT_.type === SPACE.type) {
-                cst.addNode("CharListSpace", "branch");
+                _Tree_.addNode("CharListSpace", "branch");
+                _Log_.printParseMessage("PARSE - parseChar()");
                 this.matchParse(SPACE.type);
-                this.parseChar(cst);
-                cst.kick();
+                this.parseChar();
+                _Tree_.kick();
             }
             else
                 (_CurrentT_.type === CHAR.type);
             {
-                cst.addNode("CharListChar", "branch");
+                _Tree_.addNode("CharListChar", "branch");
+                _Log_.printParseMessage("PARSE - parseChar()");
                 this.matchParse(CHAR.type);
-                this.parseChar(cst);
-                cst.kick();
+                this.parseChar();
+                _Tree_.kick();
             }
         };
         parse.prototype.matchParse = function (type) {

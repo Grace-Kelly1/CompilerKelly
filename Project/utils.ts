@@ -18,6 +18,7 @@ module TSCompiler{
             _Lexer_ = new TSCompiler.lexer();  // We declared these in globals but still have 
              _Log_   = new TSCompiler.logger(); // to construct them before we can use them.
              _Parser_ = new TSCompiler.parse();
+             _Tree_ = new TSCompiler.Tree();
                 
 
             var log: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("outputTA");
@@ -36,7 +37,7 @@ module TSCompiler{
                 
             //     _Log_.printMessage("Completed parsing program.");
             // }
-            _Log_.printCST();
+            // _Log_.printCST();
 
         }
 

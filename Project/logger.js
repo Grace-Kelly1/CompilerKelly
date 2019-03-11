@@ -21,7 +21,9 @@ var TSCompiler;
         };
         logger.prototype.printCST = function () {
             var log = document.getElementById('cst_output');
-            log.value = TSCompiler.Tree.toString();
+            //Print code not tree???
+            _Tree_ = new TSCompiler.Tree();
+            log.value += TSCompiler.Tree.toString();
         };
         logger.prototype.printParseMessage = function (message) {
             var log = document.getElementById("outputTA");

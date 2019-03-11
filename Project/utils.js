@@ -17,6 +17,7 @@ var TSCompiler;
             _Lexer_ = new TSCompiler.lexer(); // We declared these in globals but still have 
             _Log_ = new TSCompiler.logger(); // to construct them before we can use them.
             _Parser_ = new TSCompiler.parse();
+            _Tree_ = new TSCompiler.Tree();
             var log = document.getElementById("outputTA");
             var source = document.getElementById("inputTA");
             source.value = this.trim(source.value);
@@ -30,7 +31,7 @@ var TSCompiler;
             //     _Parser_.parse();
             //     _Log_.printMessage("Completed parsing program.");
             // }
-            _Log_.printCST();
+            // _Log_.printCST();
         };
         // Used in some places but specifically typed out in others. (TODO: Be consistent about this.)
         utils.trim = function (words) {

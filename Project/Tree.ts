@@ -25,16 +25,16 @@ module TSCompiler{
     // -- ------- --
 
     // Add a node: kind in {branch, leaf}.
-    addNode = function(name, kind, row, col, scope, type) {
+    addNode = function(name, kind) {
         // Construct the node object.
         var node = {
             name: name,
             children: [],
             parent: {},
-            row: row,
-            col: col,
-            scope: scope,
-            type: type
+            // row: row,
+            // col: col,
+            // scope: scope,
+            // type: type
         };
 
         // Check to see if it needs to be the root node.

@@ -22,16 +22,12 @@ var TSCompiler;
             // -- Methods --
             // -- ------- --
             // Add a node: kind in {branch, leaf}.
-            this.addNode = function (name, kind, row, col, scope, type) {
+            this.addNode = function (name, kind) {
                 // Construct the node object.
                 var node = {
                     name: name,
                     children: [],
-                    parent: {},
-                    row: row,
-                    col: col,
-                    scope: scope,
-                    type: type
+                    parent: {}
                 };
                 // Check to see if it needs to be the root node.
                 if ((this.root == null) || (!this.root)) {
