@@ -9,17 +9,21 @@ module TSCompiler{
     export class parse{
         //Need to fix where the parse programs print 
         public parse(){
+            var parseCpmleted = false;
             _CurrentT_ = _Tokens_[_TokenIndex_];
             _Log_.printMessage("\nBeginning Parsing Session...");
             _Tree_ = new Tree();
-            _Tree_ .addNode("Root", "branch");
+            //_Tree_ .addNode("Root", "branch");
             _Log_.printParseMessage("PARSE - parse()");
             this.parseProgram();
             _Log_.printParseMessage("Parse Completed");
-            //_Tree_: new TSCompiler.Tree();
-            console.log(_Tree_.toString());
-            // _Log_.printCSTMessage("\nCST for program" + p + "...");
-            _Log_.printCST();
+            var parseCompleted = true;
+            if(parseCompleted === true){
+                //_Tree_: new TSCompiler.Tree();
+                console.log(_Tree_.toString());
+                // _Log_.printCSTMessage("\nCST for program" + p + "...");
+                _Log_.printCST();
+            }
         }
 
         public parseProgram(){
@@ -28,16 +32,42 @@ module TSCompiler{
             this.parseBlock();
             //console.log(this);
             this.matchParse(EOP.type);
+            _Tree_.addNode("$", "");
             _Tree_ .kick();
         }
 
         public parseBlock(){
-            _Tree_ .addNode("Block", "");
+            _Tree_ .addNode("Block", "branch");
             _Log_.printParseMessage("PARSE - parseBlock()");
             this.matchParse(L_BRACE.type);
+            _Tree_.addNode("{", "");
             this.parseStatmentL();
+            //_Tree_.addNode("StatementList", "")
             this.matchParse(R_BRACE.type);
+            _Tree_.addNode("}", "");
             _Tree_ .kick();
+        }
+
+        public parseStatmentL(){
+            //_Tree_ .addNode("StatementList", "");
+            if (_CurrentT_.type === PRINT.type ||
+                _CurrentT_.type === ID.type ||
+                _CurrentT_.type === INT.type ||
+                _CurrentT_.type === BOOLEAN.type ||
+                _CurrentT_.type === STRING.type ||
+                _CurrentT_.type === L_BRACE.type ||
+                _CurrentT_.type === WHILE.type ||
+                _CurrentT_.type === IF.type
+            ) {
+                _Tree_ .addNode("StatementList", "branch");
+                _Log_.printParseMessage("PARSE - parseStatmentL()");
+                this.parseStatments();
+                this.parseStatmentL();
+                _Tree_ .kick();
+            }
+            else{
+                _Log_.printParseMessage("PARSE - parseStatmentL()");
+            }
         }
 
         public  parseStatments(){
@@ -67,29 +97,6 @@ module TSCompiler{
             _Tree_ .kick();
         }
 
-        public parseStatmentL(){
-            if (_CurrentT_.type === PRINT.type ||
-                _CurrentT_.type === ID.type ||
-                _CurrentT_.type === INT.type ||
-                _CurrentT_.type === BOOLEAN.type ||
-                _CurrentT_.type === STRING.type ||
-                _CurrentT_.type === L_BRACE.type ||
-                _CurrentT_.type === WHILE.type ||
-                _CurrentT_.type === IF.type
-            ) {
-                _Tree_.addNode("{", "");
-                _Tree_ .addNode("StatementList", "branch");
-                _Tree_.addNode("}", "");
-                _Log_.printParseMessage("PARSE - parseStatmentL()");
-                this.parseStatments();
-                this.parseStatmentL();
-                _Tree_ .kick();
-            }
-            else{
-                _Log_.printParseMessage("PARSE - parseStatmentL()");
-            }
-        }
-
         public parseVar(){
             _Tree_ .addNode("VariableDeclaration", "branch");
             _Log_.printParseMessage("PARSE - parseVar()");
@@ -108,7 +115,7 @@ module TSCompiler{
                     break;
                 default:
                     _Log_.printError("We should never have gotten to this point.");
-                    throw new Error("Something broke in parser.");
+                    //throw new Error("Something broke in parser.");
             }
             _Tree_ .kick();
         }
@@ -175,7 +182,7 @@ module TSCompiler{
                     break;
                 default:
                     _Log_.printParseError("We should never have gotten to this point.");
-                    throw new Error("Something broke in parser.");
+                    //throw new Error("Something broke in parser.");
             }
             _Tree_ .kick();
         }
@@ -267,7 +274,7 @@ module TSCompiler{
             } 
             else {
                 _Log_.printParseError("Expected " + type + ", found " + _CurrentT_.type);
-                throw new Error("Error in Parse. Ending execution.");
+               // throw new Error("Error in Parse. Ending execution.");
             }
 
             // if (_TokenIndex_ < _Tokens_.length) {
