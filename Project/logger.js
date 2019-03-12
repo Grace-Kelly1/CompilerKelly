@@ -22,8 +22,12 @@ var TSCompiler;
         logger.prototype.printCST = function () {
             var log = document.getElementById('cst_output');
             //Print code not tree???
-            _Tree_ = new TSCompiler.Tree();
-            log.value += TSCompiler.Tree.toString();
+            //_Tree_ = new TSCompiler.Tree();
+            log.value += _Tree_.toString();
+        };
+        logger.prototype.printCSTMessage = function (message) {
+            var log = document.getElementById('cst_output');
+            log.value += message + "\n";
         };
         logger.prototype.printParseMessage = function (message) {
             var log = document.getElementById("outputTA");

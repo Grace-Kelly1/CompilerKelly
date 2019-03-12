@@ -22,8 +22,13 @@ module TSCompiler{
         public printCST(): void {
             var log = <HTMLTextAreaElement> document.getElementById('cst_output');
             //Print code not tree???
-            _Tree_ = new TSCompiler.Tree();
-            log.value += Tree.toString();
+            //_Tree_ = new TSCompiler.Tree();
+            log.value += _Tree_.toString();
+        }
+
+        public printCSTMessage(message: string): void{
+            var log = <HTMLTextAreaElement> document.getElementById('cst_output');
+            log.value += message + "\n";
         }
 
         public printParseMessage(message: string): void{

@@ -112,11 +112,12 @@ module TSCompiler{
                         //multi programs
                         else if(currentT === '$'){
                             _Log_.printMessage("Lex analysis complete - program" + programCount);
-                            programCount++;
                             var token = new Token('EOP', currentT[i], x);
                             _Tokens_.push(token);
                             if(lexerError === 0){
+                                _Log_.printCSTMessage("\nCST for program" + programCount + "...");
                                 _Parser_.parse();
+                                programCount++;
                             }
                             else{
                                 _Log_.printParseMessage("\nPARSE - Skipped due to	LEXER error(s)");

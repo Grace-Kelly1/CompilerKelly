@@ -16,6 +16,9 @@ module TSCompiler{
             _Log_.printParseMessage("PARSE - parse()");
             this.parseProgram();
             _Log_.printParseMessage("Parse Completed");
+            //_Tree_: new TSCompiler.Tree();
+            console.log(_Tree_.toString());
+            // _Log_.printCSTMessage("\nCST for program" + p + "...");
             _Log_.printCST();
         }
 
@@ -235,12 +238,18 @@ module TSCompiler{
                 this.matchParse(SPACE.type);
                 this.parseChar();
                 _Tree_ .kick();
-            } else(_CurrentT_.type === CHAR.type) 
+            } 
+            else(_CurrentT_.type === CHAR.type) 
             {
                 _Tree_ .addNode("CharListChar", "branch");
                 _Log_.printParseMessage("PARSE - parseChar()");
                 this.matchParse(CHAR.type);
-                this.parseChar();
+                // if(_CurrentT_.type === QUOTE.type){
+                //     this.parseString();
+                // }
+                // else{
+                    this.parseChar();
+                // }
                 _Tree_ .kick();
             }
         }
