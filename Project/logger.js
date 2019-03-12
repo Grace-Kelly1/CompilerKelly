@@ -36,6 +36,7 @@ var TSCompiler;
         logger.prototype.printParseError = function (message) {
             var log = document.getElementById("outputTA");
             log.value += "ERROR: " + message + "\n";
+            _Log_.printCSTMessage("CST	for	program: Skipped due to	PARSE error(s)");
         };
         logger.prototype.printParseComplete = function () {
             var log = document.getElementById("outputTA");

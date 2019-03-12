@@ -9,7 +9,7 @@ module TSCompiler{
         public static compile() {
             //test line
             //console.log("HERE");
-
+            
             // Reset everything
             //_Tokens_ = [];
             _CurrentT_ = null;
@@ -22,9 +22,11 @@ module TSCompiler{
                 
 
             var log: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("outputTA");
+            var cstLog: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("cst_output");
             var source: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("inputTA");
             source.value = this.trim(source.value);
             log.value = "";
+            cstLog.value = "";
 
             if (source.value === '') {
                 _Log_.printMessage("Empty TextArea");

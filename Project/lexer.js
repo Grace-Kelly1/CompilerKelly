@@ -108,7 +108,8 @@ var TSCompiler;
                                 programCount++;
                             }
                             else {
-                                _Log_.printParseMessage("\nPARSE - Skipped due to	LEXER error(s)");
+                                _Log_.printParseMessage("\nPARSE - Skipped due to LEXER error(s)");
+                                _Log_.printCSTMessage("\nCST for program " + programCount + ": Skipped due to LEXER error(s)");
                             }
                             _Log_.printMessage("\n" + "INFO Lexer - program " + programCount);
                             lexerError = 0;

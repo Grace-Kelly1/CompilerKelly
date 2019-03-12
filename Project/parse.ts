@@ -77,7 +77,9 @@ module TSCompiler{
                 _CurrentT_.type === WHILE.type ||
                 _CurrentT_.type === IF.type
             ) {
+                _Tree_.addNode("{", "");
                 _Tree_ .addNode("StatementList", "branch");
+                _Tree_.addNode("}", "");
                 _Log_.printParseMessage("PARSE - parseStatmentL()");
                 this.parseStatments();
                 this.parseStatmentL();
@@ -256,6 +258,7 @@ module TSCompiler{
 
         public matchParse(type){
             if (_CurrentT_.type === type) {
+                //_Tree_.addNode(_CurrentT_.value, "leaf");
                 //_Log_.printMessage("Parse: Successfully matched " + type + " token.");
                 if (_TokenIndex_ < _Tokens_.length) {
                     _CurrentT_ = _Tokens_[_TokenIndex_ + 1];

@@ -34,7 +34,7 @@ module TSCompiler{
             // row: row,
             // col: col,
             // scope: scope,
-            // type: type
+            //= type: type
         };
 
         // Check to see if it needs to be the root node.

@@ -19,9 +19,11 @@ var TSCompiler;
             _Parser_ = new TSCompiler.parse();
             _Tree_ = new TSCompiler.Tree();
             var log = document.getElementById("outputTA");
+            var cstLog = document.getElementById("cst_output");
             var source = document.getElementById("inputTA");
             source.value = this.trim(source.value);
             log.value = "";
+            cstLog.value = "";
             if (source.value === '') {
                 _Log_.printMessage("Empty TextArea");
                 return;
