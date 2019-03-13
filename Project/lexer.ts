@@ -19,7 +19,7 @@ module TSCompiler{
             var symbols = ['{', '}', '(', ')', '"', '=', '==', '!=', '+', '$'];
             
 				//Regular Expressions for id, digit and char
-            var id_RE: RegExp = /^[a-z]+$/;
+            var id_RE: RegExp = /^[a-z]$/;
             var digit_RE: RegExp = /0|(^[1-9]([0-9])*)$/;
             
 				//Char and String needed?
@@ -31,9 +31,10 @@ module TSCompiler{
             //var any_RE: RegExp = /([a-z]+)|([0-9])|("([a-z ])*")|(\/\*[^\/\*]*\*\/)|(==)|(!=)|(\S)|(\n)|(\t)|(\s)/g;
             var any_RE: RegExp = /[a-z]+|[1-9]|(==)|(!=)|"[^"]*"|(")|(\/\*[^\/\*]*\*\/)|(\S)|(\n)/g;
             //Comments
-            var com_RE = /^\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*/;
-            var comHalf_RE = /\*+/;
-            var stringBreak_RE: RegExp = /^"[a-z\S\n]*"$/;
+            var com_RE: RegExp = /^\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*/;
+            var comHalf_RE:RegExp = /\*+/;
+            //var stringBreak_RE: RegExp = /^"[a-z\S\n]*"$/;
+            var onlyChar_RE: RegExp = /^[a-z\S]*$/;
             //new line
             //var line_RE = /\n/;
 
@@ -83,6 +84,7 @@ module TSCompiler{
                     //Tokens 
                     for(var y = 0; y < checkLength; y++){
                         var currentT = checkRE[y];
+                        console.log(currentT);
                         
                         //Find Tokens
                         //Check if keyword 
@@ -241,6 +243,7 @@ module TSCompiler{
                         }
                         else if (comHalf_RE.test(currentT)){
                             _Log_.printError(" Not finished Comment" + " on line " + x);
+                            lexerError = lexerError + 1;
                         }
 
                         //None throw error

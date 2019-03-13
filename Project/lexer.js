@@ -17,7 +17,7 @@ var TSCompiler;
             var keywords = ['print', 'while', 'if', 'int', 'string', 'boolean', 'false', 'true'];
             var symbols = ['{', '}', '(', ')', '"', '=', '==', '!=', '+', '$'];
             //Regular Expressions for id, digit and char
-            var id_RE = /^[a-z]+$/;
+            var id_RE = /^[a-z]$/;
             var digit_RE = /0|(^[1-9]([0-9])*)$/;
             //Char and String needed?
             var char_RE = /^[a-z]$/;
@@ -29,7 +29,8 @@ var TSCompiler;
             //Comments
             var com_RE = /^\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*/;
             var comHalf_RE = /\*+/;
-            var stringBreak_RE = /^"[a-z\S\n]*"$/;
+            //var stringBreak_RE: RegExp = /^"[a-z\S\n]*"$/;
+            var onlyChar_RE = /^[a-z\S]*$/;
             //new line
             //var line_RE = /\n/;
             //Trying to implement multiple programs
@@ -74,6 +75,7 @@ var TSCompiler;
                     //Tokens 
                     for (var y = 0; y < checkLength; y++) {
                         var currentT = checkRE[y];
+                        console.log(currentT);
                         //Find Tokens
                         //Check if keyword 
                         if (keywords.indexOf(currentT) > -1) {
@@ -226,10 +228,11 @@ var TSCompiler;
                         }
                         else if (comHalf_RE.test(currentT)) {
                             _Log_.printError(" Not finished Comment" + " on line " + x);
+                            lexerError = lexerError + 1;
                         }
                         //None throw error
                         else {
-                            _Log_.printError(" Invalid Token " + "[" + currentT + "]" + " on line " + x);
+                            _Log_.printError(" Invalid Token: " + "[" + currentT + "]" + " on line " + x);
                             lexerError = lexerError + 1;
                             //console.log(currentT);
                         }

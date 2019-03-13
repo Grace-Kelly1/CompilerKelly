@@ -260,7 +260,7 @@ module TSCompiler{
                 //     this.parseString();
                 // }
                 // else{
-                    this.parseChar();
+                this.parseChar();
                 // }
                 _Tree_ .kick();
             }
