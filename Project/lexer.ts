@@ -31,8 +31,9 @@ module TSCompiler{
             //var any_RE: RegExp = /([a-z]+)|([0-9])|("([a-z ])*")|(\/\*[^\/\*]*\*\/)|(==)|(!=)|(\S)|(\n)|(\t)|(\s)/g;
             var any_RE: RegExp = /[a-z]+|[1-9]|(==)|(!=)|"[^"]*"|(")|(\/\*[^\/\*]*\*\/)|(\S)|(\n)/g;
             //Comments
-            var com_RE = /\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/;
+            var com_RE = /^\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*/;
             var comHalf_RE = /\*+/;
+            var stringBreak_RE: RegExp = /^"[a-z\S\n]*"$/;
             //new line
             //var line_RE = /\n/;
 
@@ -141,15 +142,15 @@ module TSCompiler{
                                     //let Token = token(tokenType, tokenValue, x + 1);
                                    // _CurrentT_ = new TSCompiler.token;
                                     //let token = _CurrentT_.newToken(tokenType, tokenValue, x + 1);
-                                    if((token.type === QUOTE.type) && (codeString === true)){
-                                        _Tokens_.push(token);
-                                        codeString = !codeString;
-                                        _Log_.printMessage("DEBUG Lexer -" + stuff);
-                                    }
-                                    else if((token.type === QUOTE.type) && (codeString === false)){
+                                    if((token.type === QUOTE.type) && (codeString === false)){
                                         _Log_.printError(" not complete string");
                                         lexerError = lexerError + 1;
                                         //throw new Error("...Ending Lexer");
+                                    }
+                                    else if((token.type === QUOTE.type) && (codeString === true)){
+                                        _Tokens_.push(token);
+                                        codeString = !codeString;
+                                        _Log_.printMessage("DEBUG Lexer -" + stuff);
                                     }
                                     else{
                                         _Tokens_.push(token);
@@ -195,9 +196,9 @@ module TSCompiler{
                         //Do I need to check strings?
                         else if(string_RE.test(currentT)){
                             //console.log(currentT);
-                            // codeString = !codeString;
+                             codeString = !codeString;
                             // this.sepString(currentT, x+1);
-                            // codeString = !codeString;
+                             codeString = !codeString;
                             //break;
                             for(var i = 0; i < currentT.length; i++){
                                 if(currentT[i]=== '"'){
@@ -231,6 +232,7 @@ module TSCompiler{
                         }
                         //ignoring comments
                         else if(com_RE.test(currentT)){
+                            console.log(currentT);
                             console.log("Comment");
                         }
                         else if (comHalf_RE.test(currentT)){
