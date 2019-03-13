@@ -31,8 +31,8 @@ module TSCompiler{
             //var any_RE: RegExp = /([a-z]+)|([0-9])|("([a-z ])*")|(\/\*[^\/\*]*\*\/)|(==)|(!=)|(\S)|(\n)|(\t)|(\s)/g;
             var any_RE: RegExp = /[a-z]+|[1-9]|(==)|(!=)|"[^"]*"|(")|(\/\*[^\/\*]*\*\/)|(\S)|(\n)/g;
             //Comments
-            var com_RE: RegExp = /^\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*/;
-            var comHalf_RE:RegExp = /\*+/;
+            var com_RE: RegExp = /\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/;;
+            //var comHalf_RE:RegExp = /\*+/;
             //var stringBreak_RE: RegExp = /^"[a-z\S\n]*"$/;
             //var onlyChar_RE: RegExp = /^[a-z\S]*$/;
             //new line

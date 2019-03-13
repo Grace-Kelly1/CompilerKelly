@@ -27,8 +27,9 @@ var TSCompiler;
             //var any_RE: RegExp = /([a-z]+)|([0-9])|("([a-z ])*")|(\/\*[^\/\*]*\*\/)|(==)|(!=)|(\S)|(\n)|(\t)|(\s)/g;
             var any_RE = /[a-z]+|[1-9]|(==)|(!=)|"[^"]*"|(")|(\/\*[^\/\*]*\*\/)|(\S)|(\n)/g;
             //Comments
-            var com_RE = /^\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*/;
-            var comHalf_RE = /\*+/;
+            var com_RE = /\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/;
+            ;
+            //var comHalf_RE:RegExp = /\*+/;
             //var stringBreak_RE: RegExp = /^"[a-z\S\n]*"$/;
             //var onlyChar_RE: RegExp = /^[a-z\S]*$/;
             //new line
@@ -215,10 +216,10 @@ var TSCompiler;
                                     _Tokens_.push(token);
                                     _Log_.printMessage("DEBUG Lexer -" + stuff);
                                 }
-                                else if (currentT[i] === "/" && currentT[i + 1] === "*") {
-                                    console.log(currentT);
-                                    console.log("Comment");
-                                }
+                                // else if(currentT[i] === "/" && currentT[i+1] === "*"){
+                                //     console.log(currentT);
+                                //     console.log("Comment");
+                                // }
                                 else {
                                     _Log_.printError("Not Valid in string -" + currentT[i] + " one line " + x);
                                     lexerError = lexerError + 1;
