@@ -230,6 +230,7 @@ module TSCompiler{
                                 }
                                 else{
                                     _Log_.printError("Not Valid in string -" + currentT[i] + " one line " + x);
+                                    lexerError = lexerError + 1;
                                 }
                             }
                         }

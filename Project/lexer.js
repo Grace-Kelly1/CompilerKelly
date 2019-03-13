@@ -215,6 +215,7 @@ var TSCompiler;
                                 }
                                 else {
                                     _Log_.printError("Not Valid in string -" + currentT[i] + " one line " + x);
+                                    lexerError = lexerError + 1;
                                 }
                             }
                         }
@@ -223,9 +224,9 @@ var TSCompiler;
                             console.log(currentT);
                             console.log("Comment");
                         }
-                        // else if (comHalf_RE.test(currentT)){
-                        //     _Log_.printError(" Not finished Comment" + " on line " + x);
-                        // }
+                        else if (comHalf_RE.test(currentT)) {
+                            _Log_.printError(" Not finished Comment" + " on line " + x);
+                        }
                         //None throw error
                         else {
                             _Log_.printError(" Invalid Token " + "[" + currentT + "]" + " on line " + x);
