@@ -181,9 +181,9 @@ var TSCompiler;
                         //Do I need to check strings?
                         else if (string_RE.test(currentT)) {
                             //console.log(currentT);
-                            codeString = !codeString;
+                            // codeString = !codeString;
                             // this.sepString(currentT, x+1);
-                            codeString = !codeString;
+                            //codeString = !codeString;
                             //break;
                             for (var i = 0; i < currentT.length; i++) {
                                 if (currentT[i] === '"') {
@@ -207,11 +207,14 @@ var TSCompiler;
                                     }
                                     i++;
                                 }
-                                else {
+                                else if (char_RE.test(currentT[i])) {
                                     var token = new TSCompiler.Token('CHAR', currentT[i], x);
                                     var stuff = ('CHAR' + " [ " + currentT[i] + " ] " + " one line " + x);
                                     _Tokens_.push(token);
                                     _Log_.printMessage("DEBUG Lexer -" + stuff);
+                                }
+                                else {
+                                    _Log_.printError("Not Valid in string -" + currentT[i] + " one line " + x);
                                 }
                             }
                         }
@@ -220,9 +223,9 @@ var TSCompiler;
                             console.log(currentT);
                             console.log("Comment");
                         }
-                        else if (comHalf_RE.test(currentT)) {
-                            _Log_.printError(" Not finished Comment" + " on line " + x);
-                        }
+                        // else if (comHalf_RE.test(currentT)){
+                        //     _Log_.printError(" Not finished Comment" + " on line " + x);
+                        // }
                         //None throw error
                         else {
                             _Log_.printError(" Invalid Token " + "[" + currentT + "]" + " on line " + x);
