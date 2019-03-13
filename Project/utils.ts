@@ -7,11 +7,14 @@ module TSCompiler{
     export class utils{
 
         public static compile() {
+            // document.getElementById("outputTA").value = "";
+			// document.getElementById("inputTA").value = "Enter Code Here...";
+			// document.getElementById("cst_output").value = "";
             //test line
             //console.log("HERE");
             
             // Reset everything
-            //_Tokens_ = [];
+            _Tokens_ = [];
             _CurrentT_ = null;
             _TokenIndex_ = 0;
 

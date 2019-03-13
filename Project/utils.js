@@ -8,10 +8,13 @@ var TSCompiler;
         function utils() {
         }
         utils.compile = function () {
+            // document.getElementById("outputTA").value = "";
+            // document.getElementById("inputTA").value = "Enter Code Here...";
+            // document.getElementById("cst_output").value = "";
             //test line
             //console.log("HERE");
             // Reset everything
-            //_Tokens_ = [];
+            _Tokens_ = [];
             _CurrentT_ = null;
             _TokenIndex_ = 0;
             _Lexer_ = new TSCompiler.lexer(); // We declared these in globals but still have 

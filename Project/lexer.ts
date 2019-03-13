@@ -25,7 +25,7 @@ module TSCompiler{
 				//Char and String needed?
             var char_RE: RegExp = /^[a-z]$/;
             var codeString = false;
-            var string_RE: RegExp = /^"[a-z\s]*"$/;
+            var string_RE: RegExp = /^"[a-z\S]*"$/;
             
 				//Regular Expression for anything needed?
             //var any_RE: RegExp = /([a-z]+)|([0-9])|("([a-z ])*")|(\/\*[^\/\*]*\*\/)|(==)|(!=)|(\S)|(\n)|(\t)|(\s)/g;
@@ -149,7 +149,7 @@ module TSCompiler{
                                     else if((token.type === QUOTE.type) && (codeString === false)){
                                         _Log_.printError(" not complete string");
                                         lexerError = lexerError + 1;
-                                        throw new Error("...Ending Lexer");
+                                        //throw new Error("...Ending Lexer");
                                     }
                                     else{
                                         _Tokens_.push(token);

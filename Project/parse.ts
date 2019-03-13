@@ -117,7 +117,7 @@ module TSCompiler{
                     this.parseId();
                     break;
                 default:
-                    _Log_.printError("We should never have gotten to this point.");
+                    _Log_.printError("Expected String or Int or Boolean");
                     //throw new Error("Something broke in parser.");
             }
             _Tree_ .kick();
@@ -184,7 +184,7 @@ module TSCompiler{
                     this.parseId();
                     break;
                 default:
-                    _Log_.printParseError("We should never have gotten to this point.");
+                    _Log_.printParseError("Expected to finish assigning variable");
                     //throw new Error("Something broke in parser.");
             }
             _Tree_ .kick();

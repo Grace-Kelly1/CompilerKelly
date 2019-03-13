@@ -22,7 +22,7 @@ var TSCompiler;
             //Char and String needed?
             var char_RE = /^[a-z]$/;
             var codeString = false;
-            var string_RE = /^"[a-z\s]*"$/;
+            var string_RE = /^"[a-z\S]*"$/;
             //Regular Expression for anything needed?
             //var any_RE: RegExp = /([a-z]+)|([0-9])|("([a-z ])*")|(\/\*[^\/\*]*\*\/)|(==)|(!=)|(\S)|(\n)|(\t)|(\s)/g;
             var any_RE = /[a-z]+|[1-9]|(==)|(!=)|"[^"]*"|(")|(\/\*[^\/\*]*\*\/)|(\S)|(\n)/g;
@@ -137,7 +137,7 @@ var TSCompiler;
                                     else if ((token.type === QUOTE.type) && (codeString === false)) {
                                         _Log_.printError(" not complete string");
                                         lexerError = lexerError + 1;
-                                        throw new Error("...Ending Lexer");
+                                        //throw new Error("...Ending Lexer");
                                     }
                                     else {
                                         _Tokens_.push(token);
