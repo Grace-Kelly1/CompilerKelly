@@ -7,20 +7,21 @@
 
 module TSCompiler{
     export class parse{
+        //Need to count error to print 
+        //_Log_.printCSTMessage("CST	for	program: Skipped due to	PARSE error(s)");
         //Need to fix where the parse programs print 
         public parse(){
-            var parseCpmleted = false;
+            var parseCompleted = true;
             _CurrentT_ = _Tokens_[_TokenIndex_];
             _Log_.printMessage("\nBeginning Parsing Session...");
             _Tree_ = new Tree();
             //_Tree_ .addNode("Root", "branch");
             _Log_.printParseMessage("PARSE - parse()");
             this.parseProgram();
-            _Log_.printParseMessage("Parse Completed");
-            var parseCompleted = true;
+            //_Log_.printParseMessage("Parse Completed");
             if(parseCompleted === true){
                 //_Tree_: new TSCompiler.Tree();
-                console.log(_Tree_.toString());
+                //console.log(_Tree_.toString());
                 // _Log_.printCSTMessage("\nCST for program" + p + "...");
                 _Log_.printCST();
             }
@@ -40,16 +41,17 @@ module TSCompiler{
             _Tree_ .addNode("Block", "branch");
             _Log_.printParseMessage("PARSE - parseBlock()");
             this.matchParse(L_BRACE.type);
-            _Tree_.addNode("{", "");
+            //_Tree_.addNode("{", "leaf");
             this.parseStatmentL();
+            _Tree_.kick();
             //_Tree_.addNode("StatementList", "")
             this.matchParse(R_BRACE.type);
-            _Tree_.addNode("}", "");
+            //_Tree_.addNode("}", "leaf");
             _Tree_ .kick();
         }
 
         public parseStatmentL(){
-            //_Tree_ .addNode("StatementList", "");
+            //_Tree_ .addNode("StatementList", "branch");
             if (_CurrentT_.type === PRINT.type ||
                 _CurrentT_.type === ID.type ||
                 _CurrentT_.type === INT.type ||
@@ -66,6 +68,7 @@ module TSCompiler{
                 _Tree_ .kick();
             }
             else{
+                //_Tree_.addNode("StatementList", "branch");
                 _Log_.printParseMessage("PARSE - parseStatmentL()");
             }
         }
@@ -265,7 +268,12 @@ module TSCompiler{
 
         public matchParse(type){
             if (_CurrentT_.type === type) {
-                //_Tree_.addNode(_CurrentT_.value, "leaf");
+                if(_CurrentT_.value === "undefined"){
+
+                }
+                else{
+                    _Tree_.addNode(_CurrentT_.value, "leaf");
+                }
                 //_Log_.printMessage("Parse: Successfully matched " + type + " token.");
                 if (_TokenIndex_ < _Tokens_.length) {
                     _CurrentT_ = _Tokens_[_TokenIndex_ + 1];

@@ -39,7 +39,6 @@ module TSCompiler{
         public printParseError(message: string): void{
             var log = <HTMLTextAreaElement> document.getElementById("outputTA");
             log.value += "ERROR: " + message + "\n";
-            _Log_.printCSTMessage("CST	for	program: Skipped due to	PARSE error(s)");
         }
 
         public printParseComplete(){

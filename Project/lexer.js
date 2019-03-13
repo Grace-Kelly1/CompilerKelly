@@ -28,6 +28,7 @@ var TSCompiler;
             var any_RE = /[a-z]+|[1-9]|(==)|(!=)|"[^"]*"|(")|(\/\*[^\/\*]*\*\/)|(\S)|(\n)/g;
             //Comments
             var com_RE = /\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/;
+            var comHalf_RE = /\*+/;
             //new line
             //var line_RE = /\n/;
             //Trying to implement multiple programs
@@ -37,7 +38,7 @@ var TSCompiler;
             _Log_.printMessage("INFO Lexer - program " + programCount);
             //Grab Code and trim and split into lines to get length
             var inputCode = document.getElementById("inputTA").value;
-            console.log("Gets inside lexer.ts");
+            //console.log("Gets inside lexer.ts");
             inputCode = inputCode.trim();
             //Check for $
             if (inputCode[inputCode.length - 1] != '$') {
@@ -50,8 +51,8 @@ var TSCompiler;
             for (var x = 0; x < inputLength; x++) {
                 inputLines[x] = (inputLines[x].replace(/^\s+ | \s+$/g, ""));
             }
-            console.log(inputCode);
-            console.log(inputLines); //VALUE?
+            //console.log(inputCode);
+            // console.log(inputLines); //VALUE?
             //_Tokens_ = new TSCompiler.token;
             //Loop through the code 
             for (var x = 0; x < inputLength; x++) {
@@ -60,9 +61,9 @@ var TSCompiler;
                 // }
                 //Make sure it is in grammer atleast
                 var checkRE = inputLines[x].match(any_RE);
-                console.log(checkRE);
+                //console.log(checkRE);
                 if (checkRE === null) {
-                    console.log("New Line");
+                    //console.log("New Line")
                 }
                 else {
                     var checkLength = checkRE.length;
@@ -93,7 +94,7 @@ var TSCompiler;
                                 var token = new TSCompiler.Token('ID', currentT[i], x);
                                 var stuff = ('ID' + " [ " + currentT[i] + " ] " + " one line " + x);
                                 _Tokens_.push(token);
-                                console.log(currentT);
+                                // console.log(currentT);
                                 _Log_.printMessage("DEBUG Lexer -" + stuff);
                             }
                         }
@@ -105,6 +106,7 @@ var TSCompiler;
                             if (lexerError === 0) {
                                 _Log_.printCSTMessage("\nCST for program" + programCount + "...");
                                 _Parser_.parse();
+                                // _Log_.printCST();
                                 programCount++;
                             }
                             else {
@@ -119,7 +121,7 @@ var TSCompiler;
                             for (var s = 0; s < _Pun_.length; s++) {
                                 if (currentT === _Pun_[s].value) {
                                     var tokenType = _Pun_[s].type;
-                                    console.log(tokenType);
+                                    //console.log(tokenType);
                                     var tokenValue = _Pun_[s].value;
                                     var token = new TSCompiler.Token(tokenType, tokenValue, x);
                                     var stuff = (tokenType + " [ " + tokenValue + " ] " + " one line " + x);
@@ -133,7 +135,7 @@ var TSCompiler;
                                         _Log_.printMessage("DEBUG Lexer -" + stuff);
                                     }
                                     else if ((token.type === QUOTE.type) && (codeString === false)) {
-                                        //_Log_.printError("");
+                                        _Log_.printError(" not complete string");
                                         lexerError = lexerError + 1;
                                         throw new Error("...Ending Lexer");
                                     }
@@ -148,6 +150,10 @@ var TSCompiler;
                         }
                         //Check if digit 
                         else if (digit_RE.test(currentT)) {
+                            // if(currentT === '"'){
+                            //     console.log("Not a digit");
+                            // }
+                            //console.log(currentT);
                             for (var i = 0; i < currentT.length; i++) {
                                 var token = new TSCompiler.Token('DIGIT', currentT[i], x);
                                 var stuff = ('DIGIT' + " [ " + currentT[i] + " ] " + " one line " + x);
@@ -173,6 +179,7 @@ var TSCompiler;
                         //console.log("STOP");
                         //Do I need to check strings?
                         else if (string_RE.test(currentT)) {
+                            //console.log(currentT);
                             // codeString = !codeString;
                             // this.sepString(currentT, x+1);
                             // codeString = !codeString;
@@ -190,6 +197,15 @@ var TSCompiler;
                                     _Log_.printMessage("DEBUG Lexer -" + stuff);
                                     _Tokens_.push(token);
                                 }
+                                else if (currentT[i] === "/" && currentT[i + 1] === "*") {
+                                    //console.log("String Comment");
+                                    i = i + 2;
+                                    while (currentT[i] != "/") {
+                                        i++;
+                                        //console.log("StringComment");
+                                    }
+                                    i++;
+                                }
                                 else {
                                     var token = new TSCompiler.Token('CHAR', currentT[i], x);
                                     var stuff = ('CHAR' + " [ " + currentT[i] + " ] " + " one line " + x);
@@ -202,11 +218,14 @@ var TSCompiler;
                         else if (com_RE.test(currentT)) {
                             console.log("Comment");
                         }
+                        else if (comHalf_RE.test(currentT)) {
+                            _Log_.printError(" Not finished Comment" + " on line " + x);
+                        }
                         //None throw error
                         else {
                             _Log_.printError(" Invalid Token " + "[" + currentT + "]" + " on line " + x);
                             lexerError = lexerError + 1;
-                            console.log(currentT);
+                            //console.log(currentT);
                         }
                     }
                 }
