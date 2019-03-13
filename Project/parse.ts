@@ -268,27 +268,18 @@ module TSCompiler{
 
         public matchParse(type){
             if (_CurrentT_.type === type) {
-                if(_CurrentT_.value === "undefined"){
-
-                }
-                else{
                     _Tree_.addNode(_CurrentT_.value, "leaf");
-                }
                 //_Log_.printMessage("Parse: Successfully matched " + type + " token.");
-                if (_TokenIndex_ < _Tokens_.length) {
-                    _CurrentT_ = _Tokens_[_TokenIndex_ + 1];
-                    _TokenIndex_++;
-                }
             } 
             else {
                 _Log_.printParseError("Expected " + type + ", found " + _CurrentT_.type);
                // throw new Error("Error in Parse. Ending execution.");
             }
 
-            // if (_TokenIndex_ < _Tokens_.length) {
-            //     _CurrentT_ = _Tokens_[_TokenIndex_ + 1];
-            //     _TokenIndex_++;
-            // }
+            if (_TokenIndex_ < _Tokens_.length) {
+                _CurrentT_ = _Tokens_[_TokenIndex_ + 1];
+                _TokenIndex_++;
+            }
         }
     }
 
