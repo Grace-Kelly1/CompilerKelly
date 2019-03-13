@@ -34,7 +34,7 @@ module TSCompiler{
             var com_RE: RegExp = /^\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*/;
             var comHalf_RE:RegExp = /\*+/;
             //var stringBreak_RE: RegExp = /^"[a-z\S\n]*"$/;
-            var onlyChar_RE: RegExp = /^[a-z\S]*$/;
+            //var onlyChar_RE: RegExp = /^[a-z\S]*$/;
             //new line
             //var line_RE = /\n/;
 
@@ -230,6 +230,10 @@ module TSCompiler{
                                         _Tokens_.push(token);
                                         _Log_.printMessage("DEBUG Lexer -" + stuff)
                                 }
+                                // else if(currentT[i] === "/" && currentT[i+1] === "*"){
+                                //     console.log(currentT);
+                                //     console.log("Comment");
+                                // }
                                 else{
                                     _Log_.printError("Not Valid in string -" + currentT[i] + " one line " + x);
                                     lexerError = lexerError + 1;
@@ -241,10 +245,10 @@ module TSCompiler{
                             console.log(currentT);
                             console.log("Comment");
                         }
-                        else if (comHalf_RE.test(currentT)){
-                            _Log_.printError(" Not finished Comment" + " on line " + x);
-                            lexerError = lexerError + 1;
-                        }
+                        // else if (comHalf_RE.test(currentT)){
+                        //     _Log_.printError(" Not finished Comment" + " on line " + x);
+                        //     lexerError = lexerError + 1;
+                        // }
 
                         //None throw error
                         else{
