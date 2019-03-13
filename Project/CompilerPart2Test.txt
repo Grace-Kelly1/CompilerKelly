@@ -1,0 +1,22 @@
+{print(}$
+
+{}$
+
+{a=1}$
+
+{
+	print(if)
+}$
+
+{print(007)}$
+
+{{{{{{}}}}}}$	
+	 	 	 
+{{{{{{}}}	/*	comments	are	ignored	*/	}}}}$	
+	 	 	 
+{	/*	comments	are	still	ignored	*/	int	@}$
+
+{
+int x
+x = 1
+}$
