@@ -43,7 +43,7 @@ module TSCompiler{
             this.matchParse(L_BRACE.type);
             //_Tree_.addNode("{", "leaf");
             this.parseStatmentL();
-            _Tree_.kick();
+            //_Tree_.kick();
             //_Tree_.addNode("StatementList", "")
             this.matchParse(R_BRACE.type);
             //_Tree_.addNode("}", "leaf");
