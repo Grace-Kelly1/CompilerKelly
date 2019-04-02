@@ -32,8 +32,8 @@ var TSCompiler;
             _Tree_.addNode("Program", "branch");
             _Log_.printParseMessage("PARSE - parseProgram()");
             this.parseBlock();
-            //console.log(this);
-            this.matchParse(EOP.type);
+            //console.log("this = " + this);
+            //this.matchParse(EOP.type);
             _Tree_.addNode("$", "");
             _Tree_.kick();
         };
@@ -62,7 +62,7 @@ var TSCompiler;
                 _Tree_.addNode("StatementList", "branch");
                 _Log_.printParseMessage("PARSE - parseStatmentL()");
                 this.parseStatments();
-                this.parseStatmentL();
+                //this.parseStatmentL();
                 _Tree_.kick();
             }
             else {
