@@ -24,6 +24,14 @@ module TSCompiler{
     // -- Methods --
     // -- ------- --
 
+    public getRoot(): Node {
+        return this.root;
+    }
+
+    public setRoot(node: Node) {
+        this.root = node;
+    }
+
     // Add a node: kind in {branch, leaf}.
     addNode = function(name, kind) {
         // Construct the node object.
@@ -101,6 +109,45 @@ module TSCompiler{
         expand(this.root, 0);
         // Return the result.
         return traversalResult;
-    };
+    }
+
+    public toStringAST() {
+        var traversalResult = "";
+
+        // Recursive function to handle the expansion of the nodes.
+        function expand(node, depth)
+        {
+            // Space out based on the current depth so
+            // this looks at least a little tree-like.
+            for (var i = 0; i < depth; i++)
+            {
+                traversalResult += "-";
+            }
+
+            // If there are no children (i.e., leaf nodes)...
+            if (!node.children || node.children.length === 0)
+            {
+                // ... note the leaf node.
+                traversalResult += "[ " + node.type + " ]";
+                traversalResult += "\n";
+            }
+            else
+            {
+                // There are children, so note these interior/branch nodes and ...
+                traversalResult += "< " + node.type + " > \n";
+                // .. recursively expand them.
+                for (var i = 0; i < node.children.length; i++)
+                {
+                    expand(node.children[i], depth + 1);
+                }
+            }
+        }
+        // Make the initial call to expand from the root.
+        expand(this.root, 0);
+        // Return the result.
+        return traversalResult;
+    }
+
+
 }
 }

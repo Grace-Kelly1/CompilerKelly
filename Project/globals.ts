@@ -3,9 +3,12 @@
 ///<reference path='token.ts' />
 ///<reference path='utils.ts' />
 // / <reference path="cst.ts"/>
-// / <reference path="Node.ts"/>
+/// <reference path="Node.ts"/>
 /// <reference path="parse.ts"/>
 /// <reference path="Tree.ts"/>
+/// <reference path="sa.ts"/>
+/// <reference path="scope.ts"/>
+
 
 
 var _Lexer_ : TSCompiler.lexer;  // Remember to construct this later.
@@ -17,6 +20,7 @@ var _TokenIndex_: number = 0;
 //having same priblem from last time
 var _Parser_ : TSCompiler.parse;
 var _Tree_: TSCompiler.Tree;
+var _Sa_: TSCompiler.SemAnalysis;
 
 
 //Types of keywords

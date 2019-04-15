@@ -1,16 +1,10 @@
-/// <reference path="globals.ts"/>
-/// <reference path="logger.ts"/>
-/// <reference path="token.ts"/>
-/// <reference path="utils.ts"/>
-/// <reference path="lexer.ts"/>
-/// <reference path="cst.ts"/>
 var TSCompiler;
 (function (TSCompiler) {
     var Node = /** @class */ (function () {
         function Node(type) {
             this.isBoolean = false;
             this.isInt = false;
-            this.isId = false;
+            this.isIdentifier = false;
             if (type) {
                 this.type = type;
             }
@@ -21,7 +15,7 @@ var TSCompiler;
             this.children = [];
             this.parent = null;
             this.lineNumber = 0;
-            this.isLeaf = false;
+            this.isLeafNode = false;
         }
         Node.prototype.getType = function () {
             return this.type;
@@ -41,17 +35,17 @@ var TSCompiler;
         Node.prototype.setParent = function (parent) {
             this.parent = parent;
         };
-        Node.prototype.getLine = function () {
+        Node.prototype.getLineNumber = function () {
             return this.lineNumber;
         };
-        Node.prototype.setLine = function (number) {
+        Node.prototype.setLineNumber = function (number) {
             this.lineNumber = number;
         };
-        Node.prototype.checkLeaf = function () {
-            return this.isLeaf;
+        Node.prototype.checkLeafNode = function () {
+            return this.isLeafNode;
         };
-        Node.prototype.setLeaf = function (bool) {
-            this.isLeaf = bool;
+        Node.prototype.setLeafNode = function (bool) {
+            this.isLeafNode = bool;
         };
         Node.prototype.checkBoolean = function () {
             return this.isBoolean;
@@ -68,11 +62,11 @@ var TSCompiler;
         Node.prototype.addChild = function (node) {
             this.children.push(node);
         };
-        Node.prototype.getId = function () {
-            return this.isId;
+        Node.prototype.getIdentifier = function () {
+            return this.isIdentifier;
         };
-        Node.prototype.setId = function (bool) {
-            this.isId = bool;
+        Node.prototype.setIdentifier = function (bool) {
+            this.isIdentifier = bool;
         };
         return Node;
     }());

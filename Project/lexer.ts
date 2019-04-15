@@ -121,12 +121,15 @@ module TSCompiler{
                             if(lexerError === 0){
                                 _Log_.printCSTMessage("\nCST for program" + programCount + "...");
                                 _Parser_.parse();
+                                _Log_.printASTMessage("\nAST for program" + programCount + "...");
+                                _Sa_. performSemAnalysis();
                                 // _Log_.printCST();
                                 programCount++;
                             }
                             else{
                                 _Log_.printParseMessage("\nPARSE - Skipped due to LEXER error(s)");
                                 _Log_.printCSTMessage("\nCST for program " + programCount + ": Skipped due to LEXER error(s)");
+                                _Log_.printASTMessage("\nAST for program " + programCount + ": Skipped due to LEXER error(s)")
                             }
                             _Log_.printMessage("\n" + "INFO Lexer - program " + programCount);
                             lexerError = 0;

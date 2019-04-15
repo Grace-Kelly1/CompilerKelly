@@ -22,14 +22,17 @@ module TSCompiler{
              _Log_   = new TSCompiler.logger(); // to construct them before we can use them.
              _Parser_ = new TSCompiler.parse();
              _Tree_ = new TSCompiler.Tree();
+             _Sa_ = new TSCompiler.SemAnalysis();
                 
 
             var log: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("outputTA");
             var cstLog: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("cst_output");
+            var astLog: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("ast_output");
             var source: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("inputTA");
             source.value = this.trim(source.value);
             log.value = "";
             cstLog.value = "";
+            astLog.value = "";
 
             if (source.value === '') {
                 _Log_.printMessage("Empty TextArea");

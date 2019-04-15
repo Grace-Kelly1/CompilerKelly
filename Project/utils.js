@@ -21,12 +21,15 @@ var TSCompiler;
             _Log_ = new TSCompiler.logger(); // to construct them before we can use them.
             _Parser_ = new TSCompiler.parse();
             _Tree_ = new TSCompiler.Tree();
+            _Sa_ = new TSCompiler.SemAnalysis();
             var log = document.getElementById("outputTA");
             var cstLog = document.getElementById("cst_output");
+            var astLog = document.getElementById("ast_output");
             var source = document.getElementById("inputTA");
             source.value = this.trim(source.value);
             log.value = "";
             cstLog.value = "";
+            astLog.value = "";
             if (source.value === '') {
                 _Log_.printMessage("Empty TextArea");
                 return;
