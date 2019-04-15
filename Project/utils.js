@@ -2,6 +2,7 @@
 ///<reference path='lexer.ts' />
 ///<reference path='logger.ts' />
 ///<reference path='token.ts' />
+///<reference path='sa.ts' />
 var TSCompiler;
 (function (TSCompiler) {
     var utils = /** @class */ (function () {

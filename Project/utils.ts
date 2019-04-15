@@ -2,6 +2,7 @@
 ///<reference path='lexer.ts' />
 ///<reference path='logger.ts' />
 ///<reference path='token.ts' />
+///<reference path='sa.ts' />
 
 module TSCompiler{
     export class utils{

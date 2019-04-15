@@ -111,7 +111,9 @@ var TSCompiler;
                                 _Log_.printCSTMessage("\nCST for program" + programCount + "...");
                                 _Parser_.parse();
                                 _Log_.printASTMessage("\nAST for program" + programCount + "...");
-                                _Sa_.performSemAnalysis();
+                                //Not a constructor?
+                                // _Sa_ = new TSCompiler.SemAnalysis();
+                                // _Sa_.
                                 // _Log_.printCST();
                                 programCount++;
                             }

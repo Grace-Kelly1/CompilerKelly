@@ -7,7 +7,7 @@
 /// <reference path="parse.ts"/>
 /// <reference path="Tree.ts"/>
 /// <reference path="sa.ts"/>
-/// <reference path="scope.ts"/>
+//// <reference path="scope.ts"/>
 var _Lexer_; // Remember to construct this later.
 var _Log_; // Remember to construct this later.
 var _Tokens_ = [];

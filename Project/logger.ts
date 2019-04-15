@@ -2,7 +2,6 @@
 /// <reference path="token.ts"/>
 /// <reference path="utils.ts"/>
 /// <reference path="Tree.ts"/>
-/// <reference path="Scope.ts"/>
 
 module TSCompiler{
     export class logger{
@@ -81,34 +80,34 @@ module TSCompiler{
                 line.innerHTML = _Tokens_[i].line;
             }
         }
-        
-        public static printSymbolT(symbolTable: Scope[]): void {
-            for (var i = 0; i < symbolTable.length; i++) {
-                this.logScope(symbolTable[i]);
-            }
-        }
 
-        public static logScope(scope: Scope): void {
-            var table = <HTMLTableElement> document.getElementById('symbol-table');
-            var unusedSymbols: Symbol[] = [];
-            for (var i = 0; i < scope.getSymbols().length; i++) {
-                var symbols = scope.getSymbols();
+//         public static printSymbolT(symbolTable: Scope[]): void {
+//             for (var i = 0; i < symbolTable.length; i++) {
+//                 this.logScope(symbolTable[i]);
+//             }
+//         }
 
-                var row = <HTMLTableRowElement> table.insertRow(i + 1);
-                var name  = <HTMLTableCellElement> row.insertCell(0);
-                var type  = <HTMLTableCellElement> row.insertCell(1);
-                var level = <HTMLTableCellElement> row.insertCell(2);
-                var line  = <HTMLTableCellElement> row.insertCell(3);
+//         public static logScope(scope: Scope): void {
+//             var table = <HTMLTableElement> document.getElementById('symbol-table');
+//             var unusedSymbols: Symbol[] = [];
+//             for (var i = 0; i < scope.getSymbols().length; i++) {
+//                 var symbols = scope.getSymbols();
 
-                name.innerHTML = symbols[i].getName();
-                type.innerHTML = symbols[i].getType();
-                level.innerHTML = scope.getName();
-                line.innerHTML = symbols[i].getLine();
+//                 var row = <HTMLTableRowElement> table.insertRow(i + 1);
+//                 var name  = <HTMLTableCellElement> row.insertCell(0);
+//                 var type  = <HTMLTableCellElement> row.insertCell(1);
+//                 var level = <HTMLTableCellElement> row.insertCell(2);
+//                 var line  = <HTMLTableCellElement> row.insertCell(3);
 
-                if (!symbols[i].getInitialized()) {
-                    unusedSymbols.push(symbols[i]);
-                }
-            }
-        }
+//                 name.innerHTML = symbols[i].getName();
+//                 type.innerHTML = symbols[i].getType();
+//                 level.innerHTML = scope.getName();
+//                 line.innerHTML = symbols[i].getLine();
+
+//                 if (!symbols[i].getInitialized()) {
+//                     unusedSymbols.push(symbols[i]);
+//                 }
+//             }
+//         }
     }
 }

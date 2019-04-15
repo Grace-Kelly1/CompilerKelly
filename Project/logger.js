@@ -2,7 +2,6 @@
 /// <reference path="token.ts"/>
 /// <reference path="utils.ts"/>
 /// <reference path="Tree.ts"/>
-/// <reference path="Scope.ts"/>
 var TSCompiler;
 (function (TSCompiler) {
     var logger = /** @class */ (function () {
@@ -69,30 +68,6 @@ var TSCompiler;
                 type.innerHTML = _Tokens_[i].type;
                 value.innerHTML = _Tokens_[i].value;
                 line.innerHTML = _Tokens_[i].line;
-            }
-        };
-        logger.printSymbolT = function (symbolTable) {
-            for (var i = 0; i < symbolTable.length; i++) {
-                this.logScope(symbolTable[i]);
-            }
-        };
-        logger.logScope = function (scope) {
-            var table = document.getElementById('symbol-table');
-            var unusedSymbols = [];
-            for (var i = 0; i < scope.getSymbols().length; i++) {
-                var symbols = scope.getSymbols();
-                var row = table.insertRow(i + 1);
-                var name = row.insertCell(0);
-                var type = row.insertCell(1);
-                var level = row.insertCell(2);
-                var line = row.insertCell(3);
-                name.innerHTML = symbols[i].getName();
-                type.innerHTML = symbols[i].getType();
-                level.innerHTML = scope.getName();
-                line.innerHTML = symbols[i].getLine();
-                if (!symbols[i].getInitialized()) {
-                    unusedSymbols.push(symbols[i]);
-                }
             }
         };
         return logger;
