@@ -2,6 +2,7 @@
 /// <reference path="token.ts"/>
 /// <reference path="utils.ts"/>
 /// <reference path="Tree.ts"/>
+/// <reference path="symbolTree.ts"/>
 var TSCompiler;
 (function (TSCompiler) {
     var logger = /** @class */ (function () {
@@ -24,6 +25,12 @@ var TSCompiler;
             //Print code not tree???
             //_Tree_ = new TSCompiler.Tree();
             log.value += _Tree_.toString();
+        };
+        logger.prototype.printAST = function () {
+            var log = document.getElementById('ast_output');
+            //Print code not tree???
+            //_Tree_ = new TSCompiler.Tree();
+            log.value += _SymbolTree_.toString();
         };
         logger.prototype.printCSTMessage = function (message) {
             var log = document.getElementById('cst_output');

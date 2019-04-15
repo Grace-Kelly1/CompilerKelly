@@ -2,6 +2,7 @@
 /// <reference path="token.ts"/>
 /// <reference path="utils.ts"/>
 /// <reference path="Tree.ts"/>
+/// <reference path="symbolTree.ts"/>
 
 module TSCompiler{
     export class logger{
@@ -24,6 +25,13 @@ module TSCompiler{
             //Print code not tree???
             //_Tree_ = new TSCompiler.Tree();
             log.value += _Tree_.toString();
+        }
+
+        public printAST(): void {
+            var log = <HTMLTextAreaElement> document.getElementById('ast_output');
+            //Print code not tree???
+            //_Tree_ = new TSCompiler.Tree();
+            log.value += _SymbolTree_.toString();
         }
 
         public printCSTMessage(message: string): void{

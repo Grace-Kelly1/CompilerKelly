@@ -7,7 +7,8 @@
 /// <reference path="parse.ts"/>
 /// <reference path="Tree.ts"/>
 /// <reference path="sa.ts"/>
-//// <reference path="scope.ts"/>
+/// <reference path="symbolTree.ts"/>
+/// <reference path="ast.ts"/>
 var _Lexer_; // Remember to construct this later.
 var _Log_; // Remember to construct this later.
 var _Tokens_ = [];
@@ -17,6 +18,8 @@ var _TokenIndex_ = 0;
 //having same priblem from last time
 var _Parser_;
 var _Tree_;
+var _SymbolTree_;
+var _AST_;
 var _Sa_;
 //Types of keywords
 var PRINT = { type: 'PRINT', value: 'print' };

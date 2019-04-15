@@ -123,8 +123,7 @@ module TSCompiler{
                                 _Parser_.parse();
                                 _Log_.printASTMessage("\nAST for program" + programCount + "...");
                                 //Not a constructor?
-                               // _Sa_ = new TSCompiler.SemAnalysis();
-                               // _Sa_.
+                               _AST_.ast();
                                 // _Log_.printCST();
                                 programCount++;
                             }

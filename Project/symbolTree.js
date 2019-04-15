@@ -11,20 +11,25 @@
 /// <reference path="parse.ts"/>
 var TSCompiler;
 (function (TSCompiler) {
-    var Tree = /** @class */ (function () {
-        function Tree() {
+    var symbolTree = /** @class */ (function () {
+        function symbolTree() {
             // ----------
             // Attributes
             // ----------
             this.root = null; // Note the NULL root node of this tree.
             this.cur = {}; // Note the EMPTY current node of the tree we're building.
+            // -- ------- --
+            // -- Methods --
+            // -- ------- --
             // Add a node: kind in {branch, leaf}.
-            this.addNode = function (name, kind) {
+            this.addNode = function (name, kind, scope) {
                 // Construct the node object.
                 var node = {
                     name: name,
                     children: [],
-                    parent: {}
+                    parent: {},
+                    symbols: [],
+                    scope: scope
                 };
                 // Check to see if it needs to be the root node.
                 if ((this.root == null) || (!this.root)) {
@@ -71,11 +76,20 @@ var TSCompiler;
                     if (!node.children || node.children.length === 0) {
                         // ... note the leaf node.
                         traversalResult += "[ " + node.name + " ]";
+                        traversalResult += ":";
+                        node.symbols.forEach(function (symbol) {
+                            traversalResult += " " + symbol.type + " " + symbol.key + " |";
+                        });
                         traversalResult += "\n";
                     }
                     else {
                         // There are children, so note these interior/branch nodes and ...
-                        traversalResult += "<" + node.name + "> \n";
+                        traversalResult += "[ " + node.name + " ]";
+                        traversalResult += ":";
+                        node.symbols.forEach(function (symbol) {
+                            traversalResult += " " + symbol.type + " " + symbol.key + " |";
+                        });
+                        traversalResult += "\n";
                         // .. recursively expand them.
                         for (var i = 0; i < node.children.length; i++) {
                             expand(node.children[i], depth + 1);
@@ -88,16 +102,7 @@ var TSCompiler;
                 return traversalResult;
             };
         }
-        // -- ------- --
-        // -- Methods --
-        // -- ------- --
-        Tree.prototype.getRoot = function () {
-            return this.root;
-        };
-        Tree.prototype.setRoot = function (node) {
-            this.root = node;
-        };
-        return Tree;
+        return symbolTree;
     }());
-    TSCompiler.Tree = Tree;
+    TSCompiler.symbolTree = symbolTree;
 })(TSCompiler || (TSCompiler = {}));

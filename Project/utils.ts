@@ -23,7 +23,8 @@ module TSCompiler{
              _Log_   = new TSCompiler.logger(); // to construct them before we can use them.
              _Parser_ = new TSCompiler.parse();
              _Tree_ = new TSCompiler.Tree();
-             _Sa_ = new TSCompiler.SemAnalysis();
+             //_Sa_ = new TSCompiler.SemAnalysis();
+             //_SymbolTree_ = new TSCompiler.symbolTree();
                 
 
             var log: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("outputTA");

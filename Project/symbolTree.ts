@@ -11,8 +11,8 @@
 /// <reference path="parse.ts"/>
 
 module TSCompiler{
-    export class Tree{
-    // ----------
+    export class symbolTree{
+        // ----------
     // Attributes
     // ----------
 
@@ -24,25 +24,15 @@ module TSCompiler{
     // -- Methods --
     // -- ------- --
 
-    public getRoot(): Node {
-        return this.root;
-    }
-
-    public setRoot(node: Node) {
-        this.root = node;
-    }
-
     // Add a node: kind in {branch, leaf}.
-    addNode = function(name, kind) {
+    addNode = function(name, kind, scope) {
         // Construct the node object.
         var node = {
             name: name,
             children: [],
             parent: {},
-            // row: row,
-            // col: col,
-            // scope: scope,
-            //= type: type
+            symbols: [],
+            scope: scope
         };
 
         // Check to see if it needs to be the root node.
@@ -94,11 +84,20 @@ module TSCompiler{
             if (!node.children || node.children.length === 0) {
                 // ... note the leaf node.
                 traversalResult += "[ " + node.name + " ]";
+                traversalResult += ":";
+                node.symbols.forEach(function(symbol){
+                    traversalResult += " " + symbol.type + " " + symbol.key + " |";
+                });
                 traversalResult += "\n";
             }
             else {
                 // There are children, so note these interior/branch nodes and ...
-                traversalResult += "<" + node.name + "> \n";
+                traversalResult += "[ " + node.name + " ]";
+                traversalResult += ":";
+                node.symbols.forEach(function(symbol){
+                    traversalResult += " " + symbol.type + " " + symbol.key + " |";
+                });
+                traversalResult += "\n";
                 // .. recursively expand them.
                 for (var i = 0; i < node.children.length; i++) {
                     expand(node.children[i], depth + 1);
@@ -109,8 +108,7 @@ module TSCompiler{
         expand(this.root, 0);
         // Return the result.
         return traversalResult;
-    }
-
+    };
     
 
 }

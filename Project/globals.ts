@@ -7,7 +7,8 @@
 /// <reference path="parse.ts"/>
 /// <reference path="Tree.ts"/>
 /// <reference path="sa.ts"/>
-//// <reference path="scope.ts"/>
+/// <reference path="symbolTree.ts"/>
+/// <reference path="ast.ts"/>
 
 
 
@@ -20,6 +21,8 @@ var _TokenIndex_: number = 0;
 //having same priblem from last time
 var _Parser_ : TSCompiler.parse;
 var _Tree_: TSCompiler.Tree;
+var _SymbolTree_: TSCompiler.symbolTree;
+var _AST_: TSCompiler.ast;
 var _Sa_: TSCompiler.SemAnalysis;
 
 
