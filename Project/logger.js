@@ -32,7 +32,7 @@ var TSCompiler;
             //Print code not tree???
             //_Tree_ = new TSCompiler.Tree();
             console.log("Trying to print ast");
-            log.value += _AST_.toString();
+            log.value += _Tree_.toString();
         };
         logger.prototype.printCSTMessage = function (message) {
             var log = document.getElementById('cst_output');
