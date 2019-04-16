@@ -3,6 +3,8 @@
 ///<reference path='logger.ts' />
 ///<reference path='token.ts' />
 ///<reference path='sa.ts' />
+///<reference path='ast.ts' />
+
 
 module TSCompiler{
     export class utils{
@@ -23,6 +25,7 @@ module TSCompiler{
              _Log_   = new TSCompiler.logger(); // to construct them before we can use them.
              _Parser_ = new TSCompiler.parse();
              _Tree_ = new TSCompiler.Tree();
+             _AST_ = new TSCompiler.ast();
              //_Sa_ = new TSCompiler.SemAnalysis();
              //_SymbolTree_ = new TSCompiler.symbolTree();
                 

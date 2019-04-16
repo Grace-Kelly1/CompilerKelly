@@ -10,229 +10,230 @@ var TSCompiler;
     var ast = /** @class */ (function () {
         function ast() {
         }
-        ast.prototype.ast = function () {
-            var currentToken = 0;
-            var scope = -1;
-            var scopeTree = new TSCompiler.symbolTree();
-            var astCompleted = true;
+        ast.prototype.Ast = function () {
+            console.log('AST Inside');
+            _CurrentT_ = _Tokens_[_TokenIndex_];
+            //scope = -1;
+            //scopeTree = new symbolTree();
+            //var astCompleted = true;
             _CurrentT_ = _Tokens_[_TokenIndex_];
             //_Log_.printMessage("\nBeginning  Session...");
-            var _AST_ = new TSCompiler.Tree();
-            _AST_.addNode("Root", "brnch");
+            _Tree_ = new TSCompiler.Tree();
+            //_Tree_.addNode("Root", "brnch");
             //_Tree_ .addNode("Root", "branch");
             //_Log_.printParseMessage("PARSE - parse()");
-            parseProgram();
+            this.parseProgram();
             //_Log_.printParseMessage("Parse Completed");
-            if (astCompleted === true) {
-                //_Tree_: new TSCompiler.Tree();
-                //console.log(_Tree_.toString());
-                // _Log_.printCSTMessage("\nCST for program" + p + "...");
-                _Log_.printAST();
+            //_Tree_: new TSCompiler.Tree();
+            //console.log(_Tree_.toString());
+            // _Log_.printCSTMessage("\nCST for program" + p + "...");
+            _Log_.printAST();
+        };
+        ast.prototype.parseProgram = function () {
+            //console.log("Here");
+            _Tree_.addNode("Program", "branch");
+            this.parseBlock();
+            this.consumeToken();
+            _Tree_.kick();
+            _Tree_.kick();
+            // if(currentToken < ASTtokens.length){
+            //     parseProgram();
+            // }
+        };
+        ast.prototype.parseBlock = function () {
+            //console.log("Here");
+            // scope++;
+            // scopeTree.addNode("ScopeLevel: "+scope, "branch", scope);
+            _Tree_.addNode("Block", "branch");
+            this.consumeToken();
+            this.parseStatementL();
+            this.consumeToken();
+            // scopeTree.kick();
+        };
+        ast.prototype.parseStatementL = function () {
+            if (_CurrentT_.type === PRINT.type ||
+                _CurrentT_.type === ID.type ||
+                _CurrentT_.type === INT.type ||
+                _CurrentT_.type === BOOLEAN.type ||
+                _CurrentT_.type === STRING.type ||
+                _CurrentT_.type === L_BRACE.type ||
+                _CurrentT_.type === WHILE.type ||
+                _CurrentT_.type === IF.type) {
+                this.parseStatement();
+                _Tree_.kick();
+                //this.parseStatementL();
             }
-            function parseProgram() {
-                _AST_.addNode("Program", "branch");
-                parseBlock();
-                consumeToken();
-                _AST_.kick();
-                _AST_.kick();
-                // if(currentToken < ASTtokens.length){
-                //     parseProgram();
-                // }
+        };
+        ast.prototype.parseStatement = function () {
+            switch (_CurrentT_.type) {
+                case PRINT.type:
+                    this.parsePrint();
+                    break;
+                case ID.type:
+                    this.parseAssign();
+                    break;
+                case STRING.type:
+                case INT.type:
+                case BOOLEAN.type:
+                    this.parseVar();
+                    break;
+                case WHILE.type:
+                    this.parseWhile();
+                    break;
+                case IF.type:
+                    this.parseIf();
+                    break;
+                default:
+                    this.parseBlock();
             }
-            function parseBlock() {
-                scope++;
-                scopeTree.addNode("ScopeLevel: " + scope, "branch", scope);
-                _AST_.addNode("Block", "branch");
-                consumeToken();
-                parseStatementL();
-                consumeToken();
-                scopeTree.kick();
+        };
+        ast.prototype.parsePrint = function () {
+            _Tree_.addNode("PrintStatement", "branch");
+            this.consumeToken();
+            this.consumeToken();
+            this.parseExper();
+            this.consumeToken();
+        };
+        ast.prototype.parseAssign = function () {
+            _Tree_.addNode("AssignmentStatement", "branch");
+            this.parseID();
+            this.consumeToken();
+            this.parseExper();
+        };
+        ast.prototype.parseVar = function () {
+            _Tree_.addNode("VariableDeclaration", "branch");
+            this.parseType();
+            this.parseID();
+        };
+        ast.prototype.parseWhile = function () {
+            _Tree_.addNode("WhileStatement", "branch");
+            this.consumeToken();
+            this.parseBoolean();
+            this.parseBlock();
+        };
+        ast.prototype.parseIf = function () {
+            _Tree_.addNode("IfStatement", "branch");
+            this.consumeToken();
+            this.parseBoolean();
+            this.parseBlock();
+        };
+        ast.prototype.parseExper = function () {
+            switch (_CurrentT_.type) {
+                // IntExpr
+                case DIGIT.type:
+                    this.parseInt();
+                    break;
+                // String
+                case QUOTE.type:
+                    this.parseString();
+                    break;
+                // Boolean
+                case L_PAREN.type:
+                case TRUE.type:
+                case FALSE.type:
+                    this.parseBoolean();
+                    break;
+                // ID
+                case ID.type:
+                    this.parseID();
+                    break;
+                default:
+                    _Log_.printParseError("Expected to finish assigning variable");
             }
-            function parseStatementL() {
-                if (_CurrentT_.type === PRINT.type ||
-                    _CurrentT_.type === ID.type ||
-                    _CurrentT_.type === INT.type ||
-                    _CurrentT_.type === BOOLEAN.type ||
-                    _CurrentT_.type === STRING.type ||
-                    _CurrentT_.type === L_BRACE.type ||
-                    _CurrentT_.type === WHILE.type ||
-                    _CurrentT_.type === IF.type) {
-                    parseStatement();
-                    _AST_.kick();
-                    parseStatementL();
-                }
-            }
-            function parseStatement() {
-                switch (_CurrentT_.type) {
-                    case PRINT.type:
-                        parsePrint();
-                        break;
-                    case ID.type:
-                        parseAssign();
-                        break;
-                    case STRING.type:
-                    case INT.type:
-                    case BOOLEAN.type:
-                        parseVar();
-                        break;
-                    case WHILE.type:
-                        parseWhile();
-                        break;
-                    case IF.type:
-                        parseIf();
-                        break;
-                    default:
-                        parseBlock();
-                }
-            }
-            function parsePrint() {
-                _AST_.addNode("PrintStatement", "branch");
-                consumeToken();
-                consumeToken();
-                parseExper();
-                consumeToken();
-            }
-            function parseAssign() {
-                _AST_.addNode("AssignmentStatement", "branch");
-                parseID();
-                consumeToken();
-                parseExper();
-            }
-            function parseVar() {
-                _AST_.addNode("VariableDeclaration", "branch");
-                parseType();
-                parseID();
-            }
-            function parseWhile() {
-                _AST_.addNode("WhileStatement", "branch");
-                consumeToken();
-                parseBoolean();
-                parseBlock();
-            }
-            function parseIf() {
-                _AST_.addNode("IfStatement", "branch");
-                consumeToken();
-                parseBoolean();
-                parseBlock();
-            }
-            function parseExper() {
-                switch (_CurrentT_.type) {
-                    // IntExpr
-                    case DIGIT.type:
-                        parseInt();
-                        break;
-                    // String
-                    case QUOTE.type:
-                        parseString();
-                        break;
-                    // Boolean
-                    case L_PAREN.type:
-                    case TRUE.type:
-                    case FALSE.type:
-                        parseBoolean();
-                        break;
-                    // ID
-                    case ID.type:
-                        this.parseId();
-                        break;
-                    default:
-                        _Log_.printParseError("Expected to finish assigning variable");
-                }
-            }
-            function parseInt() {
-                if (_CurrentT_.type === DIGIT.type) {
-                    this.matchParse(DIGIT.type);
-                    if (_CurrentT_.type === PLUS.type) {
-                        this.matchParse(PLUS.type);
-                        _AST_.addNode("Add", "branch");
-                        parseDigit();
-                        parseIntOp();
-                        parseExper();
-                        _AST_.kick();
-                    }
-                    else {
-                        parseDigit();
-                    }
-                }
-            }
-            function parseString() {
-                consumeToken();
-                parseCharList();
-                consumeToken();
-            }
-            function parseBoolean() {
-                if (match(_CurrentT_.type, L_PAREN.type)) {
-                    consumeToken();
-                    _AST_.addNode("Comp", "branch");
-                    parseExper();
-                    // var branchType = parseBoolOp();
-                    // _AST_.cur.name = branchType;
-                    // _AST_.cur.type = branchType;
-                    parseExper();
-                    consumeToken();
-                }
-                else if (match(_CurrentT_.type, BOOLEAN.type)) {
-                    parseBoolVal();
-                }
-                _AST_.kick();
-            }
-            function parseID() {
-                _AST_.addNode(_CurrentT_, "leaf");
-                consumeToken();
-            }
-            function parseCharList() {
-                var tempString = "";
-                while (match(_CurrentT_.type, CHAR.type)) {
-                    tempString = tempString + _CurrentT_;
-                    consumeToken();
-                }
-                _AST_.addNode(tempString, "leaf");
-            }
-            function parseType() {
-                _AST_.addNode(_CurrentT_, "leaf");
-                consumeToken();
-            }
-            function parseChar() {
-                _AST_.addNode(_CurrentT_, "leaf");
-                consumeToken();
-                parseCharList();
-            }
-            function parseDigit() {
-                _AST_.addNode(_CurrentT_, "leaf");
-                consumeToken();
-            }
-            function parseBool() {
-                //branchType = "";
-                if (match(_CurrentT_.type, "T_EQUALITY")) {
-                    consumeToken();
-                    //branchType = "Equality";
-                }
-                else if (match(_CurrentT_.type, "T_INEQUALITY")) {
-                    consumeToken();
-                    //branchType = "Inequality";
-                }
-                //return branchType;
-            }
-            function parseBoolVal() {
-                _AST_.addNode(_CurrentT_, "leaf");
-                consumeToken();
-            }
-            function parseIntOp() {
-                consumeToken();
-            }
-            function match(tokenKind, expectedKind) {
-                var match;
-                if (tokenKind == expectedKind) {
-                    match = true;
+        };
+        ast.prototype.parseInt = function () {
+            if (_CurrentT_.type === DIGIT.type) {
+                this.match(_CurrentT_.type, DIGIT.type);
+                if (_CurrentT_.type === PLUS.type) {
+                    this.match(_CurrentT_.type, PLUS.type);
+                    _Tree_.addNode("Add", "branch");
+                    this.parseDigit();
+                    this.parseIntOp();
+                    this.parseExper();
+                    _Tree_.kick();
                 }
                 else {
-                    match = false;
+                    this.parseDigit();
                 }
-                return match;
             }
-            function consumeToken() {
-                currentToken = currentToken + 1;
+        };
+        ast.prototype.parseString = function () {
+            this.consumeToken();
+            this.parseCharList();
+            this.consumeToken();
+        };
+        ast.prototype.parseBoolean = function () {
+            if (this.match(_CurrentT_.type, L_PAREN.type)) {
+                this.consumeToken();
+                _Tree_.addNode("Comp", "branch");
+                this.parseExper();
+                // var branchType = parseBoolOp();
+                // _Tree_.cur.name = branchType;
+                // _Tree_.cur.type = branchType;
+                this.parseExper();
+                this.consumeToken();
             }
+            else if (this.match(_CurrentT_.type, BOOLEAN.type)) {
+                this.parseBoolVal();
+            }
+            _Tree_.kick();
+        };
+        ast.prototype.parseID = function () {
+            _Tree_.addNode(_CurrentT_, "leaf");
+            this.consumeToken();
+        };
+        ast.prototype.parseCharList = function () {
+            var tempString = "";
+            while (this.match(_CurrentT_.type, CHAR.type)) {
+                tempString = tempString + _CurrentT_;
+                this.consumeToken();
+            }
+            _Tree_.addNode(tempString, "leaf");
+        };
+        ast.prototype.parseType = function () {
+            _Tree_.addNode(_CurrentT_, "leaf");
+            this.consumeToken();
+        };
+        ast.prototype.parseChar = function () {
+            _Tree_.addNode(_CurrentT_, "leaf");
+            this.consumeToken();
+            this.parseCharList();
+        };
+        ast.prototype.parseDigit = function () {
+            _Tree_.addNode(_CurrentT_, "leaf");
+            this.consumeToken();
+        };
+        ast.prototype.parseBool = function () {
+            //branchType = "";
+            if (this.match(_CurrentT_.type, "T_EQUALITY")) {
+                this.consumeToken();
+                //branchType = "Equality";
+            }
+            else if (this.match(_CurrentT_.type, "T_INEQUALITY")) {
+                this.consumeToken();
+                //branchType = "Inequality";
+            }
+            //return branchType;
+        };
+        ast.prototype.parseBoolVal = function () {
+            _Tree_.addNode(_CurrentT_, "leaf");
+            this.consumeToken();
+        };
+        ast.prototype.parseIntOp = function () {
+            this.consumeToken();
+        };
+        ast.prototype.match = function (tokenKind, expectedKind) {
+            var match;
+            if (tokenKind == expectedKind) {
+                match = true;
+            }
+            else {
+                match = false;
+            }
+            return match;
+        };
+        ast.prototype.consumeToken = function () {
+            _CurrentT_ = _Tokens_[_TokenIndex_ + 1];
         };
         return ast;
     }());

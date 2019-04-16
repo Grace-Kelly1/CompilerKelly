@@ -3,6 +3,7 @@
 /// <reference path="utils.ts"/>
 /// <reference path="Tree.ts"/>
 /// <reference path="symbolTree.ts"/>
+/// <reference path="ast.ts"/>
 
 module TSCompiler{
     export class logger{
@@ -31,7 +32,8 @@ module TSCompiler{
             var log = <HTMLTextAreaElement> document.getElementById('ast_output');
             //Print code not tree???
             //_Tree_ = new TSCompiler.Tree();
-            log.value += _SymbolTree_.toString();
+            console.log("Trying to print ast")
+            log.value += _AST_.toString();
         }
 
         public printCSTMessage(message: string): void{

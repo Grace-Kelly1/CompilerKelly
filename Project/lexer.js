@@ -5,6 +5,7 @@
 /// <reference path="logger.ts"/>
 /// <reference path="token.ts"/>
 /// <reference path="utils.ts"/>
+/// <reference path="ast.ts"/>
 var TSCompiler;
 (function (TSCompiler) {
     var lexer = /** @class */ (function () {
@@ -111,8 +112,8 @@ var TSCompiler;
                                 _Log_.printCSTMessage("\nCST for program" + programCount + "...");
                                 _Parser_.parse();
                                 _Log_.printASTMessage("\nAST for program" + programCount + "...");
-                                //Not a constructor?
-                                _AST_.ast();
+                                //Not defined?
+                                _AST_.Ast();
                                 // _Log_.printCST();
                                 programCount++;
                             }
