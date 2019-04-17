@@ -1,3 +1,10 @@
+/// <reference path="globals.ts"/>
+/// <reference path="logger.ts"/>
+/// <reference path="token.ts"/>
+/// <reference path="utils.ts"/>
+/// <reference path="lexer.ts"/>
+/// <reference path="Tree.ts"/>
+/// <reference path="symbolTree.ts"/>
 var TSCompiler;
 (function (TSCompiler) {
     var Node = /** @class */ (function () {

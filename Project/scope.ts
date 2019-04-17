@@ -7,13 +7,13 @@
 
 module TSCompiler {
     export class Scope {
-        private name: number;
+        // name: number;
         private symbols: Symbol[] = [];
         private children: Scope[] = [];
         private parent: Scope = null;
 
-        constructor(name: number) {
-            this.setName(name);
+        constructor(public name: number) {
+            // this.setName(name);
         }
 
         public getName(): string {

@@ -35,10 +35,6 @@ var TSCompiler;
             console.log("Trying to print ast");
             log.value += _Tree_.toString();
         };
-        logger.prototype.printSymbolTable = function (symbolTableStrings) {
-            var log = document.getElementById('symbolTable');
-            log.value += "<th>Key</th><th>Type</th><th>Scope</th><th>Scope Level</th><th>Line Number</th><th>Col Number</th>" + symbolTableStrings;
-        };
         logger.prototype.printCSTMessage = function (message) {
             var log = document.getElementById('cst_output');
             log.value += message + "\n";
@@ -84,9 +80,7 @@ var TSCompiler;
                 line.innerHTML = _Tokens_[i].line;
             }
         };
-        logger.prototype.printUnusedWarningMessage = function (message) {
-        };
-        logger.logSymbolTable = function (symbolTable) {
+        logger.prototype.printSymbolTable = function (symbolTable) {
             for (var i = 0; i < symbolTable.length; i++) {
                 _Log_.printScope(symbolTable[i]);
             }

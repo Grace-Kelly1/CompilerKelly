@@ -21,13 +21,13 @@ var TSCompiler;
             _Tokens_ = [];
             _CurrentT_ = null;
             _TokenIndex_ = 0;
+            //_Scope_ [];
             _Lexer_ = new TSCompiler.lexer(); // We declared these in globals but still have 
             _Log_ = new TSCompiler.logger(); // to construct them before we can use them.
             _Parser_ = new TSCompiler.parse();
             _Tree_ = new TSCompiler.Tree();
             _AST_ = new TSCompiler.ast();
             _SA_ = new TSCompiler.sa();
-            //_Scope_ = new TSCompiler.Scope();
             //_Symbol_ = new TSCompiler.Symbol();
             //_SymbolTree_ = new TSCompiler.symbolTree();
             var log = document.getElementById("outputTA");

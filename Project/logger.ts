@@ -37,10 +37,6 @@ module TSCompiler{
             console.log("Trying to print ast")
             log.value += _Tree_.toString();
         }
-        public printSymbolTable(symbolTableStrings):void{
-            var log = <HTMLTextAreaElement> document.getElementById('symbolTable');
-            log.value += "<th>Key</th><th>Type</th><th>Scope</th><th>Scope Level</th><th>Line Number</th><th>Col Number</th>" + symbolTableStrings;
-        }
 
         public printCSTMessage(message: string): void{
             var log = <HTMLTextAreaElement> document.getElementById('cst_output');
@@ -97,11 +93,7 @@ module TSCompiler{
             }
         }
 
-        public printUnusedWarningMessage(message: string): void{
-
-        }
-
-        public static logSymbolTable(symbolTable: Scope[]): void {
+        public printSymbolTable(symbolTable: Scope[]): void {
             for (var i = 0; i < symbolTable.length; i++) {
                 _Log_.printScope(symbolTable[i]);
             }
