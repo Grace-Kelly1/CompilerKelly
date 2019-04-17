@@ -165,7 +165,7 @@ var TSCompiler;
             _Tree_.kick();
         };
         ast.prototype.parseInt = function () {
-            _Tree_.addNode(_CurrentT_.value, "branch");
+            //_Tree_.addNode(_CurrentT_.value, "branch");
             //console.log(_CurrentT_.value);
             if (_CurrentT_.type === DIGIT.type) {
                 //_Tree_.addNode(_CurrentT_.value, "leaf");

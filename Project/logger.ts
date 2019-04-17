@@ -5,6 +5,7 @@
 /// <reference path="symbolTree.ts"/>
 /// <reference path="ast.ts"/>
 /// <reference path="symbol.ts"/>
+/// <reference path="scope.ts"/>
 
 
 module TSCompiler{
@@ -102,15 +103,15 @@ module TSCompiler{
         public printScope(scope: Scope): void {
             var table = <HTMLTableElement> document.getElementById('scope_output');
             var unusedSymbols: Symbol[] = [];
-            for (var i = 0; i < _Scope_.getSymbols().length; i++) {
-                var symbols = _Scope_.getSymbols();
+            for (var i = 0; i < scope.getSymbols().length; i++) {
+                var symbols = scope.getSymbols();
 
                 var row = <HTMLTableRowElement> table.insertRow(i + 1);
                 var name  = <HTMLTableCellElement> row.insertCell(0);
                 var type  = <HTMLTableCellElement> row.insertCell(1);
                 var level = <HTMLTableCellElement> row.insertCell(2);
                 var line  = <HTMLTableCellElement> row.insertCell(3);
-
+                console.log("HERE Trying to print scope table");
                 name.innerHTML = symbols[i].getName();
                 type.innerHTML = symbols[i].getType();
                 level.innerHTML = scope.getName();

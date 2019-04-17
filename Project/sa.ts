@@ -4,7 +4,7 @@
 ///<reference path='node.ts' />
 ///<reference path='symbol.ts' />
 ///<reference path='ast.ts' />
-///<reference path='lexer.ts' />
+///<reference path='parse.ts' />
 ///<reference path='logger.ts' />
 ///<reference path='token.ts' />
 
@@ -20,6 +20,7 @@ module TSCompiler{
             
             this.scopes = [];
             this.scopeName = 0;
+            this.astTree = new Tree();
             this.build(_Tree_.getRoot());
             //_Log_.printAST(this.astTree.toStringAST());
             _Log_.printSymbolTable(this.scopes);
@@ -69,7 +70,7 @@ module TSCompiler{
             if (!cstNode) {
                 return;
             }
-
+            console.log(cstNode.children[0].getType());
             this.analyzeStatement(cstNode.children[0], astNode, scope);
             this.analyzeStatementList(cstNode.children[1], astNode, scope);
         }

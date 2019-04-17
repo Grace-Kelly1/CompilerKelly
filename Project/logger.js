@@ -5,6 +5,7 @@
 /// <reference path="symbolTree.ts"/>
 /// <reference path="ast.ts"/>
 /// <reference path="symbol.ts"/>
+/// <reference path="scope.ts"/>
 var TSCompiler;
 (function (TSCompiler) {
     var logger = /** @class */ (function () {
@@ -88,13 +89,14 @@ var TSCompiler;
         logger.prototype.printScope = function (scope) {
             var table = document.getElementById('scope_output');
             var unusedSymbols = [];
-            for (var i = 0; i < _Scope_.getSymbols().length; i++) {
-                var symbols = _Scope_.getSymbols();
+            for (var i = 0; i < scope.getSymbols().length; i++) {
+                var symbols = scope.getSymbols();
                 var row = table.insertRow(i + 1);
                 var name = row.insertCell(0);
                 var type = row.insertCell(1);
                 var level = row.insertCell(2);
                 var line = row.insertCell(3);
+                console.log("HERE Trying to print scope table");
                 name.innerHTML = symbols[i].getName();
                 type.innerHTML = symbols[i].getType();
                 level.innerHTML = scope.getName();
