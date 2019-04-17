@@ -74,7 +74,8 @@ module TSCompiler{
             if (!cstNode) {
                 return;
             }
-            //console.log(cstNode.children[0].getType());
+            //undefined??? how to fix this?
+            console.log(cstNode.children[0]);
             this.analyzeStatement(cstNode.children[0], astNode, scope);
             this.analyzeStatementList(cstNode.children[1], astNode, scope);
         }
