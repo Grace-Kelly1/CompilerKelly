@@ -4,6 +4,7 @@
 /// <reference path="Tree.ts"/>
 /// <reference path="symbolTree.ts"/>
 /// <reference path="ast.ts"/>
+/// <reference path="symbol.ts"/>
 var TSCompiler;
 (function (TSCompiler) {
     var logger = /** @class */ (function () {
@@ -84,6 +85,30 @@ var TSCompiler;
             }
         };
         logger.prototype.printUnusedWarningMessage = function (message) {
+        };
+        logger.logSymbolTable = function (symbolTable) {
+            for (var i = 0; i < symbolTable.length; i++) {
+                _Log_.printScope(symbolTable[i]);
+            }
+        };
+        logger.prototype.printScope = function (scope) {
+            var table = document.getElementById('scope_output');
+            var unusedSymbols = [];
+            for (var i = 0; i < _Scope_.getSymbols().length; i++) {
+                var symbols = _Scope_.getSymbols();
+                var row = table.insertRow(i + 1);
+                var name = row.insertCell(0);
+                var type = row.insertCell(1);
+                var level = row.insertCell(2);
+                var line = row.insertCell(3);
+                name.innerHTML = symbols[i].getName();
+                type.innerHTML = symbols[i].getType();
+                level.innerHTML = scope.getName();
+                line.innerHTML = symbols[i].getLine();
+                if (!symbols[i].getInitialized()) {
+                    unusedSymbols.push(symbols[i]);
+                }
+            }
         };
         return logger;
     }());

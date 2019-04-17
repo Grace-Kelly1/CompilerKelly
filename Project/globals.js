@@ -10,6 +10,7 @@
 /// <reference path="symbolTree.ts"/>
 /// <reference path="ast.ts"/>
 ///<reference path='symbol.ts' />
+///<reference path='scope.ts' />
 var _Lexer_; // Remember to construct this later.
 var _Log_; // Remember to construct this later.
 var _Tokens_ = [];
@@ -23,6 +24,7 @@ var _SymbolTree_;
 var _AST_;
 var _SA_;
 var _Symbol_;
+var _Scope_;
 //Types of keywords
 var PRINT = { type: 'PRINT', value: 'print' };
 var WHILE = { type: 'WHILE', value: 'while' };

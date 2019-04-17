@@ -1,421 +1,241 @@
-/// <reference path="globals.ts"/>
-/// <reference path="logger.ts"/>
-/// <reference path="token.ts"/>
-/// <reference path="utils.ts"/>
-/// <reference path="lexer.ts"/>
-/// <reference path="Tree.ts"/>
-/// <reference path="symbol.ts"/>
-/// <reference path="node.ts"/>
+///<reference path='tree.ts' />
+///<reference path='scope.ts' />
+///<reference path='globals.ts' />
+///<reference path='node.ts' />
+///<reference path='symbol.ts' />
 var TSCompiler;
 (function (TSCompiler) {
-    var SemAnalysis = /** @class */ (function () {
-        function SemAnalysis() {
-            this.scope = -1;
-            this.scopeLevel = -1;
-            this.saErrorCount = 0;
-            this.saWarningCount = 0;
-            this.currentToken = 0;
-            this.symbolTableStrings = "";
-            this.symbolArray = [];
-            this.variableKey = "";
-            this.variableType = "";
-            this.variableLine = 0;
-            this.variableCol = 0;
-            this.checkedType = "";
+    var sa = /** @class */ (function () {
+        function sa() {
         }
-        SemAnalysis.prototype.SA = function () {
-            var parseCompleted = true;
-            _TokenIndex_ = 0;
-            _CurrentT_ = _Tokens_[_TokenIndex_];
-            //console.log(_CurrentT_.type);
-            _Log_.printMessage("\nBeginning Semantic Analysis Session...");
-            _SymbolTree_ = new TSCompiler.symbolTree();
-            //_SymbolTree_ .addNode("Root", "branch");
-            this.parseProgram();
-            this.checkInit(_SymbolTree_.root);
-            this.checkUsed(_SymbolTree_.root);
-            if (this.saErrorCount == 0) {
-                parseCompleted = true;
-                _Log_.printMessage("\nSemantic Analysis Session Finished.");
-                _Log_.printSymbolTable(this.symbolTableStrings);
+        sa.prototype.performAnalysis = function () {
+            _Log_.printMessage("\nBeginning Semantic Analysis.\n");
+            this.scopes = [];
+            this.scopeName = 0;
+            this.abstractSyntaxTree = new TSCompiler.Tree();
+            this.buildAST(_Tree_.getRoot());
+            _Log_.printSymbolTable(this.scopes);
+            _Log_.printMessage("Semantic Analysis complete.");
+        };
+        sa.prototype.buildAST = function (root) {
+            this.analyzeProgram(root);
+        };
+        sa.prototype.analyzeProgram = function (node) {
+            // Only one thing to do here
+            var newScope = new TSCompiler.Scope(this.scopeName);
+            _Log_.printMessage("Created Scope " + newScope.getName() + ".");
+            this.scopeName++;
+            this.analyzeBlock(node.children[0], newScope);
+        };
+        sa.prototype.analyzeBlock = function (cstNode, scope, astNode) {
+            var newNode = new TSCompiler.Node("Block");
+            // We have to define the root of the AST the first time,
+            // so we'll check if its been set
+            if (this.abstractSyntaxTree.getRoot() != null) {
+                astNode.addChild(newNode);
+                astNode = newNode;
+                var newScope = new TSCompiler.Scope(this.scopeName);
+                _Log_.printMessage("Created Scope " + newScope.getName() + ".");
+                this.scopeName++;
+                newScope.setParent(scope);
+                this.scopes.push(newScope);
+                // Statement list is up next, if there is one
+                if (cstNode.children.length > 2) {
+                    this.analyzeStatementList(cstNode.children[1], astNode, newScope);
+                }
+            }
+            else {
+                this.abstractSyntaxTree.setRoot(newNode);
+                astNode = newNode;
+                this.scopes.push(scope);
+                // Statement list is up next, if there is one
+                if (cstNode.children.length > 2) {
+                    this.analyzeStatementList(cstNode.children[1], astNode, scope);
+                }
             }
         };
-        SemAnalysis.prototype.parseProgram = function () {
-            this.parseBlock();
-            //console.log("this = " + this);
-            this.matchParse(EOP.type);
-            _SymbolTree_.kick();
-            _SymbolTree_.kick();
-        };
-        SemAnalysis.prototype.parseBlock = function () {
-            this.scope = this.scope + 1;
-            this.scopeLevel = this.scopeLevel + 1;
-            _SymbolTree_.addNode("ScopeLevel: " + this.scope, "brach", this.scope);
-            this.matchParse(L_BRACE.type);
-            //_SymbolTree_.addNode("{", "leaf");
-            this.parseStatmentL();
-            //_SymbolTree_.kick();
-            //_SymbolTree_.addNode("StatementList", "")
-            this.matchParse(R_BRACE.type);
-            this.scopeLevel = this.scopeLevel - 1;
-            //_SymbolTree_.addNode("}", "leaf");
-            _SymbolTree_.kick();
-        };
-        SemAnalysis.prototype.parseStatmentL = function () {
-            //_SymbolTree_ .addNode("StatementList", "branch");
-            if (_CurrentT_.type === PRINT.type ||
-                _CurrentT_.type === ID.type ||
-                _CurrentT_.type === INT.type ||
-                _CurrentT_.type === BOOLEAN.type ||
-                _CurrentT_.type === STRING.type ||
-                _CurrentT_.type === L_BRACE.type ||
-                _CurrentT_.type === WHILE.type ||
-                _CurrentT_.type === IF.type) {
-                this.parseStatments();
-                //this.parseStatmentL();
-                _SymbolTree_.kick();
+        sa.prototype.analyzeStatementList = function (cstNode, astNode, scope) {
+            // Handle the epsilon production
+            if (!cstNode) {
+                return;
             }
+            this.analyzeStatement(cstNode.children[0], astNode, scope);
+            this.analyzeStatementList(cstNode.children[1], astNode, scope);
         };
-        SemAnalysis.prototype.parseStatments = function () {
-            switch (_CurrentT_.type) {
-                case PRINT.type:
-                    this.parsePrint();
+        sa.prototype.analyzeStatement = function (cstNode, astNode, scope) {
+            switch (cstNode.children[0].getType()) {
+                case "Print Statement":
+                    this.analyzePrintStatement(cstNode.children[0], astNode, scope);
                     break;
-                case ID.type:
-                    this.parseAssign();
+                case "Assignment Statement":
+                    this.analyzeAssignmentStatement(cstNode.children[0], astNode, scope);
                     break;
-                case STRING.type:
-                case INT.type:
-                case BOOLEAN.type:
-                    this.parseVar();
+                case "Variable Declaration":
+                    this.analyzeVariableDeclaration(cstNode.children[0], astNode, scope);
                     break;
-                case WHILE.type:
-                    this.parseWhile();
+                case "While Statement":
+                    this.analyzeWhileStatement(cstNode.children[0], astNode, scope);
                     break;
-                case IF.type:
-                    this.parseIf();
+                case "If Statement":
+                    this.analyzeIfStatement(cstNode.children[0], astNode, scope);
+                    break;
+                case "Block":
+                    this.analyzeBlock(cstNode.children[0], scope, astNode);
                     break;
                 default:
-                    this.parseBlock();
+                    _Log_.printError("Statement undefined. " + cstNode.getLineNumber() + "----Semantic Analyzer");
+                    throw new Error("Undefined statement passed to analyzeStatement(). This shouldn't happen.");
             }
-            _SymbolTree_.kick();
         };
-        SemAnalysis.prototype.parseVar = function () {
-            //_SymbolTree_ .addNode();
-            switch (_CurrentT_.type) {
-                case STRING.type:
-                    this.matchParse(STRING.type);
-                    this.parseId();
-                    this.checkVarName(_SymbolTree_.cur);
-                    _Symbol_ = new TSCompiler.Symbol(this.variableKey, this.variableType, this.variableLine, this.variableCol, _SymbolTree_.cur.scope, this.scopeLevel, false, false);
-                    _SymbolTree_.cur.symbols.push(_Symbol_);
-                    this.symbolArray.push(_Symbol_);
-                    this.symbolTableStrings = this.symbolTableStrings + "<tr ><td>" + _Symbol_.key + "</td><td>" + _Symbol_.type + "</td><td>" + _Symbol_.scope + "</td><td>" + _Symbol_.scopeLevel + "</td><td>" + _Symbol_.line + "</td><td>" + _Symbol_.col + "</td></tr>";
-                    this.variableKey = "";
-                    this.variableType = "";
-                    this.variableLine = 0;
-                    break;
-                case INT.type:
-                    this.matchParse(INT.type);
-                    this.parseId();
-                    break;
-                case BOOLEAN.type:
-                    this.matchParse(BOOLEAN.type);
-                    this.parseId();
-                    break;
-                default:
-                    _Log_.printError("Expected String or Int or Boolean");
-                //throw new Error("Something broke in parser.");
+        sa.prototype.analyzePrintStatement = function (cstNode, astNode, scope) {
+            var newNode = new TSCompiler.Node("Print Statement");
+            astNode.addChild(newNode);
+            astNode = newNode;
+            this.analyzeExpression(cstNode.children[2], astNode, scope);
+        };
+        sa.prototype.analyzeAssignmentStatement = function (cstNode, astNode, scope) {
+            // console.log(cstNode);
+            var newNode = new TSCompiler.Node("Assignment Statement");
+            // Add the identifier to the AST
+            var id = new TSCompiler.Node(cstNode.children[0].children[0].getValue());
+            newNode.addChild(id);
+            newNode.setLineNumber(cstNode.children[0].children[0].getLineNumber());
+            astNode.addChild(newNode);
+            astNode = newNode;
+            this.analyzeExpression(cstNode.children[2], astNode, scope);
+            // First, make sure the ID exists
+            _Log_.printMessage("Checking for identifier '" + cstNode.children[0].children[0].getValue() + "' in Scope " + scope.getName() + ".");
+            var scopeCheck = scope.findIdentifier(cstNode.children[0].children[0].getValue());
+            if (!scopeCheck) {
+                _Log_.printError("Identifier '" + cstNode.children[0].children[0].getValue() + "' not in scope. " + astNode.getLineNumber() + "----Semantic Analyzer");
+                throw new Error("ID not in scope, breaking.");
             }
-            _SymbolTree_.kick();
-        };
-        SemAnalysis.prototype.parsePrint = function () {
-            this.matchParse(PRINT.type);
-            this.matchParse(L_PAREN.type);
-            this.parseExpr();
-            this.matchParse(R_PAREN.type);
-            _SymbolTree_.kick();
-        };
-        SemAnalysis.prototype.parseAssign = function () {
-            var idKey = "";
-            this.parseId();
-            this.checkVarDeclared(_SymbolTree_.cur, "assigned");
-            this.checkVarType(_SymbolTree_.cur, "assigned");
-            var idType = this.checkedType;
-            this.declareInit(_SymbolTree_.cur);
-            this.matchParse(ASSIGN.type);
-            var experType = this.parseExpr();
-            if (idType === experType) {
-                //printSATypeCheckMessage(idKey,idType,"assigned",experType);
+            _Log_.printMessage("Found '" + cstNode.children[0].children[0].getValue() + "' in Scope " + scope.getName() + ".");
+            // Then, type check it
+            _Log_.printMessage("Checking if identifier '" + cstNode.children[0].children[0].getValue() + "' is being assigned the type it was declared.");
+            var typeCheck = scope.confirmType(cstNode.children[0].children[0].getValue(), astNode.children[1]);
+            if (!typeCheck) {
+                _Log_.printError("Type mismatch. Expected " + scope.getTypeOfSymbol(cstNode.children[0].children[0].getValue()) + "." + astNode.getLineNumber() + "-----Semantic Analyzer");
+                throw new Error("Type mismatch, breaking.");
             }
-            else {
-                _Log_.printError(idKey + ":" + idType + "assigned " + experType);
-            }
-            _SymbolTree_.kick();
+            _Log_.printMessage("Identifier assigned successfully.");
         };
-        SemAnalysis.prototype.parseWhile = function () {
-            this.matchParse(WHILE.type);
-            this.parseBoolean();
-            this.parseBlock();
-            _SymbolTree_.kick();
+        sa.prototype.analyzeVariableDeclaration = function (cstNode, astNode, scope) {
+            var newNode = new TSCompiler.Node("Variable Declaration");
+            // Add the type and value of the variable to the AST
+            var type = new TSCompiler.Node(cstNode.children[0].getValue());
+            var value = new TSCompiler.Node(cstNode.children[1].children[0].getValue());
+            newNode.addChild(type);
+            newNode.addChild(value);
+            astNode.addChild(newNode);
+            var newSymbol = new TSCompiler.Symbol(cstNode.children[1].children[0].getValue(), cstNode.children[0].getValue(), cstNode.children[0].getLineNumber());
+            scope.addSymbol(newSymbol);
+            _Log_.printMessage("Item added to Symbol Table: " + newSymbol.getType() + " " + newSymbol.getName() +
+                " in Scope " + scope.getName() + ".");
         };
-        SemAnalysis.prototype.parseIf = function () {
-            this.matchParse(IF.type);
-            this.parseBoolean();
-            this.parseBlock();
-            _SymbolTree_.kick();
+        sa.prototype.analyzeWhileStatement = function (cstNode, astNode, scope) {
+            var newNode = new TSCompiler.Node("While Statement");
+            astNode.addChild(newNode);
+            astNode = newNode;
+            this.analyzeBooleanExpression(cstNode.children[1], astNode, scope);
+            this.analyzeBlock(cstNode.children[2], scope, astNode);
         };
-        //Work on!!
-        SemAnalysis.prototype.parseExpr = function () {
-            var experType = "";
-            switch (_CurrentT_.type) {
-                // IntExpr
-                case DIGIT.type:
-                    experType = this.parseInt();
+        sa.prototype.analyzeIfStatement = function (cstNode, astNode, scope) {
+            var newNode = new TSCompiler.Node("If Statement");
+            astNode.addChild(newNode);
+            astNode = newNode;
+            this.analyzeBooleanExpression(cstNode.children[1], astNode, scope);
+            this.analyzeBlock(cstNode.children[2], scope, astNode);
+        };
+        sa.prototype.analyzeExpression = function (cstNode, astNode, scope) {
+            switch (cstNode.children[0].getType()) {
+                case "Int Expression":
+                    this.analyzeIntExpression(cstNode.children[0], astNode, scope);
                     break;
-                // String
-                case QUOTE.type:
-                    this.parseString();
+                case "String Expression":
+                    this.analyzeStringExpression(cstNode.children[0], astNode, scope);
                     break;
-                // Boolean
-                case L_PAREN.type:
-                case TRUE.type:
-                case FALSE.type:
-                    experType = this.parseBoolean();
+                case "Boolean Expression":
+                    this.analyzeBooleanExpression(cstNode.children[0], astNode, scope);
                     break;
-                // ID
-                case ID.type:
-                    this.parseId();
-                    this.checkVarDeclared(_SymbolTree_.cur, "used");
-                    this.declareUsed(_SymbolTree_.cur);
-                    this.checkVarType(_SymbolTree_.cur, "used");
-                    experType = this.checkedType;
+                case "Identifier":
+                    var id = new TSCompiler.Node(cstNode.children[0].children[0].getValue());
+                    id.setIdentifier(true);
+                    astNode.addChild(id);
+                    var search = scope.findIdentifier(cstNode.children[0].children[0].getValue());
+                    if (!search) {
+                        _Log_.printError("Identifier '" + cstNode.children[0].children[0].getValue() + "' not found." + cstNode.children[0].children[0].getLineNumber() + "-----Semantic Analysis");
+                        throw new Error("ID not found.");
+                    }
                     break;
                 default:
-                    _Log_.printParseError("Expected to finish assigning variable");
-                //throw new Error("Something broke in parser.");
+                    _Log_.printError("Undefined expression. " + cstNode.getLineNumber() + "-----Semantic Analyzer");
+                    throw new Error("Undefined expression. This shouldn't happen.");
             }
-            _SymbolTree_.kick();
-            return experType;
         };
-        //Work on!!
-        SemAnalysis.prototype.parseInt = function () {
-            var intExperType = "";
-            //console.log(_CurrentT_.value);
-            if (_CurrentT_.type === DIGIT.type) {
-                var intExper1 = _CurrentT_.value;
-                var intExperType = _CurrentT_.value;
-                //_SymbolTree_.addNode(_CurrentT_.value, "leaf");
-                this.matchParse(DIGIT.type);
-                if (_CurrentT_.type === PLUS.type) {
-                    this.matchParse(PLUS.type);
-                    var intExper2 = this.parseExpr();
-                    if (intExper1 == intExper2) {
-                        intExperType = intExper2;
-                    }
-                    else {
-                        _Log_.printError("" + intExper1 + " Added: " + intExper2);
-                    }
-                }
-            }
-            _SymbolTree_.kick();
-            return intExperType;
-        };
-        //Work on!!
-        SemAnalysis.prototype.parseString = function () {
-            this.matchParse(QUOTE.type);
-            var stringExperType = this.parseChar();
-            this.matchParse(QUOTE.type);
-            _SymbolTree_.kick();
-            return stringExperType;
-        };
-        //Work on!!
-        SemAnalysis.prototype.parseBoolean = function () {
-            var booleanExperType = "";
-            if (_CurrentT_.type === TRUE.type) {
-                this.matchParse(TRUE.type);
-            }
-            else if (_CurrentT_.type === FALSE.type) {
-                this.matchParse(FALSE.type);
+        sa.prototype.analyzeIntExpression = function (cstNode, astNode, scope) {
+            if (cstNode.children.length === 1) {
+                var value = new TSCompiler.Node(cstNode.children[0].getValue());
+                value.setInt(true);
+                astNode.addChild(value);
             }
             else {
-                this.matchParse(L_PAREN.type);
-                this.parseExpr();
-                if (_CurrentT_.type === EQUAL.type) {
-                    this.matchParse(EQUAL.type);
-                    this.parseExpr();
-                    this.matchParse(R_PAREN.type);
+                var value = new TSCompiler.Node(cstNode.children[0].getValue());
+                value.setInt(true);
+                astNode.addChild(value);
+                var plus = new TSCompiler.Node("+");
+                astNode.addChild(plus);
+                astNode = plus;
+                console.log(cstNode.children[2].children[0]);
+                // So the grammar says it can be an expression, but thats not exactly true
+                // It can be an Identifier or an Int Expression
+                // So if we check which it is, and call the appropriate function, we'll
+                // fix the bug
+                var typeCheck = cstNode.children[2].children[0];
+                if (typeCheck.getType() === "Boolean Expression" || typeCheck.getType() === "String Expression") {
+                    _Log_.printError("Type mismatch, expected Int Expression. " + typeCheck.getLineNumber() + "------Semantic Analyzer");
+                    throw new Error("Type mismatch.");
                 }
-                else if (_CurrentT_.type === N_EQUAL.type) {
-                    this.matchParse(N_EQUAL.type);
-                    this.parseExpr();
-                    this.matchParse(R_PAREN.type);
-                }
-            }
-            _SymbolTree_.kick();
-            return booleanExperType;
-        };
-        SemAnalysis.prototype.parseId = function () {
-            //_SymbolTree_.addNode(_CurrentT_.type, "leaf");
-            this.variableKey = _Tokens_[_TokenIndex_].value;
-            this.variableLine = _Tokens_[_TokenIndex_].rowNum;
-            this.variableCol = _Tokens_[_TokenIndex_].colNum;
-            this.matchParse(ID.type);
-            _SymbolTree_.kick();
-        };
-        SemAnalysis.prototype.parseChar = function () {
-            if (_CurrentT_.type === SPACE.type) {
-                this.matchParse(SPACE.type);
-                this.parseChar();
-                _SymbolTree_.kick();
-            }
-            else
-                (_CurrentT_.type === CHAR.type);
-            {
-                //_SymbolTree_.addNode(_CurrentT_.value, "leaf");
-                this.matchParse(CHAR.type);
-                // if(_CurrentT_.type === QUOTE.type){
-                //     this.parseString();
-                // }
-                // else{
-                this.parseChar();
-                // }
-                _SymbolTree_.kick();
+                this.analyzeExpression(cstNode.children[2], astNode, scope);
             }
         };
-        SemAnalysis.prototype.matchParse = function (type) {
-            if (_CurrentT_.value === "{" ||
-                _CurrentT_.value === "}" ||
-                _CurrentT_.value === "(" ||
-                _CurrentT_.value === ")" ||
-                _CurrentT_.value === "print" ||
-                _CurrentT_.value === "while" ||
-                _CurrentT_.value === "if" ||
-                _CurrentT_.value === "=" ||
-                _CurrentT_.value === "==" ||
-                _CurrentT_.value === "!=" ||
-                _CurrentT_.value === '"' ||
-                _CurrentT_.value === "+") {
-                console.log("NO {");
-            }
-            else if (_CurrentT_.type === type) {
-                console.log(_CurrentT_.value);
-                //_Log_.printMessage("Parse: Successfully matched " + type + " token.");
+        sa.prototype.analyzeStringExpression = function (cstNode, astNode, scope) {
+            if (cstNode.children.length > 2) {
+                this.analyzeCharList(cstNode.children[1], astNode, "", scope);
             }
             else {
-                _Log_.printParseError("Expected " + type + ", found " + _CurrentT_.type);
-                // throw new Error("Error in Parse. Ending execution.");
-            }
-            if (_TokenIndex_ < _Tokens_.length) {
-                _CurrentT_ = _Tokens_[_TokenIndex_ + 1];
-                _TokenIndex_++;
+                var newNode = new TSCompiler.Node("");
+                astNode.addChild(newNode);
             }
         };
-        SemAnalysis.prototype.checkUsed = function (node) {
-            for (var symbol = 0; symbol < node.symbols.length; symbol++) {
-                if (node.symbols[symbol].initialized == true && node.symbols[symbol].utilized == false) {
-                    _Log_.printWarning("Unused: " + node.symbols[symbol].key);
-                }
-            }
-            if (node.children.length != 0) {
-                node.children.forEach(function (child) {
-                    this.checkUsed(child);
-                });
-            }
-        };
-        SemAnalysis.prototype.checkInit = function (node) {
-            for (var symbol = 0; symbol < node.symbols.length; symbol++) {
-                if (node.symbols[symbol].initialized == false) {
-                    _Log_.printWarning("Not Init: " + node.symbols[symbol].key);
-                }
-            }
-            if (node.children.length != 0) {
-                node.children.forEach(function (child) {
-                    this.checkInit(child);
-                });
-            }
-        };
-        SemAnalysis.prototype.checkVarDeclared = function (node, usage) {
-            if ((node.parent != undefined || node.parent != null) && node.symbols.length > 0) {
-                for (var symbol = 0; symbol < node.symbols.length; symbol++) {
-                    if (node.symbols[symbol].getKey() == _Tokens_[_TokenIndex_ - 1].value) {
-                        _Log_.printWarning("Declared: " + node.symbols[symbol].key);
-                    }
-                    else if (symbol == node.symbols.length - 1 && (node.parent != undefined || node.parent != null)) {
-                        this.checkVarDeclared(node.parent, usage);
-                        break;
-                    }
-                }
-            }
-            else if (node.parent != undefined || node.parent != null) {
-                this.checkVarDeclared(node.parent, usage);
+        sa.prototype.analyzeBooleanExpression = function (cstNode, astNode, scope) {
+            if (cstNode.children.length > 1) {
+                // The next node is going to be the boolop
+                var newNode = new TSCompiler.Node(cstNode.children[2].getValue());
+                astNode.addChild(newNode);
+                astNode = newNode;
+                // then we need to evaluate the expressions on both sides of it
+                this.analyzeExpression(cstNode.children[1], astNode, scope);
+                this.analyzeExpression(cstNode.children[3], astNode, scope);
             }
             else {
-                _Log_.printError(_Tokens_[_TokenIndex_ - 1].value + "Use: " + usage);
+                var newNode = new TSCompiler.Node(cstNode.children[0].getValue());
+                newNode.setBoolean(true);
+                astNode.addChild(newNode);
             }
         };
-        SemAnalysis.prototype.checkVarType = function (node, usage) {
-            if ((node.parent != undefined || node.parent != null) && node.symbols.length > 0) {
-                for (var symbol = 0; symbol < node.symbols.length; symbol++) {
-                    if (node.symbols[symbol].getKey() == _Tokens_[_TokenIndex_ - 1].value) {
-                        this.checkedType = node.symbols[symbol].getType();
-                        _Log_.printMessage(_Tokens_[_TokenIndex_ - 1].value + "Check: " + this.checkedType);
-                        break;
-                    }
-                    else if (symbol == node.symbols.length - 1 && (node.parent != undefined || node.parent != null)) {
-                        this.checkVarType(node.parent, usage);
-                        break;
-                    }
-                }
+        sa.prototype.analyzeCharList = function (cstNode, astNode, string, scope) {
+            if (cstNode.children.length === 1) {
+                string += cstNode.children[0].getValue();
+                var newNode = new TSCompiler.Node(string);
+                astNode.addChild(newNode);
             }
-            else if (node.parent != undefined || node.parent != null) {
-                this.checkVarType(node.parent, usage);
+            else {
+                string += cstNode.children[0].getValue();
+                this.analyzeCharList(cstNode.children[1], astNode, string, scope);
             }
         };
-        SemAnalysis.prototype.declareUsed = function (node) {
-            if ((node.parent != undefined || node.parent != null) && node.symbols.length > 0) {
-                for (var symbol = 0; symbol < node.symbols.length; symbol++) {
-                    if (node.symbols[symbol].getKey() == _Tokens_[_TokenIndex_ - 1].value) {
-                        node.symbols[symbol].utilized = true;
-                        _Log_.printMessage(_Tokens_[_TokenIndex_ - 1].value);
-                        break;
-                    }
-                    else if (symbol == node.symbols.length - 1 && (node.parent != undefined || node.parent != null)) {
-                        this.declareUsed(node.parent);
-                        break;
-                    }
-                }
-            }
-            else if (node.parent != undefined || node.parent != null) {
-                this.declareUsed(node.parent);
-            }
-        };
-        SemAnalysis.prototype.declareInit = function (node) {
-            if ((node.parent != undefined || node.parent != null) && node.symbols.length > 0) {
-                for (var symbol = 0; symbol < node.symbols.length; symbol++) {
-                    if (node.symbols[symbol].getKey() == _Tokens_[_TokenIndex_ - 1].value) {
-                        node.symbols[symbol].initialized = true;
-                        _Log_.printMessage(_Tokens_[_TokenIndex_ - 1].value);
-                        break;
-                    }
-                    else if (symbol == node.symbols.length - 1 && (node.parent != undefined || node.parent != null)) {
-                        this.declareInit(node.parent);
-                        break;
-                    }
-                }
-            }
-            else if (node.parent != undefined || node.parent != null) {
-                this.declareInit(node.parent);
-            }
-        };
-        SemAnalysis.prototype.checkVarName = function (node) {
-            for (var symbol = 0; symbol < node.symbols.length; symbol++) {
-                if (this.variableKey == node.symbols[symbol].getKey()) {
-                    _Log_.printError(this.variableKey + node.symbols[symbol].getLine() + node.symbols[symbol].getCol());
-                }
-            }
-        };
-        return SemAnalysis;
+        return sa;
     }());
-    TSCompiler.SemAnalysis = SemAnalysis;
+    TSCompiler.sa = sa;
 })(TSCompiler || (TSCompiler = {}));

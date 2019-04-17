@@ -28,6 +28,7 @@ var TSCompiler;
                 //console.log(_Tree_.toString());
                 // _Log_.printCSTMessage("\nCST for program" + p + "...");
                 _Log_.printAST();
+                _Log_.logTokens();
             }
         };
         ast.prototype.parseProgram = function () {
@@ -89,7 +90,6 @@ var TSCompiler;
         };
         ast.prototype.parseVar = function () {
             _Tree_.addNode("VariableDeclaration", "branch");
-            _Log_.printParseMessage("PARSE - parseVar()");
             switch (_CurrentT_.type) {
                 case STRING.type:
                     this.matchParse(STRING.type);

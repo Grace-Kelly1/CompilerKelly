@@ -6,6 +6,7 @@
 /// <reference path="token.ts"/>
 /// <reference path="utils.ts"/>
 /// <reference path="ast.ts"/>
+/// <reference path="sa.ts"/>
 var TSCompiler;
 (function (TSCompiler) {
     var lexer = /** @class */ (function () {
@@ -112,10 +113,11 @@ var TSCompiler;
                                 _Log_.printCSTMessage("\nCST for program" + programCount + "...");
                                 _Parser_.parse();
                                 //_Log_.printMessage("\nSA for program" + programCount + "...");
-                                //_SA_.SA();
+                                // _SA_.performAnalysis();
                                 _Log_.printASTMessage("\nAST for program" + programCount + "...");
                                 //Not defined?
                                 _AST_.Ast();
+                                _SA_.performAnalysis();
                                 // _Log_.printCST();
                                 programCount++;
                             }

@@ -1,430 +1,270 @@
-/// <reference path="globals.ts"/>
-/// <reference path="logger.ts"/>
-/// <reference path="token.ts"/>
-/// <reference path="utils.ts"/>
-/// <reference path="lexer.ts"/>
-/// <reference path="Tree.ts"/>
-/// <reference path="symbol.ts"/>
-/// <reference path="node.ts"/>
+///<reference path='tree.ts' />
+///<reference path='scope.ts' />
+///<reference path='globals.ts' />
+///<reference path='node.ts' />
+///<reference path='symbol.ts' />
 
 
 module TSCompiler{
-    export class SemAnalysis{
-        private scope = -1;
-        private scopeLevel = -1;
-        private saErrorCount = 0;
-        private saWarningCount = 0;
-        private currentToken = 0;
-        private symbolTableStrings = "";
-        private symbolArray = [];
-        private variableKey = "";
-        private variableType = "";
-        private variableLine = 0;
-        private variableCol = 0;
-        private checkedType = "";
+    export class sa{
+        private abstractSyntaxTree: Tree;
+        private scopes: Scope[];
+        private scopeName: number;
 
-        public SA(){
-            var parseCompleted = true;
-            _TokenIndex_ = 0;
-            _CurrentT_ = _Tokens_[_TokenIndex_];
-            //console.log(_CurrentT_.type);
-            
-            _Log_.printMessage("\nBeginning Semantic Analysis Session...");
-            
-            _SymbolTree_ = new symbolTree();
-            //_SymbolTree_ .addNode("Root", "branch");
-            this.parseProgram();
-            this.checkInit(_SymbolTree_.root);
-            this.checkUsed(_SymbolTree_.root);
-            if(this.saErrorCount == 0){
-                parseCompleted = true;
-                _Log_.printMessage("\nSemantic Analysis Session Finished.");
-                _Log_.printSymbolTable(this.symbolTableStrings);
-            }
-            
+
+        public performAnalysis(){
+            _Log_.printMessage("\nBeginning Semantic Analysis.\n");
+            this.scopes = [];
+            this.scopeName = 0;
+            this.abstractSyntaxTree = new Tree();
+
+            this.buildAST(_Tree_.getRoot());
+            _Log_.printSymbolTable(this.scopes);
+            _Log_.printMessage("Semantic Analysis complete.");
         }
 
-        public parseProgram(){
-            this.parseBlock();
-            //console.log("this = " + this);
-            this.matchParse(EOP.type);
-            _SymbolTree_.kick();
-            _SymbolTree_ .kick();
+        public buildAST(root: Node) {
+            this.analyzeProgram(root);
         }
 
-        public parseBlock(){
-            this.scope = this.scope + 1;
-            this.scopeLevel = this.scopeLevel + 1;
-            _SymbolTree_ .addNode("ScopeLevel: " + this.scope, "brach", this.scope);
-            this.matchParse(L_BRACE.type);
-            //_SymbolTree_.addNode("{", "leaf");
-            this.parseStatmentL();
-            //_SymbolTree_.kick();
-            //_SymbolTree_.addNode("StatementList", "")
-            this.matchParse(R_BRACE.type);
-            this.scopeLevel = this.scopeLevel -1;
-            //_SymbolTree_.addNode("}", "leaf");
-            _SymbolTree_ .kick();
+        public  analyzeProgram(node: Node) {
+            // Only one thing to do here
+            var newScope = new Scope(this.scopeName);
+            _Log_.printMessage("Created Scope " + newScope.getName() + ".");
+            this.scopeName++;
+            this.analyzeBlock(node.children[0], newScope);
         }
 
-        public parseStatmentL(){
-            //_SymbolTree_ .addNode("StatementList", "branch");
-            if (_CurrentT_.type === PRINT.type ||
-                _CurrentT_.type === ID.type ||
-                _CurrentT_.type === INT.type ||
-                _CurrentT_.type === BOOLEAN.type ||
-                _CurrentT_.type === STRING.type ||
-                _CurrentT_.type === L_BRACE.type ||
-                _CurrentT_.type === WHILE.type ||
-                _CurrentT_.type === IF.type
-            ) {
-                this.parseStatments();
-                //this.parseStatmentL();
-                _SymbolTree_ .kick();
-            }
-        }
+        public  analyzeBlock(cstNode: Node, scope: Scope, astNode?: Node) {
+            var newNode = new Node("Block");
 
-        public  parseStatments(){
-            switch (_CurrentT_.type) {
-                case PRINT.type:
-                    this.parsePrint( );
-                    break;
-                case ID.type:
-                    this.parseAssign();
-                    break;
-                case STRING.type:
-                case INT.type:
-                case BOOLEAN.type:
-                    this.parseVar();
-                    break;
-                case WHILE.type:
-                    this.parseWhile();
-                    break;
-                case IF.type:
-                    this.parseIf();
-                    break;
-                default:
-                    this.parseBlock();
-            }
-            _SymbolTree_ .kick();
-        }
+            // We have to define the root of the AST the first time,
+            // so we'll check if its been set
+            if (this.abstractSyntaxTree.getRoot() != null) {
+                astNode.addChild(newNode);
+                astNode = newNode;
 
-        public parseVar(){
-            //_SymbolTree_ .addNode();
-            switch (_CurrentT_.type) {
-                case STRING.type:
-                this.matchParse(STRING.type);
-                    this.parseId();
-                    this.checkVarName(_SymbolTree_.cur);
-                    _Symbol_ = new Symbol(this.variableKey, this.variableType, this.variableLine, this.variableCol, _SymbolTree_.cur.scope, this.scopeLevel, false, false);
-                    _SymbolTree_.cur.symbols.push(_Symbol_);
-                    this.symbolArray.push(_Symbol_);
-                    this.symbolTableStrings = this.symbolTableStrings + "<tr ><td>" + _Symbol_.key + "</td><td>" + _Symbol_.type + "</td><td>" + _Symbol_.scope + "</td><td>" + _Symbol_.scopeLevel + "</td><td>" + _Symbol_.line + "</td><td>" + _Symbol_.col + "</td></tr>";
-                    this.variableKey = "";
-                    this.variableType = "";
-                    this.variableLine = 0;
-                    break;
-                case INT.type:
-                this.matchParse(INT.type);
-                    this.parseId();
-                    break;
-                case BOOLEAN.type:
-                this.matchParse(BOOLEAN.type);
-                    this.parseId();
-                    break;
-                default:
-                    _Log_.printError("Expected String or Int or Boolean");
-                    //throw new Error("Something broke in parser.");
-            }
-            _SymbolTree_ .kick();
-        }
-
-        public parsePrint(){
-            this.matchParse(PRINT.type);
-            this.matchParse(L_PAREN.type);
-            this.parseExpr();
-            this.matchParse(R_PAREN.type);
-            _SymbolTree_ .kick();
-
-        }
-
-        public parseAssign(){
-            var idKey = "";
-            this.parseId();
-            this.checkVarDeclared(_SymbolTree_.cur, "assigned")
-            this.checkVarType(_SymbolTree_.cur, "assigned");
-            var idType = this.checkedType;
-            this.declareInit(_SymbolTree_.cur);
-            this.matchParse(ASSIGN.type);
-            var experType = this.parseExpr();
-            if (idType === experType){
-                //printSATypeCheckMessage(idKey,idType,"assigned",experType);
-            }
-            else{
-                _Log_.printError(idKey + ":" + idType + "assigned " + experType);
-            }
-
-            _SymbolTree_ .kick();
-        }
-
-        public parseWhile(){
-            this.matchParse(WHILE.type);
-            this.parseBoolean();
-            this.parseBlock();
-            _SymbolTree_ .kick();
-        }
-
-        public parseIf(){
-            this.matchParse(IF.type);
-            this.parseBoolean();
-            this.parseBlock();
-            _SymbolTree_ .kick();
-        }
-        //Work on!!
-        public parseExpr(){
-            var experType = "";
-            switch (_CurrentT_.type) {
-                // IntExpr
-                case DIGIT.type:
-                experType =this.parseInt();
-                    break;
-                // String
-                case QUOTE.type:
-                this.parseString();
-                    break;
-                // Boolean
-                case L_PAREN.type:
-                case TRUE.type:
-                case FALSE.type:
-                experType =this.parseBoolean();
-                    break;
-                // ID
-                case ID.type:
-                    this.parseId();
-                    this.checkVarDeclared(_SymbolTree_.cur, "used");
-                    this.declareUsed(_SymbolTree_.cur);
-                    this.checkVarType(_SymbolTree_.cur, "used");
-                     experType = this.checkedType;
-                    break;
-                default:
-                    _Log_.printParseError("Expected to finish assigning variable");
-                    //throw new Error("Something broke in parser.");
-            }
-            _SymbolTree_ .kick();
-            return experType;
-        }
-        //Work on!!
-        public parseInt(){
-            var intExperType = "";
-            //console.log(_CurrentT_.value);
-            if (_CurrentT_.type === DIGIT.type) {
-                var intExper1 = _CurrentT_.value;
-                var intExperType = _CurrentT_.value;
-                //_SymbolTree_.addNode(_CurrentT_.value, "leaf");
-                this.matchParse(DIGIT.type);
-                if (_CurrentT_.type === PLUS.type) {
-                    this.matchParse(PLUS.type);
-                    var intExper2 = this.parseExpr();
-                    if(intExper1 == intExper2){
-                        intExperType = intExper2;
-                    } else {
-                        _Log_.printError("" + intExper1 + " Added: " +intExper2);
-                    }
+                var newScope = new Scope(this.scopeName);
+                _Log_.printMessage("Created Scope " + newScope.getName() + ".");
+                this.scopeName++;
+                newScope.setParent(scope);
+                this.scopes.push(newScope);
+                // Statement list is up next, if there is one
+                if (cstNode.children.length > 2) {
+                    this.analyzeStatementList(cstNode.children[1], astNode, newScope)
                 }
-            }
-            _SymbolTree_ .kick();
-            return intExperType;
-        }
-        //Work on!!
-        public parseString(){
-            this.matchParse(QUOTE.type);
-            var stringExperType = this.parseChar();
-            this.matchParse(QUOTE.type);
-            _SymbolTree_ .kick();
-            return stringExperType;
-        }
-        //Work on!!
-        public parseBoolean(){
-            var booleanExperType = "";
-            if (_CurrentT_.type === TRUE.type) {
-                this.matchParse(TRUE.type);
-            } else if (_CurrentT_.type === FALSE.type) {
-                 
-                 this.matchParse(FALSE.type);
+
             } else {
-                this.matchParse(L_PAREN.type);
-                this.parseExpr();
-                if (_CurrentT_.type === EQUAL.type) {
-                    this.matchParse(EQUAL.type);
-                    this.parseExpr();
-                    this.matchParse(R_PAREN.type);
-                } else if (_CurrentT_.type === N_EQUAL.type) {
-                    this.matchParse(N_EQUAL.type);
-                    this.parseExpr();
-                    this.matchParse(R_PAREN.type);
+                this.abstractSyntaxTree.setRoot(newNode);
+                astNode = newNode;
+
+                this.scopes.push(scope);
+                // Statement list is up next, if there is one
+                if (cstNode.children.length > 2) {
+                    this.analyzeStatementList(cstNode.children[1], astNode, scope)
                 }
             }
-            _SymbolTree_ .kick();
-            return booleanExperType;
         }
 
-        public parseId(){
-            //_SymbolTree_.addNode(_CurrentT_.type, "leaf");
-            this.variableKey = _Tokens_[_TokenIndex_].value;
-            this.variableLine = _Tokens_[_TokenIndex_].rowNum;
-            this.variableCol = _Tokens_[_TokenIndex_].colNum;
-            this.matchParse(ID.type);
-            _SymbolTree_ .kick();
+        public  analyzeStatementList(cstNode: Node, astNode: Node, scope: Scope) {
+            // Handle the epsilon production
+            if (!cstNode) {
+                return;
+            }
+
+            this.analyzeStatement(cstNode.children[0], astNode, scope);
+            this.analyzeStatementList(cstNode.children[1], astNode, scope);
         }
 
-        public parseChar(){
-            if (_CurrentT_.type === SPACE.type) 
-            {
-                this.matchParse(SPACE.type);
-                this.parseChar();
-                _SymbolTree_ .kick();
-            } 
-            else(_CurrentT_.type === CHAR.type) 
-            {
-                //_SymbolTree_.addNode(_CurrentT_.value, "leaf");
-                this.matchParse(CHAR.type);
-                // if(_CurrentT_.type === QUOTE.type){
-                //     this.parseString();
-                // }
-                // else{
-                this.parseChar();
-                // }
-                _SymbolTree_ .kick();
-            }
-        }
-
-        public matchParse(type){
-            if(_CurrentT_.value === "{" ||
-            _CurrentT_.value === "}"||
-            _CurrentT_.value === "(" ||
-            _CurrentT_.value === ")" ||
-            _CurrentT_.value === "print"||
-            _CurrentT_.value === "while" ||
-            _CurrentT_.value === "if" ||
-            _CurrentT_.value === "="||
-            _CurrentT_.value === "==" ||
-            _CurrentT_.value === "!=" ||
-            _CurrentT_.value === '"' ||
-            _CurrentT_.value === "+"){
-                console.log("NO {");
-            }
-
-            else if (_CurrentT_.type === type) {
-                console.log(_CurrentT_.value);
-                    
-                //_Log_.printMessage("Parse: Successfully matched " + type + " token.");
-            } 
-            else {
-                _Log_.printParseError("Expected " + type + ", found " + _CurrentT_.type);
-               // throw new Error("Error in Parse. Ending execution.");
-            }
-
-            if (_TokenIndex_ < _Tokens_.length) {
-                _CurrentT_ = _Tokens_[_TokenIndex_ + 1];
-                _TokenIndex_++;
+        public  analyzeStatement(cstNode: Node, astNode: Node, scope: Scope) {
+            switch (cstNode.children[0].getType()) {
+                case "Print Statement":
+                    this.analyzePrintStatement(cstNode.children[0], astNode, scope);
+                    break;
+                case "Assignment Statement":
+                    this.analyzeAssignmentStatement(cstNode.children[0], astNode, scope);
+                    break;
+                case "Variable Declaration":
+                    this.analyzeVariableDeclaration(cstNode.children[0], astNode, scope);
+                    break;
+                case "While Statement":
+                    this.analyzeWhileStatement(cstNode.children[0], astNode, scope);
+                    break;
+                case "If Statement":
+                    this.analyzeIfStatement(cstNode.children[0], astNode, scope);
+                    break;
+                case "Block":
+                    this.analyzeBlock(cstNode.children[0], scope, astNode);
+                    break;
+                default:
+                    _Log_.printError("Statement undefined. " + cstNode.getLineNumber() + "----Semantic Analyzer");
+                    throw new Error("Undefined statement passed to analyzeStatement(). This shouldn't happen.");
             }
         }
 
-        public checkUsed(node) {
-            for(var symbol = 0; symbol < node.symbols.length; symbol++) {
-                if(node.symbols[symbol].initialized == true && node.symbols[symbol].utilized == false) {
-                    _Log_.printWarning("Unused: " + node.symbols[symbol].key);
-                }
-            }
-            if(node.children.length != 0) {
-                node.children.forEach(function(child) {
-                    this.checkUsed(child);
-                });
-            }
+        public  analyzePrintStatement(cstNode: Node, astNode: Node, scope: Scope) {
+            var newNode = new Node("Print Statement");
+            astNode.addChild(newNode);
+            astNode = newNode;
+            this.analyzeExpression(cstNode.children[2], astNode, scope);
         }
-        public checkInit(node) {
-            for(var symbol = 0; symbol < node.symbols.length; symbol++) {
-                if(node.symbols[symbol].initialized == false) {
-                    _Log_.printWarning("Not Init: " + node.symbols[symbol].key);
-                }
+
+        public  analyzeAssignmentStatement(cstNode: Node, astNode: Node, scope: Scope) {
+            // console.log(cstNode);
+            var newNode = new Node("Assignment Statement");
+            // Add the identifier to the AST
+            var id = new Node(cstNode.children[0].children[0].getValue());
+            newNode.addChild(id);
+            newNode.setLineNumber(cstNode.children[0].children[0].getLineNumber());
+            astNode.addChild(newNode);
+            astNode = newNode;
+
+            this.analyzeExpression(cstNode.children[2], astNode, scope);
+
+            // First, make sure the ID exists
+            _Log_.printMessage("Checking for identifier '" + cstNode.children[0].children[0].getValue() + "' in Scope " + scope.getName() + ".");
+            var scopeCheck = scope.findIdentifier(cstNode.children[0].children[0].getValue());
+            if (!scopeCheck) {
+                _Log_.printError("Identifier '" + cstNode.children[0].children[0].getValue() + "' not in scope. " + astNode.getLineNumber() + "----Semantic Analyzer");
+                throw new Error("ID not in scope, breaking.");
             }
-            if(node.children.length != 0) {
-                node.children.forEach(function(child) {
-                    this.checkInit(child);
-                });
+            _Log_.printMessage("Found '" + cstNode.children[0].children[0].getValue() + "' in Scope " + scope.getName() + ".");
+
+            // Then, type check it
+            _Log_.printMessage("Checking if identifier '" + cstNode.children[0].children[0].getValue() + "' is being assigned the type it was declared.");
+            var typeCheck = scope.confirmType(cstNode.children[0].children[0].getValue(), astNode.children[1]);
+            if (!typeCheck) {
+                _Log_.printError("Type mismatch. Expected " + scope.getTypeOfSymbol(cstNode.children[0].children[0].getValue()) + "." + astNode.getLineNumber() + "-----Semantic Analyzer");
+                throw new Error("Type mismatch, breaking.");
             }
+            _Log_.printMessage("Identifier assigned successfully.");
         }
-        public checkVarDeclared(node,usage) {
-            if((node.parent != undefined || node.parent != null) && node.symbols.length > 0) {
-                for(var symbol = 0; symbol < node.symbols.length; symbol++) {
-                    if(node.symbols[symbol].getKey() == _Tokens_[_TokenIndex_ - 1].value) {
-                        _Log_.printWarning("Declared: " + node.symbols[symbol].key);
-                    } else if(symbol == node.symbols.length-1 && (node.parent != undefined || node.parent != null)) {
-                        this.checkVarDeclared(node.parent,usage);
-                        break;
+
+        public  analyzeVariableDeclaration(cstNode: Node, astNode: Node, scope: Scope) {
+            var newNode = new Node("Variable Declaration");
+
+            // Add the type and value of the variable to the AST
+            var type = new Node(cstNode.children[0].getValue());
+            var value = new Node(cstNode.children[1].children[0].getValue());
+            newNode.addChild(type);
+            newNode.addChild(value);
+            astNode.addChild(newNode);
+
+            var newSymbol = new Symbol(cstNode.children[1].children[0].getValue(), cstNode.children[0].getValue(), cstNode.children[0].getLineNumber());
+            scope.addSymbol(newSymbol);
+            _Log_.printMessage("Item added to Symbol Table: " + newSymbol.getType() + " " + newSymbol.getName() +
+                               " in Scope " + scope.getName() + ".")
+        }
+
+        public  analyzeWhileStatement(cstNode: Node, astNode: Node, scope: Scope) {
+            var newNode = new Node("While Statement");
+            astNode.addChild(newNode);
+            astNode = newNode;
+
+            this.analyzeBooleanExpression(cstNode.children[1], astNode, scope);
+            this.analyzeBlock(cstNode.children[2], scope, astNode);
+        }
+
+        public  analyzeIfStatement(cstNode: Node, astNode: Node, scope: Scope) {
+            var newNode = new Node("If Statement");
+            astNode.addChild(newNode);
+            astNode = newNode;
+
+            this.analyzeBooleanExpression(cstNode.children[1], astNode, scope);
+            this.analyzeBlock(cstNode.children[2], scope, astNode);
+        }
+
+        public  analyzeExpression(cstNode: Node, astNode: Node, scope: Scope) {
+            switch (cstNode.children[0].getType()) {
+                case "Int Expression":
+                    this.analyzeIntExpression(cstNode.children[0], astNode, scope);
+                    break;
+                case "String Expression":
+                    this.analyzeStringExpression(cstNode.children[0], astNode, scope);
+                    break;
+                case "Boolean Expression":
+                    this.analyzeBooleanExpression(cstNode.children[0], astNode, scope);
+                    break;
+                case "Identifier":
+                    var id = new Node(cstNode.children[0].children[0].getValue());
+                    id.setIdentifier(true);
+                    astNode.addChild(id);
+                    var search = scope.findIdentifier(cstNode.children[0].children[0].getValue());
+                    if (!search) {
+                        _Log_.printError("Identifier '" + cstNode.children[0].children[0].getValue() + "' not found."+ cstNode.children[0].children[0].getLineNumber() + "-----Semantic Analysis");
+                        throw new Error("ID not found.");
                     }
-                }
-            } else if(node.parent != undefined || node.parent != null) {
-                this.checkVarDeclared(node.parent,usage);
+                    break;
+                default:
+                    _Log_.printError("Undefined expression. " + cstNode.getLineNumber() + "-----Semantic Analyzer");
+                    throw new Error("Undefined expression. This shouldn't happen.");
+            }
+        }
+
+        public  analyzeIntExpression(cstNode: Node, astNode: Node, scope: Scope) {
+            if (cstNode.children.length === 1) {
+                var value = new Node(cstNode.children[0].getValue());
+                value.setInt(true);
+                astNode.addChild(value);
             } else {
-                _Log_.printError(_Tokens_[_TokenIndex_ - 1].value + "Use: " +usage);
-            }
-        }
-        public checkVarType(node,usage) {
-            if((node.parent != undefined || node.parent != null) && node.symbols.length > 0) {
-                for(var symbol = 0; symbol < node.symbols.length; symbol++) {
-                    if(node.symbols[symbol].getKey() == _Tokens_[_TokenIndex_ - 1].value) {
-                        this.checkedType = node.symbols[symbol].getType();
-                            _Log_.printMessage(_Tokens_[_TokenIndex_ - 1].value + "Check: " + this.checkedType);
-                        break
-                    } else if(symbol == node.symbols.length-1 && (node.parent != undefined || node.parent != null)) {
-                        this.checkVarType(node.parent,usage);
-                        break;
-                    }
-                }
-            } else if(node.parent != undefined || node.parent != null) {
-                this.checkVarType(node.parent,usage);
-            }
-        }
-        public declareUsed(node) {
-            if((node.parent != undefined || node.parent != null) && node.symbols.length > 0) {
-                for(var symbol = 0; symbol < node.symbols.length; symbol++) {
-                    if(node.symbols[symbol].getKey() == _Tokens_[_TokenIndex_ - 1].value) {
-                        node.symbols[symbol].utilized = true;
-                            _Log_.printMessage(_Tokens_[_TokenIndex_ - 1].value);
-                        break
-                    } else if(symbol == node.symbols.length-1 && (node.parent != undefined || node.parent != null)) {
-                        this.declareUsed(node.parent);
-                        break;
-                    }
-                }
-            } else if(node.parent != undefined || node.parent != null) {
-                this.declareUsed(node.parent);
-            }
-        }
-        public declareInit(node) {
-            if((node.parent != undefined || node.parent != null) && node.symbols.length > 0) {
-                for(var symbol = 0; symbol < node.symbols.length; symbol++) {
-                    if(node.symbols[symbol].getKey() == _Tokens_[_TokenIndex_ - 1].value) {
-                        node.symbols[symbol].initialized = true;
-                            _Log_.printMessage(_Tokens_[_TokenIndex_ - 1].value);
-                        break
-                    } else if(symbol == node.symbols.length-1 && (node.parent != undefined || node.parent != null)) {
-                        this.declareInit(node.parent);
-                        break;
-                    }
-                }
-            } else if(node.parent != undefined || node.parent != null) {
-                this.declareInit(node.parent);
-            }
-        }
-        public checkVarName(node) {
-            for(var symbol = 0; symbol < node.symbols.length; symbol++) {
-                if(this.variableKey == node.symbols[symbol].getKey()){
-                    _Log_.printError(this.variableKey + node.symbols[symbol].getLine() + node.symbols[symbol].getCol());
-                }
+                
+                var value = new Node(cstNode.children[0].getValue());
+                value.setInt(true);
+                astNode.addChild(value);
+
+                var plus = new Node("+");
+                astNode.addChild(plus);
+                astNode = plus;
+                console.log(cstNode.children[2].children[0]);
+                // So the grammar says it can be an expression, but thats not exactly true
+                // It can be an Identifier or an Int Expression
+                // So if we check which it is, and call the appropriate function, we'll
+                // fix the bug
+                var typeCheck = cstNode.children[2].children[0];
+                if (typeCheck.getType() === "Boolean Expression" || typeCheck.getType() === "String Expression") {
+                    _Log_.printError("Type mismatch, expected Int Expression. " + typeCheck.getLineNumber() +"------Semantic Analyzer");
+                    throw new Error("Type mismatch.");
+                } 
+                
+                this.analyzeExpression(cstNode.children[2], astNode, scope);
             }
         }
 
+        public  analyzeStringExpression(cstNode: Node, astNode: Node, scope: Scope) {
+            if (cstNode.children.length > 2) {
+                this.analyzeCharList(cstNode.children[1], astNode, "", scope);
+            } else {
+                var newNode = new Node("");
+                astNode.addChild(newNode);
+            }
+        }
+
+        public  analyzeBooleanExpression(cstNode: Node, astNode: Node, scope: Scope) {
+            if (cstNode.children.length > 1) {
+                // The next node is going to be the boolop
+                var newNode = new Node(cstNode.children[2].getValue());
+                astNode.addChild(newNode);
+                astNode = newNode;
+
+                // then we need to evaluate the expressions on both sides of it
+                this.analyzeExpression(cstNode.children[1], astNode, scope);
+                this.analyzeExpression(cstNode.children[3], astNode, scope);
+            } else {
+                var newNode = new Node(cstNode.children[0].getValue());
+                newNode.setBoolean(true);
+                astNode.addChild(newNode);
+            }
+        }
+
+        public  analyzeCharList(cstNode: Node, astNode: Node, string: string, scope: Scope) {
+            if (cstNode.children.length === 1) {
+                string += cstNode.children[0].getValue();
+                var newNode = new Node(string);
+                astNode.addChild(newNode);
+            } else {
+                string += cstNode.children[0].getValue();
+                this.analyzeCharList(cstNode.children[1], astNode, string, scope);
+            }
+        }
     }
 }

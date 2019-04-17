@@ -4,6 +4,8 @@
 /// <reference path="Tree.ts"/>
 /// <reference path="symbolTree.ts"/>
 /// <reference path="ast.ts"/>
+/// <reference path="symbol.ts"/>
+
 
 module TSCompiler{
     export class logger{
@@ -99,33 +101,33 @@ module TSCompiler{
 
         }
 
-//         public static printSymbolT(symbolTable: Scope[]): void {
-//             for (var i = 0; i < symbolTable.length; i++) {
-//                 this.logScope(symbolTable[i]);
-//             }
-//         }
+        public static logSymbolTable(symbolTable: Scope[]): void {
+            for (var i = 0; i < symbolTable.length; i++) {
+                _Log_.printScope(symbolTable[i]);
+            }
+        }
 
-//         public static logScope(scope: Scope): void {
-//             var table = <HTMLTableElement> document.getElementById('symbol-table');
-//             var unusedSymbols: Symbol[] = [];
-//             for (var i = 0; i < scope.getSymbols().length; i++) {
-//                 var symbols = scope.getSymbols();
+        public printScope(scope: Scope): void {
+            var table = <HTMLTableElement> document.getElementById('scope_output');
+            var unusedSymbols: Symbol[] = [];
+            for (var i = 0; i < _Scope_.getSymbols().length; i++) {
+                var symbols = _Scope_.getSymbols();
 
-//                 var row = <HTMLTableRowElement> table.insertRow(i + 1);
-//                 var name  = <HTMLTableCellElement> row.insertCell(0);
-//                 var type  = <HTMLTableCellElement> row.insertCell(1);
-//                 var level = <HTMLTableCellElement> row.insertCell(2);
-//                 var line  = <HTMLTableCellElement> row.insertCell(3);
+                var row = <HTMLTableRowElement> table.insertRow(i + 1);
+                var name  = <HTMLTableCellElement> row.insertCell(0);
+                var type  = <HTMLTableCellElement> row.insertCell(1);
+                var level = <HTMLTableCellElement> row.insertCell(2);
+                var line  = <HTMLTableCellElement> row.insertCell(3);
 
-//                 name.innerHTML = symbols[i].getName();
-//                 type.innerHTML = symbols[i].getType();
-//                 level.innerHTML = scope.getName();
-//                 line.innerHTML = symbols[i].getLine();
+                name.innerHTML = symbols[i].getName();
+                type.innerHTML = symbols[i].getType();
+                level.innerHTML = scope.getName();
+                line.innerHTML = symbols[i].getLine();
 
-//                 if (!symbols[i].getInitialized()) {
-//                     unusedSymbols.push(symbols[i]);
-//                 }
-//             }
-//         }
+                if (!symbols[i].getInitialized()) {
+                    unusedSymbols.push(symbols[i]);
+                }
+            }
+        }
     }
 }

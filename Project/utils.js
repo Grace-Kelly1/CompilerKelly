@@ -5,6 +5,7 @@
 ///<reference path='sa.ts' />
 ///<reference path='ast.ts' />
 ///<reference path='symbol.ts' />
+///<reference path='scope.ts' />
 var TSCompiler;
 (function (TSCompiler) {
     var utils = /** @class */ (function () {
@@ -25,7 +26,8 @@ var TSCompiler;
             _Parser_ = new TSCompiler.parse();
             _Tree_ = new TSCompiler.Tree();
             _AST_ = new TSCompiler.ast();
-            _SA_ = new TSCompiler.SemAnalysis();
+            _SA_ = new TSCompiler.sa();
+            //_Scope_ = new TSCompiler.Scope();
             //_Symbol_ = new TSCompiler.Symbol();
             //_SymbolTree_ = new TSCompiler.symbolTree();
             var log = document.getElementById("outputTA");

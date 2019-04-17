@@ -7,36 +7,35 @@
 var TSCompiler;
 (function (TSCompiler) {
     var Symbol = /** @class */ (function () {
-        function Symbol(key, type, line, col, scope, scopeLevel, initialized, utilized) {
-            // this.key = key;
-            // this.type = type;
-            // this.line = line;
-            // this.col = col;
-            // this.scope = scope;
-            // this.scopeLevel = scopeLevel;
-            // this.initialized = initialized;
-            // this.utilized = utilized;
+        function Symbol(name, type, line) {
+            this.isInitialized = false;
+            this.setName(name);
+            this.setType(type);
+            this.setLine(line);
         }
-        Symbol.prototype.getKey = function () {
-            return this.key;
+        Symbol.prototype.getName = function () {
+            return this.name;
+        };
+        Symbol.prototype.setName = function (name) {
+            this.name = name;
         };
         Symbol.prototype.getType = function () {
             return this.type;
         };
+        Symbol.prototype.setType = function (type) {
+            this.type = type;
+        };
         Symbol.prototype.getLine = function () {
-            return this.line;
+            return this.line.toString();
         };
-        Symbol.prototype.getCol = function () {
-            return this.col;
+        Symbol.prototype.setLine = function (line) {
+            this.line = line;
         };
-        Symbol.prototype.getDetails = function () {
-            var details = {
-                type: this.type,
-                line: this.line,
-                initialized: this.initialized,
-                utilized: this.utilized
-            };
-            return details;
+        Symbol.prototype.getInitialized = function () {
+            return this.isInitialized;
+        };
+        Symbol.prototype.setInitialized = function (bool) {
+            this.isInitialized = bool;
         };
         return Symbol;
     }());
