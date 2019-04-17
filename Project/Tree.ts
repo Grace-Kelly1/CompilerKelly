@@ -15,11 +15,14 @@ module TSCompiler{
     // ----------
     // Attributes
     // ----------
-
-    root = null; // Note the NULL root node of this tree.
+    private root: Node;
+    
+    //root = null; // Note the NULL root node of this tree.
     cur = {}; // Note the EMPTY current node of the tree we're building.
 
-
+    constructor() {
+        this.root = null;
+    }
     // -- ------- --
     // -- Methods --
     // -- ------- --

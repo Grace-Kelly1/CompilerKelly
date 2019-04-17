@@ -13,10 +13,7 @@ var TSCompiler;
 (function (TSCompiler) {
     var Tree = /** @class */ (function () {
         function Tree() {
-            // ----------
-            // Attributes
-            // ----------
-            this.root = null; // Note the NULL root node of this tree.
+            //root = null; // Note the NULL root node of this tree.
             this.cur = {}; // Note the EMPTY current node of the tree we're building.
             // Add a node: kind in {branch, leaf}.
             this.addNode = function (name, kind) {
@@ -87,6 +84,7 @@ var TSCompiler;
                 // Return the result.
                 return traversalResult;
             };
+            this.root = null;
         }
         // -- ------- --
         // -- Methods --

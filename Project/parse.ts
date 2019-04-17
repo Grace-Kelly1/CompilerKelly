@@ -24,6 +24,7 @@ module TSCompiler{
                 //console.log(_Tree_.toString());
                 // _Log_.printCSTMessage("\nCST for program" + p + "...");
                 _Log_.printCST();
+                //_SA_.performAnalysis(_Tree_);
             }
         }
 

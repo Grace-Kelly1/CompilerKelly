@@ -18,7 +18,7 @@ module TSCompiler{
             _CurrentT_ = _Tokens_[_TokenIndex_];
             //console.log(_CurrentT_.type);
             
-            _Log_.printMessage("\nBeginning AST Session...");
+//_Log_.printMessage("\nBeginning AST Session...");
             _Tree_ = new Tree();
             //_Tree_ .addNode("Root", "branch");
             this.parseProgram();
