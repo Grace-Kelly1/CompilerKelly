@@ -35,6 +35,10 @@ module TSCompiler{
             console.log("Trying to print ast")
             log.value += _Tree_.toString();
         }
+        public printSymbolTable(symbolTableStrings):void{
+            var log = <HTMLTextAreaElement> document.getElementById('symbolTable');
+            log.value += "<th>Key</th><th>Type</th><th>Scope</th><th>Scope Level</th><th>Line Number</th><th>Col Number</th>" + symbolTableStrings;
+        }
 
         public printCSTMessage(message: string): void{
             var log = <HTMLTextAreaElement> document.getElementById('cst_output');
@@ -76,7 +80,7 @@ module TSCompiler{
             log.value += "Parse Completed" + "\n";
         }
 
-        public static logTokens(): void {
+        public logTokens(): void {
             var table = <HTMLTableElement> document.getElementById("token_output");
             for (var i = 0; i < _Tokens_.length; i++) {
                 // Use i + 1 to keep the header on top
@@ -89,6 +93,10 @@ module TSCompiler{
                 value.innerHTML = _Tokens_[i].value;
                 line.innerHTML = _Tokens_[i].line;
             }
+        }
+
+        public printUnusedWarningMessage(message: string): void{
+
         }
 
 //         public static printSymbolT(symbolTable: Scope[]): void {

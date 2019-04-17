@@ -9,6 +9,7 @@
 /// <reference path="sa.ts"/>
 /// <reference path="symbolTree.ts"/>
 /// <reference path="ast.ts"/>
+///<reference path='symbol.ts' />
 
 
 
@@ -24,6 +25,7 @@ var _Tree_: TSCompiler.Tree;
 var _SymbolTree_: TSCompiler.symbolTree;
 var _AST_: TSCompiler.ast;
 var _SA_: TSCompiler.SemAnalysis;
+var _Symbol_: TSCompiler.Symbol;
 
 
 //Types of keywords

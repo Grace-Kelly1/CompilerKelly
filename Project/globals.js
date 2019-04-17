@@ -9,6 +9,7 @@
 /// <reference path="sa.ts"/>
 /// <reference path="symbolTree.ts"/>
 /// <reference path="ast.ts"/>
+///<reference path='symbol.ts' />
 var _Lexer_; // Remember to construct this later.
 var _Log_; // Remember to construct this later.
 var _Tokens_ = [];
@@ -21,6 +22,7 @@ var _Tree_;
 var _SymbolTree_;
 var _AST_;
 var _SA_;
+var _Symbol_;
 //Types of keywords
 var PRINT = { type: 'PRINT', value: 'print' };
 var WHILE = { type: 'WHILE', value: 'while' };

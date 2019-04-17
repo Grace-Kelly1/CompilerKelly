@@ -7,47 +7,41 @@
 
 module TSCompiler {
     export class Symbol {
-        private name: string;
-        private type: string;
-        private line: number;
-        private isInitialized: boolean = false;
-
-        constructor(name: string, type: string, line: number) {
-            this.setName(name);
-            this.setType(type);
-            this.setLine(line);
+        constructor(key, type, line, col, scope, scopeLevel, initialized, utilized) {
+            // this.key = key;
+            // this.type = type;
+            // this.line = line;
+            // this.col = col;
+            // this.scope = scope;
+            // this.scopeLevel = scopeLevel;
+            // this.initialized = initialized;
+            // this.utilized = utilized;
         }
-
-        public getName(): string {
-            return this.name;
+    
+        getKey() {
+            return this.key;
         }
-
-        public setName(name: string): void {
-            this.name = name;
-        }
-
-        public getType(): string {
+    
+        getType() {
             return this.type;
         }
-
-        public setType(type: string) {
-            this.type = type;
+    
+        getLine() {
+            return this.line;
         }
-
-        public getLine(): string {
-            return this.line.toString();
+    
+        getCol() {
+            return this.col;
         }
-
-        public setLine(line: number) {
-            this.line = line;
-        }
-
-        public getInitialized(): boolean {
-            return this.isInitialized;
-        }
-
-        public setInitialized(bool: boolean): void {
-            this.isInitialized = bool;
+    
+        getDetails() {
+            var details = {
+                type: this.type,
+                line: this.line,
+                initialized: this.initialized,
+                utilized: this.utilized
+            };
+            return details;
         }
     }
 }

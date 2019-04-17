@@ -4,6 +4,7 @@
 ///<reference path='token.ts' />
 ///<reference path='sa.ts' />
 ///<reference path='ast.ts' />
+///<reference path='symbol.ts' />
 
 
 module TSCompiler{
@@ -27,6 +28,7 @@ module TSCompiler{
              _Tree_ = new TSCompiler.Tree();
              _AST_ = new TSCompiler.ast();
              _SA_ = new TSCompiler.SemAnalysis();
+             //_Symbol_ = new TSCompiler.Symbol();
              //_SymbolTree_ = new TSCompiler.symbolTree();
                 
 

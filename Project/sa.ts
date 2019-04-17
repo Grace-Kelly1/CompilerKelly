@@ -10,6 +10,19 @@
 
 module TSCompiler{
     export class SemAnalysis{
+        private scope = -1;
+        private scopeLevel = -1;
+        private saErrorCount = 0;
+        private saWarningCount = 0;
+        private currentToken = 0;
+        private symbolTableStrings = "";
+        private symbolArray = [];
+        private variableKey = "";
+        private variableType = "";
+        private variableLine = 0;
+        private variableCol = 0;
+        private checkedType = "";
+
         public SA(){
             var parseCompleted = true;
             _TokenIndex_ = 0;
@@ -21,28 +34,35 @@ module TSCompiler{
             _SymbolTree_ = new symbolTree();
             //_SymbolTree_ .addNode("Root", "branch");
             this.parseProgram();
-            checkInit(_SymbolTree_.root);
-            checkUsed(_SymbolTree_.root);
-            _Log_.printMessage("\nSemantic Analysis Session Finished.");
-
+            this.checkInit(_SymbolTree_.root);
+            this.checkUsed(_SymbolTree_.root);
+            if(this.saErrorCount == 0){
+                parseCompleted = true;
+                _Log_.printMessage("\nSemantic Analysis Session Finished.");
+                _Log_.printSymbolTable(this.symbolTableStrings);
+            }
+            
         }
 
         public parseProgram(){
             this.parseBlock();
             //console.log("this = " + this);
-            //this.matchParse(EOP.type);
+            this.matchParse(EOP.type);
             _SymbolTree_.kick();
             _SymbolTree_ .kick();
         }
 
         public parseBlock(){
-            _SymbolTree_ .addNode();
+            this.scope = this.scope + 1;
+            this.scopeLevel = this.scopeLevel + 1;
+            _SymbolTree_ .addNode("ScopeLevel: " + this.scope, "brach", this.scope);
             this.matchParse(L_BRACE.type);
             //_SymbolTree_.addNode("{", "leaf");
             this.parseStatmentL();
             //_SymbolTree_.kick();
             //_SymbolTree_.addNode("StatementList", "")
             this.matchParse(R_BRACE.type);
+            this.scopeLevel = this.scopeLevel -1;
             //_SymbolTree_.addNode("}", "leaf");
             _SymbolTree_ .kick();
         }
@@ -90,11 +110,19 @@ module TSCompiler{
         }
 
         public parseVar(){
-            _SymbolTree_ .addNode();
+            //_SymbolTree_ .addNode();
             switch (_CurrentT_.type) {
                 case STRING.type:
                 this.matchParse(STRING.type);
                     this.parseId();
+                    this.checkVarName(_SymbolTree_.cur);
+                    _Symbol_ = new Symbol(this.variableKey, this.variableType, this.variableLine, this.variableCol, _SymbolTree_.cur.scope, this.scopeLevel, false, false);
+                    _SymbolTree_.cur.symbols.push(_Symbol_);
+                    this.symbolArray.push(_Symbol_);
+                    this.symbolTableStrings = this.symbolTableStrings + "<tr ><td>" + _Symbol_.key + "</td><td>" + _Symbol_.type + "</td><td>" + _Symbol_.scope + "</td><td>" + _Symbol_.scopeLevel + "</td><td>" + _Symbol_.line + "</td><td>" + _Symbol_.col + "</td></tr>";
+                    this.variableKey = "";
+                    this.variableType = "";
+                    this.variableLine = 0;
                     break;
                 case INT.type:
                 this.matchParse(INT.type);
@@ -121,14 +149,25 @@ module TSCompiler{
         }
 
         public parseAssign(){
+            var idKey = "";
             this.parseId();
+            this.checkVarDeclared(_SymbolTree_.cur, "assigned")
+            this.checkVarType(_SymbolTree_.cur, "assigned");
+            var idType = this.checkedType;
+            this.declareInit(_SymbolTree_.cur);
             this.matchParse(ASSIGN.type);
-            this.parseExpr();
+            var experType = this.parseExpr();
+            if (idType === experType){
+                //printSATypeCheckMessage(idKey,idType,"assigned",experType);
+            }
+            else{
+                _Log_.printError(idKey + ":" + idType + "assigned " + experType);
+            }
+
             _SymbolTree_ .kick();
         }
 
         public parseWhile(){
-            _SymbolTree_ .addNode("WhileStatement", "branch");
             this.matchParse(WHILE.type);
             this.parseBoolean();
             this.parseBlock();
@@ -136,69 +175,81 @@ module TSCompiler{
         }
 
         public parseIf(){
-            _SymbolTree_ .addNode("IfStatement", "branch");
             this.matchParse(IF.type);
             this.parseBoolean();
             this.parseBlock();
             _SymbolTree_ .kick();
         }
-
+        //Work on!!
         public parseExpr(){
+            var experType = "";
             switch (_CurrentT_.type) {
                 // IntExpr
                 case DIGIT.type:
-                    this.parseInt();
+                experType =this.parseInt();
                     break;
                 // String
                 case QUOTE.type:
-                    this.parseString();
+                this.parseString();
                     break;
                 // Boolean
                 case L_PAREN.type:
                 case TRUE.type:
                 case FALSE.type:
-                    this.parseBoolean();
+                experType =this.parseBoolean();
                     break;
                 // ID
                 case ID.type:
                     this.parseId();
+                    this.checkVarDeclared(_SymbolTree_.cur, "used");
+                    this.declareUsed(_SymbolTree_.cur);
+                    this.checkVarType(_SymbolTree_.cur, "used");
+                     experType = this.checkedType;
                     break;
                 default:
                     _Log_.printParseError("Expected to finish assigning variable");
                     //throw new Error("Something broke in parser.");
             }
             _SymbolTree_ .kick();
+            return experType;
         }
-
+        //Work on!!
         public parseInt(){
-            _SymbolTree_.addNode(_CurrentT_.value, "branch");
+            var intExperType = "";
             //console.log(_CurrentT_.value);
             if (_CurrentT_.type === DIGIT.type) {
+                var intExper1 = _CurrentT_.value;
+                var intExperType = _CurrentT_.value;
                 //_SymbolTree_.addNode(_CurrentT_.value, "leaf");
                 this.matchParse(DIGIT.type);
-                _SymbolTree_.addNode(_CurrentT_.value, "leaf");
                 if (_CurrentT_.type === PLUS.type) {
                     this.matchParse(PLUS.type);
-                    this.parseExpr();
+                    var intExper2 = this.parseExpr();
+                    if(intExper1 == intExper2){
+                        intExperType = intExper2;
+                    } else {
+                        _Log_.printError("" + intExper1 + " Added: " +intExper2);
+                    }
                 }
             }
             _SymbolTree_ .kick();
+            return intExperType;
         }
-
+        //Work on!!
         public parseString(){
-            _SymbolTree_.addNode(_CurrentT_.value, "branch");
             this.matchParse(QUOTE.type);
-            this.parseChar();
+            var stringExperType = this.parseChar();
             this.matchParse(QUOTE.type);
             _SymbolTree_ .kick();
+            return stringExperType;
         }
-
+        //Work on!!
         public parseBoolean(){
+            var booleanExperType = "";
             if (_CurrentT_.type === TRUE.type) {
-                _SymbolTree_.addNode(_CurrentT_.value, "leaf");
                 this.matchParse(TRUE.type);
             } else if (_CurrentT_.type === FALSE.type) {
-                 _SymbolTree_.addNode(_CurrentT_.value, "leaf");
+                 
                  this.matchParse(FALSE.type);
             } else {
                 this.matchParse(L_PAREN.type);
@@ -214,10 +265,14 @@ module TSCompiler{
                 }
             }
             _SymbolTree_ .kick();
+            return booleanExperType;
         }
 
         public parseId(){
             //_SymbolTree_.addNode(_CurrentT_.type, "leaf");
+            this.variableKey = _Tokens_[_TokenIndex_].value;
+            this.variableLine = _Tokens_[_TokenIndex_].rowNum;
+            this.variableCol = _Tokens_[_TokenIndex_].colNum;
             this.matchParse(ID.type);
             _SymbolTree_ .kick();
         }
@@ -262,7 +317,6 @@ module TSCompiler{
             else if (_CurrentT_.type === type) {
                 console.log(_CurrentT_.value);
                     
-                    _SymbolTree_.addNode(_CurrentT_.value, "leaf");
                 //_Log_.printMessage("Parse: Successfully matched " + type + " token.");
             } 
             else {
@@ -276,109 +330,98 @@ module TSCompiler{
             }
         }
 
-        function checkUsed(node) {
+        public checkUsed(node) {
             for(var symbol = 0; symbol < node.symbols.length; symbol++) {
                 if(node.symbols[symbol].initialized == true && node.symbols[symbol].utilized == false) {
-                    saWarningCount++;
-                    printUnusedWarningMessage(node.symbols[symbol].key,node.symbols[symbol].line,node.symbols[symbol].col);
+                    _Log_.printWarning("Unused: " + node.symbols[symbol].key);
                 }
             }
             if(node.children.length != 0) {
                 node.children.forEach(function(child) {
-                    checkUsed(child);
+                    this.checkUsed(child);
                 });
             }
         }
-        function checkInit(node) {
+        public checkInit(node) {
             for(var symbol = 0; symbol < node.symbols.length; symbol++) {
                 if(node.symbols[symbol].initialized == false) {
-                    saWarningCount++;
-                    printUninitWarningMessage(node.symbols[symbol].key,node.symbols[symbol].line,node.symbols[symbol].col);
+                    _Log_.printWarning("Not Init: " + node.symbols[symbol].key);
                 }
             }
             if(node.children.length != 0) {
                 node.children.forEach(function(child) {
-                    checkInit(child);
+                    this.checkInit(child);
                 });
             }
         }
-        function checkVarDeclared(node,usage) {
+        public checkVarDeclared(node,usage) {
             if((node.parent != undefined || node.parent != null) && node.symbols.length > 0) {
                 for(var symbol = 0; symbol < node.symbols.length; symbol++) {
-                    if(node.symbols[symbol].getKey() == SAtokens[currentToken-1].value) {
-                        if(verbose){
-                            printSADeclaredMessage(SAtokens[currentToken-1].value);
-                        }
-                        break
+                    if(node.symbols[symbol].getKey() == _Tokens_[_TokenIndex_ - 1].value) {
+                        _Log_.printWarning("Declared: " + node.symbols[symbol].key);
                     } else if(symbol == node.symbols.length-1 && (node.parent != undefined || node.parent != null)) {
-                        checkVarDeclared(node.parent,usage);
+                        this.checkVarDeclared(node.parent,usage);
                         break;
                     }
                 }
             } else if(node.parent != undefined || node.parent != null) {
-                checkVarDeclared(node.parent,usage);
+                this.checkVarDeclared(node.parent,usage);
             } else {
-                throwSAUndeclaredError(SAtokens[currentToken-1].value,usage);
+                _Log_.printError(_Tokens_[_TokenIndex_ - 1].value + "Use: " +usage);
             }
         }
-        function checkVarType(node,usage) {
+        public checkVarType(node,usage) {
             if((node.parent != undefined || node.parent != null) && node.symbols.length > 0) {
                 for(var symbol = 0; symbol < node.symbols.length; symbol++) {
-                    if(node.symbols[symbol].getKey() == SAtokens[currentToken-1].value) {
-                        checkedType = node.symbols[symbol].getType();
-                        if(verbose){
-                            printSAVarTypeMessage(SAtokens[currentToken-1].value, checkedType);
-                        }
+                    if(node.symbols[symbol].getKey() == _Tokens_[_TokenIndex_ - 1].value) {
+                        this.checkedType = node.symbols[symbol].getType();
+                            _Log_.printMessage(_Tokens_[_TokenIndex_ - 1].value + "Check: " + this.checkedType);
                         break
                     } else if(symbol == node.symbols.length-1 && (node.parent != undefined || node.parent != null)) {
-                        checkVarType(node.parent,usage);
+                        this.checkVarType(node.parent,usage);
                         break;
                     }
                 }
             } else if(node.parent != undefined || node.parent != null) {
-                checkVarType(node.parent,usage);
+                this.checkVarType(node.parent,usage);
             }
         }
-        function declareUsed(node) {
+        public declareUsed(node) {
             if((node.parent != undefined || node.parent != null) && node.symbols.length > 0) {
                 for(var symbol = 0; symbol < node.symbols.length; symbol++) {
-                    if(node.symbols[symbol].getKey() == SAtokens[currentToken-1].value) {
+                    if(node.symbols[symbol].getKey() == _Tokens_[_TokenIndex_ - 1].value) {
                         node.symbols[symbol].utilized = true;
-                        if(verbose){
-                            printSAUsedMessage(SAtokens[currentToken-1].value);
-                        }
+                            _Log_.printMessage(_Tokens_[_TokenIndex_ - 1].value);
                         break
                     } else if(symbol == node.symbols.length-1 && (node.parent != undefined || node.parent != null)) {
-                        declareUsed(node.parent);
+                        this.declareUsed(node.parent);
                         break;
                     }
                 }
             } else if(node.parent != undefined || node.parent != null) {
-                declareUsed(node.parent);
+                this.declareUsed(node.parent);
             }
         }
-        function declareInit(node) {
+        public declareInit(node) {
             if((node.parent != undefined || node.parent != null) && node.symbols.length > 0) {
                 for(var symbol = 0; symbol < node.symbols.length; symbol++) {
-                    if(node.symbols[symbol].getKey() == SAtokens[currentToken-1].value) {
+                    if(node.symbols[symbol].getKey() == _Tokens_[_TokenIndex_ - 1].value) {
                         node.symbols[symbol].initialized = true;
-                        if(verbose){
-                            printSAUsedMessage(SAtokens[currentToken-1].value);
-                        }
+                            _Log_.printMessage(_Tokens_[_TokenIndex_ - 1].value);
                         break
                     } else if(symbol == node.symbols.length-1 && (node.parent != undefined || node.parent != null)) {
-                        declareInit(node.parent);
+                        this.declareInit(node.parent);
                         break;
                     }
                 }
             } else if(node.parent != undefined || node.parent != null) {
-                declareInit(node.parent);
+                this.declareInit(node.parent);
             }
         }
-        function checkVarName(node) {
+        public checkVarName(node) {
             for(var symbol = 0; symbol < node.symbols.length; symbol++) {
-                if(variableKey == node.symbols[symbol].getKey()){
-                    throwVarRedeclaredError(variableKey, node.symbols[symbol].getLine(), node.symbols[symbol].getCol());
+                if(this.variableKey == node.symbols[symbol].getKey()){
+                    _Log_.printError(this.variableKey + node.symbols[symbol].getLine() + node.symbols[symbol].getCol());
                 }
             }
         }

@@ -111,8 +111,8 @@ var TSCompiler;
                             if (lexerError === 0) {
                                 _Log_.printCSTMessage("\nCST for program" + programCount + "...");
                                 _Parser_.parse();
-                                _Log_.printMessage("\nSA for program" + programCount + "...");
-                                _SA_.SA();
+                                //_Log_.printMessage("\nSA for program" + programCount + "...");
+                                //_SA_.SA();
                                 _Log_.printASTMessage("\nAST for program" + programCount + "...");
                                 //Not defined?
                                 _AST_.Ast();
