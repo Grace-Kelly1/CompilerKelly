@@ -84,7 +84,11 @@ module TSCompiler{
                     this.parseAssign();
                     break;
                 case STRING.type:
+                    this.parseVar();
+                    break;
                 case INT.type:
+                    this.parseVar();
+                    break;
                 case BOOLEAN.type:
                     this.parseVar();
                     break;
@@ -120,6 +124,9 @@ module TSCompiler{
                     _Log_.printError("Expected String or Int or Boolean");
                     //throw new Error("Something broke in parser.");
             }
+            // if(_CurrentT_.type != "}"){
+            //     this.parseVar();
+            // }
             _Tree_ .kick();
         }
 
@@ -213,6 +220,7 @@ module TSCompiler{
         }
 
         public parseBoolean(){
+            console.log("InBool");
             _Tree_ .addNode("BooleanExpr", "branch");
             _Log_.printParseMessage("PARSE - parseBoolean()");
             if (_CurrentT_.type === TRUE.type) {
@@ -238,6 +246,7 @@ module TSCompiler{
         public parseId(){
             _Tree_ .addNode("Id", "branch");
             _Log_.printParseMessage("PARSE - parseId()");
+            //console.log(_CurrentT_.type);
             this.matchParse(ID.type);
             _Tree_ .kick();
         }
@@ -267,6 +276,7 @@ module TSCompiler{
         }
 
         public matchParse(type){
+            //console.log(_CurrentT_.type);
             if (_CurrentT_.type === type) {
                     _Tree_.addNode(_CurrentT_.value, "leaf");
                 //_Log_.printMessage("Parse: Successfully matched " + type + " token.");

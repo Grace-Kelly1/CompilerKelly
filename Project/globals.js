@@ -20,7 +20,7 @@ var _Parser_;
 var _Tree_;
 var _SymbolTree_;
 var _AST_;
-var _Sa_;
+var _SA_;
 //Types of keywords
 var PRINT = { type: 'PRINT', value: 'print' };
 var WHILE = { type: 'WHILE', value: 'while' };

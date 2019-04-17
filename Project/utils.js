@@ -24,7 +24,7 @@ var TSCompiler;
             _Parser_ = new TSCompiler.parse();
             _Tree_ = new TSCompiler.Tree();
             _AST_ = new TSCompiler.ast();
-            //_Sa_ = new TSCompiler.SemAnalysis();
+            _SA_ = new TSCompiler.SemAnalysis();
             //_SymbolTree_ = new TSCompiler.symbolTree();
             var log = document.getElementById("outputTA");
             var cstLog = document.getElementById("cst_output");

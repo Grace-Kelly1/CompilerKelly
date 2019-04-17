@@ -26,7 +26,7 @@ module TSCompiler{
              _Parser_ = new TSCompiler.parse();
              _Tree_ = new TSCompiler.Tree();
              _AST_ = new TSCompiler.ast();
-             //_Sa_ = new TSCompiler.SemAnalysis();
+             _SA_ = new TSCompiler.SemAnalysis();
              //_SymbolTree_ = new TSCompiler.symbolTree();
                 
 

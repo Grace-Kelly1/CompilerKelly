@@ -23,7 +23,7 @@ var _Parser_ : TSCompiler.parse;
 var _Tree_: TSCompiler.Tree;
 var _SymbolTree_: TSCompiler.symbolTree;
 var _AST_: TSCompiler.ast;
-var _Sa_: TSCompiler.SemAnalysis;
+var _SA_: TSCompiler.SemAnalysis;
 
 
 //Types of keywords
