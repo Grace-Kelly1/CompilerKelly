@@ -23,6 +23,7 @@ module TSCompiler{
             this.astTree = new Tree();
             this.build(_Tree_.getRoot());
             //_Log_.printAST(this.astTree.toStringAST());
+            console.log("Trying to print scope table!!" + this.scopes.length);
             _Log_.printSymbolTable(this.scopes);
             _Log_.printMessage("Semantic Analysis complete.");
         }
@@ -32,6 +33,7 @@ module TSCompiler{
         }
 
         public  analyzeProgram(node: Node) {
+            console.log("Analyze PRogram");
             var newScope = new Scope(this.scopeName);
             _Log_.printMessage("Created Scope " + newScope.getName() + ".");
             this.scopeName++;
@@ -39,6 +41,7 @@ module TSCompiler{
         }
 
         public  analyzeBlock(cstNode: Node, scope: Scope, astNode?: Node) {
+            console.log("Analyze Block");
             var newNode = new Node("Block");
             console.log(this.astTree.getRoot());
 
@@ -52,30 +55,32 @@ module TSCompiler{
                 newScope.setParent(scope);
                 this.scopes.push(newScope);
                 // Statement list is up next, if there is one
-                if (cstNode.children.length > 2) {
+                
                     this.analyzeStatementList(cstNode.children[1], astNode, newScope)
-                }
+                
 
             } else {
                 this.astTree.setRoot(newNode);
                 astNode = newNode;
                 this.scopes.push(scope);
-                if (cstNode.children.length > 2) {
+                
                     this.analyzeStatementList(cstNode.children[1], astNode, scope)
-                }
+                
             }
         }
 
         public  analyzeStatementList(cstNode: Node, astNode: Node, scope: Scope) {
+            console.log("Analyze SL");
             if (!cstNode) {
                 return;
             }
-            console.log(cstNode.children[0].getType());
+            //console.log(cstNode.children[0].getType());
             this.analyzeStatement(cstNode.children[0], astNode, scope);
             this.analyzeStatementList(cstNode.children[1], astNode, scope);
         }
 
         public  analyzeStatement(cstNode: Node, astNode: Node, scope: Scope) {
+            console.log("Analyze S");
             switch (cstNode.children[0].getType()) {
                 case "Print Statement":
                     this.analyzePrintStatement(cstNode.children[0], astNode, scope);
@@ -101,6 +106,7 @@ module TSCompiler{
         }
 
         public  analyzePrintStatement(cstNode: Node, astNode: Node, scope: Scope) {
+            console.log("Analyze Print");
             var newNode = new Node("Print Statement");
             astNode.addChild(newNode);
             astNode = newNode;
@@ -108,6 +114,7 @@ module TSCompiler{
         }
 
         public  analyzeAssignmentStatement(cstNode: Node, astNode: Node, scope: Scope) {
+            console.log("Analyze Assign");
             var newNode = new Node("Assignment Statement");
             var id = new Node(cstNode.children[0].children[0].getValue());
             newNode.addChild(id);
@@ -135,6 +142,7 @@ module TSCompiler{
         }
 
         public  analyzeVariableDeclaration(cstNode: Node, astNode: Node, scope: Scope) {
+            console.log("Analyze Var");
             var newNode = new Node("Variable Declaration");
 
             //Add the type and value 
@@ -150,6 +158,7 @@ module TSCompiler{
         }
 
         public  analyzeWhileStatement(cstNode: Node, astNode: Node, scope: Scope) {
+            console.log("Analyze while");
             var newNode = new Node("While Statement");
             astNode.addChild(newNode);
             astNode = newNode;
@@ -159,6 +168,7 @@ module TSCompiler{
         }
 
         public  analyzeIfStatement(cstNode: Node, astNode: Node, scope: Scope) {
+            console.log("Analyze IF");
             var newNode = new Node("If Statement");
             astNode.addChild(newNode);
             astNode = newNode;
@@ -168,6 +178,7 @@ module TSCompiler{
         }
 
         public  analyzeExpression(cstNode: Node, astNode: Node, scope: Scope) {
+            console.log("Analyze Expression");
             switch (cstNode.children[0].getType()) {
                 case "Int Expression":
                     this.analyzeIntExpression(cstNode.children[0], astNode, scope);
@@ -193,6 +204,7 @@ module TSCompiler{
         }
 
         public  analyzeIntExpression(cstNode: Node, astNode: Node, scope: Scope) {
+            console.log("Analyze Int");
             if (cstNode.children.length === 1) {
                 var value = new Node(cstNode.children[0].getValue());
                 value.setInt(true);
@@ -217,6 +229,7 @@ module TSCompiler{
         }
 
         public  analyzeStringExpression(cstNode: Node, astNode: Node, scope: Scope) {
+            console.log("Analyze String");
             if (cstNode.children.length > 2) {
                 this.analyzeCharList(cstNode.children[1], astNode, "", scope);
             } else {
@@ -226,6 +239,7 @@ module TSCompiler{
         }
 
         public  analyzeBooleanExpression(cstNode: Node, astNode: Node, scope: Scope) {
+            console.log("Analyze Bool");
             if (cstNode.children.length > 1) {
                 var newNode = new Node(cstNode.children[2].getValue());
                 astNode.addChild(newNode);
@@ -240,6 +254,7 @@ module TSCompiler{
         }
 
         public  analyzeCharList(cstNode: Node, astNode: Node, string: string, scope: Scope) {
+            console.log("Analyze CL");
             if (cstNode.children.length === 1) {
                 string += cstNode.children[0].getValue();
                 var newNode = new Node(string);

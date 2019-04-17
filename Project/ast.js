@@ -179,7 +179,7 @@ var TSCompiler;
             _Tree_.kick();
         };
         ast.prototype.parseString = function () {
-            _Tree_.addNode(_CurrentT_.value, "branch");
+            //_Tree_.addNode(_CurrentT_.value, "branch");
             this.matchParse(QUOTE.type);
             this.parseChar();
             this.matchParse(QUOTE.type);

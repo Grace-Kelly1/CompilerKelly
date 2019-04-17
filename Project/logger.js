@@ -89,6 +89,7 @@ var TSCompiler;
         logger.prototype.printScope = function (scope) {
             var table = document.getElementById('scope_output');
             var unusedSymbols = [];
+            console.log("Symbol Length " + scope.getSymbols().length);
             for (var i = 0; i < scope.getSymbols().length; i++) {
                 var symbols = scope.getSymbols();
                 var row = table.insertRow(i + 1);

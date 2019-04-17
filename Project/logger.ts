@@ -103,6 +103,7 @@ module TSCompiler{
         public printScope(scope: Scope): void {
             var table = <HTMLTableElement> document.getElementById('scope_output');
             var unusedSymbols: Symbol[] = [];
+            console.log("Symbol Length " + scope.getSymbols().length);
             for (var i = 0; i < scope.getSymbols().length; i++) {
                 var symbols = scope.getSymbols();
 

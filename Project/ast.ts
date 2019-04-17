@@ -193,7 +193,7 @@ module TSCompiler{
         }
 
         public parseString(){
-            _Tree_.addNode(_CurrentT_.value, "branch");
+            //_Tree_.addNode(_CurrentT_.value, "branch");
             this.matchParse(QUOTE.type);
             this.parseChar();
             this.matchParse(QUOTE.type);
