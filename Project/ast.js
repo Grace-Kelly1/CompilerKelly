@@ -170,7 +170,7 @@ var TSCompiler;
             if (_CurrentT_.type === DIGIT.type) {
                 //_Tree_.addNode(_CurrentT_.value, "leaf");
                 this.matchParse(DIGIT.type);
-                //_Tree_.addNode(_CurrentT_.value, "leaf");
+                _Tree_.addNode(_CurrentT_.value, "leaf");
                 if (_CurrentT_.type === PLUS.type) {
                     this.matchParse(PLUS.type);
                     this.parseExpr();
@@ -179,7 +179,7 @@ var TSCompiler;
             _Tree_.kick();
         };
         ast.prototype.parseString = function () {
-            //_Tree_.addNode(_CurrentT_.value, "branch");
+            _Tree_.addNode(_CurrentT_.value, "branch");
             this.matchParse(QUOTE.type);
             this.parseChar();
             this.matchParse(QUOTE.type);
@@ -187,11 +187,11 @@ var TSCompiler;
         };
         ast.prototype.parseBoolean = function () {
             if (_CurrentT_.type === TRUE.type) {
-                //_Tree_.addNode(_CurrentT_.value, "leaf");
+                _Tree_.addNode(_CurrentT_.value, "leaf");
                 this.matchParse(TRUE.type);
             }
             else if (_CurrentT_.type === FALSE.type) {
-                // _Tree_.addNode(_CurrentT_.value, "leaf");
+                _Tree_.addNode(_CurrentT_.value, "leaf");
                 this.matchParse(FALSE.type);
             }
             else {
@@ -248,7 +248,7 @@ var TSCompiler;
                 _CurrentT_.value === "!=" ||
                 _CurrentT_.value === '"' ||
                 _CurrentT_.value === "+") {
-                console.log("NO" + _CurrentT_.value);
+                console.log("NO");
             }
             else if (_CurrentT_.type === type) {
                 console.log(_CurrentT_.value);

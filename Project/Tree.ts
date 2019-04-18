@@ -15,14 +15,11 @@ module TSCompiler{
     // ----------
     // Attributes
     // ----------
-    private root: Node;
-    
-    //root = null; // Note the NULL root node of this tree.
+
+    root = null; // Note the NULL root node of this tree.
     cur = {}; // Note the EMPTY current node of the tree we're building.
 
-    constructor() {
-        this.root = null;
-    }
+
     // -- ------- --
     // -- Methods --
     // -- ------- --
@@ -115,41 +112,41 @@ module TSCompiler{
     }
 
     public toStringAST() {
-        var traversalResult = "";
+            var traversalResult = "";
 
-        // Recursive function to handle the expansion of the nodes.
-        function expand(node, depth)
-        {
-            // Space out based on the current depth so
-            // this looks at least a little tree-like.
-            for (var i = 0; i < depth; i++)
+            // Recursive function to handle the expansion of the nodes.
+            function expand(node, depth)
             {
-                traversalResult += "-";
-            }
-
-            // If there are no children (i.e., leaf nodes)...
-            if (!node.children || node.children.length === 0)
-            {
-                // ... note the leaf node.
-                traversalResult += "[ " + node.type + " ]";
-                traversalResult += "\n";
-            }
-            else
-            {
-                // There are children, so note these interior/branch nodes and ...
-                traversalResult += "< " + node.type + " > \n";
-                // .. recursively expand them.
-                for (var i = 0; i < node.children.length; i++)
+                // Space out based on the current depth so
+                // this looks at least a little tree-like.
+                for (var i = 0; i < depth; i++)
                 {
-                    expand(node.children[i], depth + 1);
+                    traversalResult += "-";
+                }
+
+                // If there are no children (i.e., leaf nodes)...
+                if (!node.children || node.children.length === 0)
+                {
+                    // ... note the leaf node.
+                    traversalResult += "[ " + node.type + " ]";
+                    traversalResult += "\n";
+                }
+                else
+                {
+                    // There are children, so note these interior/branch nodes and ...
+                    traversalResult += "< " + node.type + " > \n";
+                    // .. recursively expand them.
+                    for (var i = 0; i < node.children.length; i++)
+                    {
+                        expand(node.children[i], depth + 1);
+                    }
                 }
             }
+            // Make the initial call to expand from the root.
+            expand(this.root, 0);
+            // Return the result.
+            return traversalResult;
         }
-        // Make the initial call to expand from the root.
-        expand(this.root, 0);
-        // Return the result.
-        return traversalResult;
-    }
     
 
 }

@@ -20,7 +20,7 @@ var TSCompiler;
             this.build(_Tree_.getRoot());
             //_Log_.printAST(this.astTree.toStringAST());
             console.log("Trying to print scope table!!" + this.scopes.length);
-            _Log_.printSymbolTable(this.scopes);
+            //_Log_.printSymbolTable(this.scopes);
             _Log_.printMessage("Semantic Analysis complete.");
         };
         sa.prototype.build = function (root) {
@@ -60,6 +60,7 @@ var TSCompiler;
             if (!cstNode) {
                 return;
             }
+            //undefined??? how to fix this?
             console.log(cstNode.children[0]);
             this.analyzeStatement(cstNode.children[0], astNode, scope);
             this.analyzeStatementList(cstNode.children[1], astNode, scope);

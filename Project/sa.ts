@@ -24,7 +24,7 @@ module TSCompiler{
             this.build(_Tree_.getRoot());
             //_Log_.printAST(this.astTree.toStringAST());
             console.log("Trying to print scope table!!" + this.scopes.length);
-            _Log_.printSymbolTable(this.scopes);
+            //_Log_.printSymbolTable(this.scopes);
             _Log_.printMessage("Semantic Analysis complete.");
         }
 

@@ -94,34 +94,39 @@ module TSCompiler{
             }
         }
 
-        public printSymbolTable(symbolTable: Scope[]): void {
-            for (var i = 0; i < symbolTable.length; i++) {
-                _Log_.printScope(symbolTable[i]);
-            }
+        public printSymbolTable(message: string):void{
+            var log = <HTMLTextAreaElement> document.getElementById('outputTA');
+            log.value += "<th>Key</th><th>Type</th><th>Scope</th><th>Scope Level</th><th>Line Number</th><th>Col Number</th>" + message + "\n";
         }
 
-        public printScope(scope: Scope): void {
-            var table = <HTMLTableElement> document.getElementById('scope_output');
-            var unusedSymbols: Symbol[] = [];
-            console.log("Symbol Length " + scope.getSymbols().length);
-            for (var i = 0; i < scope.getSymbols().length; i++) {
-                var symbols = scope.getSymbols();
+        // public printSymbolTable(symbolTable: Scope[]): void {
+        //     for (var i = 0; i < symbolTable.length; i++) {
+        //         _Log_.printScope(symbolTable[i]);
+        //     }
+        // }
 
-                var row = <HTMLTableRowElement> table.insertRow(i + 1);
-                var name  = <HTMLTableCellElement> row.insertCell(0);
-                var type  = <HTMLTableCellElement> row.insertCell(1);
-                var level = <HTMLTableCellElement> row.insertCell(2);
-                var line  = <HTMLTableCellElement> row.insertCell(3);
-                console.log("HERE Trying to print scope table");
-                name.innerHTML = symbols[i].getName();
-                type.innerHTML = symbols[i].getType();
-                level.innerHTML = scope.getName();
-                line.innerHTML = symbols[i].getLine();
+        // public printScope(scope: Scope): void {
+        //     var table = <HTMLTableElement> document.getElementById('scope_output');
+        //     var unusedSymbols: Symbol[] = [];
+        //     console.log("Symbol Length " + scope.getSymbols().length);
+        //     for (var i = 0; i < scope.getSymbols().length; i++) {
+        //         var symbols = scope.getSymbols();
 
-                if (!symbols[i].getInitialized()) {
-                    unusedSymbols.push(symbols[i]);
-                }
-            }
-        }
+        //         var row = <HTMLTableRowElement> table.insertRow(i + 1);
+        //         var name  = <HTMLTableCellElement> row.insertCell(0);
+        //         var type  = <HTMLTableCellElement> row.insertCell(1);
+        //         var level = <HTMLTableCellElement> row.insertCell(2);
+        //         var line  = <HTMLTableCellElement> row.insertCell(3);
+        //         console.log("HERE Trying to print scope table");
+        //         name.innerHTML = symbols[i].getName();
+        //         type.innerHTML = symbols[i].getType();
+        //         level.innerHTML = scope.getName();
+        //         line.innerHTML = symbols[i].getLine();
+
+        //         if (!symbols[i].getInitialized()) {
+        //             unusedSymbols.push(symbols[i]);
+        //         }
+        //     }
+        // }
     }
 }

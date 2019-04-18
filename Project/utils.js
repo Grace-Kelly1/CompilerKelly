@@ -6,6 +6,7 @@
 ///<reference path='ast.ts' />
 ///<reference path='symbol.ts' />
 ///<reference path='scope.ts' />
+///<reference path='symbolTree.ts' />
 var TSCompiler;
 (function (TSCompiler) {
     var utils = /** @class */ (function () {

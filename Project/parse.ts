@@ -7,6 +7,10 @@
 
 module TSCompiler{
     export class parse{
+
+        // public getCST(): Tree{
+        //     return _Tree_;
+        // }
         //Need to count error to print 
         //_Log_.printCSTMessage("CST	for	program: Skipped due to	PARSE error(s)");
         //Need to fix where the parse programs print 
