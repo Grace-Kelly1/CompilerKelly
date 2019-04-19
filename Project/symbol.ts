@@ -4,6 +4,7 @@
 /// <reference path="utils.ts"/>
 /// <reference path="lexer.ts"/>
 /// <reference path="Tree.ts"/>
+/// <reference path="sa.ts"/>
 
 module TSCompiler {
     export class Symbol {

@@ -7,6 +7,8 @@
 ///<reference path='symbol.ts' />
 ///<reference path='scope.ts' />
 ///<reference path='symbolTree.ts' />
+///<reference path='node.ts' />
+
 
 
 module TSCompiler{
@@ -41,10 +43,14 @@ module TSCompiler{
             var cstLog: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("cst_output");
             var astLog: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("ast_output");
             var source: HTMLTextAreaElement = <HTMLTextAreaElement> document.getElementById("inputTA");
+            var table: HTMLTableElement = <HTMLTableElement> document.getElementById("scope_output")
             source.value = this.trim(source.value);
             log.value = "";
             cstLog.value = "";
             astLog.value = "";
+            table.nodeValue = "";
+
+            _Log_.clearTable("scope_output");
 
             if (source.value === '') {
                 _Log_.printMessage("Empty TextArea");

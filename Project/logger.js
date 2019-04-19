@@ -107,6 +107,17 @@ var TSCompiler;
                 }
             }
         };
+        logger.prototype.clearTable = function (element) {
+            var table = document.getElementById(element);
+            var length = table.rows.length;
+            if (length > 1) {
+                // Remove rows from the bottom up
+                // Otherwise, they'll be removed out of order or some will be skipped
+                for (var i = length - 1; i > 0; i--) {
+                    table.deleteRow(i);
+                }
+            }
+        };
         return logger;
     }());
     TSCompiler.logger = logger;

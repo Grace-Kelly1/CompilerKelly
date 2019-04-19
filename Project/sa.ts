@@ -153,7 +153,7 @@ module TSCompiler{
             newNode.addChild(type);
             newNode.addChild(value);
             astNode.addChild(newNode);
-
+            
             var newSymbol = new Symbol(cstNode.children[1].children[0].getValue(), cstNode.children[0].getValue(), cstNode.children[0].getLineNumber());
             scope.addSymbol(newSymbol);
             _Log_.printMessage("Item added to Symbol Table: " + newSymbol.getType() + " " + newSymbol.getName() +" in Scope " + scope.getName() + ".")

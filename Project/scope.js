@@ -29,8 +29,7 @@ var TSCompiler;
                 this.symbols.push(symbol);
             }
             else {
-                _Log_.printError("Identifier '" + id + "' already declared in scope." + "---> Semantic Analyzer");
-                throw new Error("ID already in scope");
+                _Log_.printError("Identifier '" + id + "' already declared in scope.");
             }
         };
         Scope.prototype.getSymbols = function () {
@@ -94,13 +93,11 @@ var TSCompiler;
                         return node.isBoolean;
                     //return (value === "false" || value === "true");
                     default:
-                        _Log_.printError("Type not found: " + node.getLineNumber() + "---> Semantic Analyzer");
-                        throw new Error("Type not found, breaking. This shouldn't happen.");
+                        _Log_.printError("Type not found: " + node.getLineNumber());
                 }
             }
             else {
-                _Log_.printError("Type undefined: " + node.getLineNumber() + "---> Semantic Analyzer");
-                throw new Error("Type undefined, breaking. This shouldn't happen.");
+                _Log_.printError("Type undefined: " + node.getLineNumber());
             }
         };
         Scope.prototype.findIdentifier = function (id) {

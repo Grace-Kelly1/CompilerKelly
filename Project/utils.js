@@ -7,6 +7,7 @@
 ///<reference path='symbol.ts' />
 ///<reference path='scope.ts' />
 ///<reference path='symbolTree.ts' />
+///<reference path='node.ts' />
 var TSCompiler;
 (function (TSCompiler) {
     var utils = /** @class */ (function () {
@@ -35,10 +36,13 @@ var TSCompiler;
             var cstLog = document.getElementById("cst_output");
             var astLog = document.getElementById("ast_output");
             var source = document.getElementById("inputTA");
+            var table = document.getElementById("scope_output");
             source.value = this.trim(source.value);
             log.value = "";
             cstLog.value = "";
             astLog.value = "";
+            table.nodeValue = "";
+            _Log_.clearTable("scope_output");
             if (source.value === '') {
                 _Log_.printMessage("Empty TextArea");
                 return;
