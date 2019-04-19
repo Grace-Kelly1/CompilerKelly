@@ -9,47 +9,47 @@
 /// <reference path="token.ts"/>
 /// <reference path="utils.ts"/>
 /// <reference path="parse.ts"/>
+/// <reference path="node.ts"/>
 var TSCompiler;
 (function (TSCompiler) {
     var Tree = /** @class */ (function () {
         function Tree() {
-            // ----------
-            // Attributes
-            // ----------
-            this.root = null; // Note the NULL root node of this tree.
-            this.cur = {}; // Note the EMPTY current node of the tree we're building.
             // Add a node: kind in {branch, leaf}.
-            this.addNode = function (name, kind) {
-                // Construct the node object.
-                var node = {
-                    name: name,
-                    children: [],
-                    parent: {}
-                };
-                // Check to see if it needs to be the root node.
-                if ((this.root == null) || (!this.root)) {
-                    // We are the root node.
-                    this.root = node;
-                }
-                else {
-                    // We are the children.
-                    // Make our parent the CURrent node...
-                    node.parent = this.cur;
-                    // ... and add ourselves (via the unfrotunately-named
-                    // "push" function) to the children array of the current node.
-                    this.cur.children.push(node);
-                }
-                // If we are an interior/branch node, then...
-                if (kind == "branch") {
-                    // ... update the CURrent node pointer to ourselves.
-                    this.cur = node;
-                }
-            };
+            // addNode = function(name, kind) {
+            //     // Construct the node object.
+            //     var node = {
+            //         name: name,
+            //         children: [],
+            //         parent: {},
+            //         // row: row,
+            //         // col: col,
+            //         // scope: scope,
+            //         //= type: type
+            //     };
+            //     // Check to see if it needs to be the root node.
+            //     if ((this.root == null) || (!this.root)) {
+            //         // We are the root node.
+            //         this.root = node;
+            //     }
+            //     else {
+            //         // We are the children.
+            //         // Make our parent the CURrent node...
+            //         node.parent = this.cur;
+            //         // ... and add ourselves (via the unfrotunately-named
+            //         // "push" function) to the children array of the current node.
+            //         this.cur.children.push(node);
+            //     }
+            //     // If we are an interior/branch node, then...
+            //     if (kind == "branch") {
+            //         // ... update the CURrent node pointer to ourselves.
+            //         this.cur = node;
+            //     }
+            // };
             // Note that we're done with this branch of the tree...
             this.kick = function () {
                 // ... by moving "up" to our parent node (if possible).
-                if ((this.cur.parent !== null) && (this.cur.parent.name !== undefined)) {
-                    this.cur = this.cur.parent;
+                if ((this.currentNode.getParent() !== null) && (this.currentNode.getParent().getType() !== undefined)) {
+                    this.currentNode = this.currentNode.getParent();
                 }
                 else {
                     // TODO: Some sort of error logging.
@@ -58,7 +58,6 @@ var TSCompiler;
             };
             // Return a string representation of the tree.
             this.toString = function () {
-                // Initialize the result string.
                 var traversalResult = "";
                 // Recursive function to handle the expansion of the nodes.
                 function expand(node, depth) {
@@ -70,12 +69,12 @@ var TSCompiler;
                     // If there are no children (i.e., leaf nodes)...
                     if (!node.children || node.children.length === 0) {
                         // ... note the leaf node.
-                        traversalResult += "[ " + node.name + " ]";
+                        traversalResult += "[ " + node.value + " ]";
                         traversalResult += "\n";
                     }
                     else {
                         // There are children, so note these interior/branch nodes and ...
-                        traversalResult += "<" + node.name + "> \n";
+                        traversalResult += "< " + node.type + " > \n";
                         // .. recursively expand them.
                         for (var i = 0; i < node.children.length; i++) {
                             expand(node.children[i], depth + 1);
@@ -87,15 +86,42 @@ var TSCompiler;
                 // Return the result.
                 return traversalResult;
             };
+            this.root = null;
+            this.currentNode = null;
         }
-        // -- ------- --
-        // -- Methods --
-        // -- ------- --
         Tree.prototype.getRoot = function () {
             return this.root;
         };
         Tree.prototype.setRoot = function (node) {
             this.root = node;
+        };
+        Tree.prototype.addBranchNode = function (type) {
+            // Create a node to be added
+            var node = new TSCompiler.Node();
+            node.setType(type);
+            if (this.root === null || (!this.root)) {
+                this.root = node;
+                this.currentNode = node;
+            }
+            else {
+                this.currentNode.addChild(node);
+                node.setParent(this.currentNode);
+                this.currentNode = node;
+            }
+        };
+        Tree.prototype.addLeafNode = function (token) {
+            var node = new TSCompiler.Node();
+            node.setType(token.type);
+            node.setValue(token.value);
+            node.setLeafNode(true);
+            node.setLineNumber(token.line);
+            if (this.root === null || (!this.root)) {
+                // log an error message, throw error
+            }
+            else {
+                this.currentNode.addChild(node);
+                node.setParent(this.currentNode);
+            }
         };
         Tree.prototype.toStringAST = function () {
             var traversalResult = "";

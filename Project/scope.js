@@ -8,12 +8,10 @@ var TSCompiler;
 (function (TSCompiler) {
     var Scope = /** @class */ (function () {
         function Scope(name) {
-            this.name = name;
-            // name: number;
             this.symbols = [];
             this.children = [];
             this.parent = null;
-            // this.setName(name);
+            this.setName(name);
         }
         Scope.prototype.getName = function () {
             return this.name.toString();

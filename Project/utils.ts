@@ -29,8 +29,10 @@ module TSCompiler{
              _Log_   = new TSCompiler.logger(); // to construct them before we can use them.
              _Parser_ = new TSCompiler.parse();
              _Tree_ = new TSCompiler.Tree();
+             
              _AST_ = new TSCompiler.ast();
              _SA_ = new TSCompiler.sa();
+             
              //_Symbol_ = new TSCompiler.Symbol();
              //_SymbolTree_ = new TSCompiler.symbolTree();
                 

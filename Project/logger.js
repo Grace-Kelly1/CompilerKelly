@@ -29,12 +29,12 @@ var TSCompiler;
             //_Tree_ = new TSCompiler.Tree();
             log.value += _Tree_.toString();
         };
-        logger.prototype.printAST = function () {
+        logger.prototype.printAST = function (output) {
             var log = document.getElementById('ast_output');
             //Print code not tree???
             //_Tree_ = new TSCompiler.Tree();
             console.log("Trying to print ast");
-            log.value += _Tree_.toString();
+            log.value = output;
         };
         logger.prototype.printCSTMessage = function (message) {
             var log = document.getElementById('cst_output');
@@ -81,9 +81,31 @@ var TSCompiler;
                 line.innerHTML = _Tokens_[i].line;
             }
         };
-        logger.prototype.printSymbolTable = function (message) {
-            var log = document.getElementById('outputTA');
-            log.value += "<th>Key</th><th>Type</th><th>Scope</th><th>Scope Level</th><th>Line Number</th><th>Col Number</th>" + message + "\n";
+        logger.prototype.printSymbolTable = function (symbolTable) {
+            console.log("Printing");
+            for (var i = 0; i < symbolTable.length; i++) {
+                this.printScope(symbolTable[i]);
+            }
+        };
+        logger.prototype.printScope = function (scope) {
+            var table = document.getElementById("scope_output");
+            var unusedSymbols = [];
+            console.log("Symbol Length " + scope.getSymbols().length);
+            for (var i = 0; i < scope.getSymbols().length; i++) {
+                var symbols = scope.getSymbols();
+                var row = table.insertRow(i + 1);
+                var name = row.insertCell(0);
+                var type = row.insertCell(1);
+                var level = row.insertCell(2);
+                var line = row.insertCell(3);
+                name.innerHTML = symbols[i].getName();
+                type.innerHTML = symbols[i].getType();
+                level.innerHTML = scope.getName();
+                line.innerHTML = symbols[i].getLine();
+                if (!symbols[i].getInitialized()) {
+                    unusedSymbols.push(symbols[i]);
+                }
+            }
         };
         return logger;
     }());

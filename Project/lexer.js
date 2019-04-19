@@ -116,7 +116,7 @@ var TSCompiler;
                                 // _SA_.performAnalysis();
                                 _Log_.printASTMessage("\nAST for program" + programCount + "...");
                                 //Not defined?
-                                _AST_.Ast();
+                                //_AST_.Ast();
                                 _SA_.performAnalysis();
                                 // _Log_.printCST();
                                 programCount++;

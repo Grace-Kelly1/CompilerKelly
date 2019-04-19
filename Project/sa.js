@@ -1,4 +1,4 @@
-///<reference path='tree.ts' />
+///<reference path='Tree.ts' />
 ///<reference path='scope.ts' />
 ///<reference path='globals.ts' />
 ///<reference path='node.ts' />
@@ -13,14 +13,14 @@ var TSCompiler;
         function sa() {
         }
         sa.prototype.performAnalysis = function () {
-            _Log_.printMessage("\nBeginning Semantic Analysis.\n");
+            _Log_.printMessage("\nBeginning Semantic Analysis.");
             this.scopes = [];
             this.scopeName = 0;
             this.astTree = new TSCompiler.Tree();
             this.build(_Tree_.getRoot());
-            //_Log_.printAST(this.astTree.toStringAST());
+            _Log_.printAST(this.astTree.toStringAST());
             console.log("Trying to print scope table!!" + this.scopes.length);
-            //_Log_.printSymbolTable(this.scopes);
+            _Log_.printSymbolTable(this.scopes);
             _Log_.printMessage("Semantic Analysis complete.");
         };
         sa.prototype.build = function (root) {
@@ -61,33 +61,33 @@ var TSCompiler;
                 return;
             }
             //undefined??? how to fix this?
-            console.log(cstNode.children[0]);
+            console.log(cstNode);
             this.analyzeStatement(cstNode.children[0], astNode, scope);
             this.analyzeStatementList(cstNode.children[1], astNode, scope);
         };
         sa.prototype.analyzeStatement = function (cstNode, astNode, scope) {
             console.log("Analyze S");
             switch (cstNode.children[0].getType()) {
-                case "Print Statement":
+                case "PrintStatement":
                     this.analyzePrintStatement(cstNode.children[0], astNode, scope);
                     break;
-                case "Assignment Statement":
+                case "AssignmentStatement":
                     this.analyzeAssignmentStatement(cstNode.children[0], astNode, scope);
                     break;
-                case "Variable Declaration":
+                case "VariableDeclaration":
                     this.analyzeVariableDeclaration(cstNode.children[0], astNode, scope);
                     break;
-                case "While Statement":
+                case "WhileStatement":
                     this.analyzeWhileStatement(cstNode.children[0], astNode, scope);
                     break;
-                case "If Statement":
+                case "IfStatement":
                     this.analyzeIfStatement(cstNode.children[0], astNode, scope);
                     break;
                 case "Block":
                     this.analyzeBlock(cstNode.children[0], scope, astNode);
                     break;
                 default:
-                    _Log_.printError("Statement undefined. " + cstNode.getLineNumber() + "----Semantic Analyzer");
+                    _Log_.printError("Statement undefined. " + cstNode.getLineNumber());
             }
         };
         sa.prototype.analyzePrintStatement = function (cstNode, astNode, scope) {
@@ -110,14 +110,14 @@ var TSCompiler;
             _Log_.printMessage("Checking for identifier '" + cstNode.children[0].children[0].getValue() + "' in Scope " + scope.getName() + ".");
             var scopeCheck = scope.findIdentifier(cstNode.children[0].children[0].getValue());
             if (!scopeCheck) {
-                _Log_.printError("Identifier '" + cstNode.children[0].children[0].getValue() + "' not in scope. " + astNode.getLineNumber() + "----Semantic Analyzer");
+                _Log_.printError("Identifier '" + cstNode.children[0].children[0].getValue() + "' not in scope. " + astNode.getLineNumber());
             }
             _Log_.printMessage("Found '" + cstNode.children[0].children[0].getValue() + "' in Scope " + scope.getName() + ".");
             // type check it
             _Log_.printMessage("Checking if identifier '" + cstNode.children[0].children[0].getValue() + "' is being assigned the type it was declared.");
             var typeCheck = scope.confirmType(cstNode.children[0].children[0].getValue(), astNode.children[1]);
             if (!typeCheck) {
-                _Log_.printError("Type mismatch. Expected " + scope.getTypeOfSymbol(cstNode.children[0].children[0].getValue()) + "." + astNode.getLineNumber() + "-----Semantic Analyzer");
+                _Log_.printError("Type mismatch. Expected " + scope.getTypeOfSymbol(cstNode.children[0].children[0].getValue()) + "." + astNode.getLineNumber());
             }
             _Log_.printMessage("Identifier assigned successfully.");
         };
@@ -153,26 +153,28 @@ var TSCompiler;
         sa.prototype.analyzeExpression = function (cstNode, astNode, scope) {
             console.log("Analyze Expression");
             switch (cstNode.children[0].getType()) {
-                case "Int Expression":
+                case "IntExpr":
                     this.analyzeIntExpression(cstNode.children[0], astNode, scope);
                     break;
-                case "String Expression":
+                case "StringExpr":
                     this.analyzeStringExpression(cstNode.children[0], astNode, scope);
                     break;
-                case "Boolean Expression":
+                case "BooleanExpr":
                     this.analyzeBooleanExpression(cstNode.children[0], astNode, scope);
                     break;
-                case "Identifier":
+                case "Id":
+                    // console.log("Got Here");
                     var id = new TSCompiler.Node(cstNode.children[0].children[0].getValue());
                     id.setIdentifier(true);
                     astNode.addChild(id);
                     var search = scope.findIdentifier(cstNode.children[0].children[0].getValue());
                     if (!search) {
-                        _Log_.printError("Identifier '" + cstNode.children[0].children[0].getValue() + "' not found." + cstNode.children[0].children[0].getLineNumber() + "-----Semantic Analysis");
+                        _Log_.printError("Identifier '" + cstNode.children[0].children[0].getValue() + "' not found." + cstNode.children[0].children[0].getLineNumber());
                     }
                     break;
                 default:
-                    _Log_.printError("Undefined expression. " + cstNode.getLineNumber() + "-----Semantic Analyzer");
+                    console.log("Got Here");
+                    _Log_.printError("Undefined expression. " + cstNode.getLineNumber());
             }
         };
         sa.prototype.analyzeIntExpression = function (cstNode, astNode, scope) {
@@ -192,7 +194,7 @@ var TSCompiler;
                 console.log(cstNode.children[2].children[0]);
                 var typeCheck = cstNode.children[2].children[0];
                 if (typeCheck.getType() === "Boolean Expression" || typeCheck.getType() === "String Expression") {
-                    _Log_.printError("Type mismatch, expected Int Expression. " + typeCheck.getLineNumber() + "------Semantic Analyzer");
+                    _Log_.printError("Type mismatch, expected Int Expression. " + typeCheck.getLineNumber());
                 }
                 this.analyzeExpression(cstNode.children[2], astNode, scope);
             }

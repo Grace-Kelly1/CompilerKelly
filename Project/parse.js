@@ -20,7 +20,7 @@ var TSCompiler;
             _CurrentT_ = _Tokens_[_TokenIndex_];
             _Log_.printMessage("\nBeginning Parsing Session...");
             _Tree_ = new TSCompiler.Tree();
-            //_Tree_ .addNode("Root", "branch");
+            //_Tree_ .addBranchNode("Root");
             _Log_.printParseMessage("PARSE - parse()");
             this.parseProgram();
             //_Log_.printParseMessage("Parse Completed");
@@ -33,28 +33,28 @@ var TSCompiler;
             }
         };
         parse.prototype.parseProgram = function () {
-            _Tree_.addNode("Program", "branch");
+            _Tree_.addBranchNode("Program");
             _Log_.printParseMessage("PARSE - parseProgram()");
             this.parseBlock();
             //console.log("this = " + this);
             //this.matchParse(EOP.type);
-            _Tree_.addNode("$", "");
+            //_Tree_.addLeafNode("$");
             _Tree_.kick();
         };
         parse.prototype.parseBlock = function () {
-            _Tree_.addNode("Block", "branch");
+            _Tree_.addBranchNode("Block");
             _Log_.printParseMessage("PARSE - parseBlock()");
             this.matchParse(L_BRACE.type);
-            //_Tree_.addNode("{", "leaf");
+            //_Tree_.addBranchNode("{", "leaf");
             this.parseStatmentL();
             //_Tree_.kick();
-            //_Tree_.addNode("StatementList", "")
+            //_Tree_.addBranchNode("StatementList", "")
             this.matchParse(R_BRACE.type);
-            //_Tree_.addNode("}", "leaf");
+            //_Tree_.addBranchNode("}", "leaf");
             _Tree_.kick();
         };
         parse.prototype.parseStatmentL = function () {
-            //_Tree_ .addNode("StatementList", "branch");
+            //_Tree_ .addBranchNode("StatementList");
             if (_CurrentT_.type === PRINT.type ||
                 _CurrentT_.type === ID.type ||
                 _CurrentT_.type === INT.type ||
@@ -63,19 +63,19 @@ var TSCompiler;
                 _CurrentT_.type === L_BRACE.type ||
                 _CurrentT_.type === WHILE.type ||
                 _CurrentT_.type === IF.type) {
-                _Tree_.addNode("StatementList", "branch");
+                _Tree_.addBranchNode("StatementList");
                 _Log_.printParseMessage("PARSE - parseStatmentL()");
                 this.parseStatments();
                 //this.parseStatmentL();
                 _Tree_.kick();
             }
             else {
-                //_Tree_.addNode("StatementList", "branch");
+                //_Tree_.addBranchNode("StatementList");
                 _Log_.printParseMessage("PARSE - parseStatmentL()");
             }
         };
         parse.prototype.parseStatments = function () {
-            _Tree_.addNode("Statement", "branch");
+            _Tree_.addBranchNode("Statement");
             _Log_.printParseMessage("PARSE - parseStatements()");
             switch (_CurrentT_.type) {
                 case PRINT.type:
@@ -105,7 +105,7 @@ var TSCompiler;
             _Tree_.kick();
         };
         parse.prototype.parseVar = function () {
-            _Tree_.addNode("VariableDeclaration", "branch");
+            _Tree_.addBranchNode("VariableDeclaration");
             _Log_.printParseMessage("PARSE - parseVar()");
             switch (_CurrentT_.type) {
                 case STRING.type:
@@ -130,7 +130,7 @@ var TSCompiler;
             _Tree_.kick();
         };
         parse.prototype.parsePrint = function () {
-            _Tree_.addNode("PrintStatement", "branch");
+            _Tree_.addBranchNode("PrintStatement");
             _Log_.printParseMessage("PARSE - parsePrint()");
             this.matchParse(PRINT.type);
             this.matchParse(L_PAREN.type);
@@ -139,7 +139,7 @@ var TSCompiler;
             _Tree_.kick();
         };
         parse.prototype.parseAssign = function () {
-            _Tree_.addNode("AssignmentStatement", "branch");
+            _Tree_.addBranchNode("AssignmentStatement");
             _Log_.printParseMessage("PARSE - parseAssign()");
             this.parseId();
             this.matchParse(ASSIGN.type);
@@ -147,7 +147,7 @@ var TSCompiler;
             _Tree_.kick();
         };
         parse.prototype.parseWhile = function () {
-            _Tree_.addNode("WhileStatement", "branch");
+            _Tree_.addBranchNode("WhileStatement");
             _Log_.printParseMessage("PARSE - parseWhile()");
             this.matchParse(WHILE.type);
             this.parseBoolean();
@@ -155,7 +155,7 @@ var TSCompiler;
             _Tree_.kick();
         };
         parse.prototype.parseIf = function () {
-            _Tree_.addNode("IfStatement", "branch");
+            _Tree_.addBranchNode("IfStatement");
             _Log_.printParseMessage("PARSE - parseIf()");
             this.matchParse(IF.type);
             this.parseBoolean();
@@ -163,7 +163,7 @@ var TSCompiler;
             _Tree_.kick();
         };
         parse.prototype.parseExpr = function () {
-            _Tree_.addNode("Expr", "branch");
+            _Tree_.addBranchNode("Expr");
             _Log_.printParseMessage("PARSE - parseExpr()");
             switch (_CurrentT_.type) {
                 // IntExpr
@@ -191,7 +191,7 @@ var TSCompiler;
             _Tree_.kick();
         };
         parse.prototype.parseInt = function () {
-            _Tree_.addNode("IntExpr", "branch");
+            _Tree_.addBranchNode("IntExpr");
             _Log_.printParseMessage("PARSE - parseInt()");
             if (_CurrentT_.type === DIGIT.type) {
                 this.matchParse(DIGIT.type);
@@ -203,7 +203,7 @@ var TSCompiler;
             _Tree_.kick();
         };
         parse.prototype.parseString = function () {
-            _Tree_.addNode("StringExpr", "branch");
+            _Tree_.addBranchNode("StringExpr");
             _Log_.printParseMessage("PARSE - parseString()");
             this.matchParse(QUOTE.type);
             this.parseChar();
@@ -212,7 +212,7 @@ var TSCompiler;
         };
         parse.prototype.parseBoolean = function () {
             console.log("InBool");
-            _Tree_.addNode("BooleanExpr", "branch");
+            _Tree_.addBranchNode("BooleanExpr");
             _Log_.printParseMessage("PARSE - parseBoolean()");
             if (_CurrentT_.type === TRUE.type) {
                 this.matchParse(TRUE.type);
@@ -237,7 +237,7 @@ var TSCompiler;
             _Tree_.kick();
         };
         parse.prototype.parseId = function () {
-            _Tree_.addNode("Id", "branch");
+            _Tree_.addBranchNode("Id");
             _Log_.printParseMessage("PARSE - parseId()");
             //console.log(_CurrentT_.type);
             this.matchParse(ID.type);
@@ -245,7 +245,7 @@ var TSCompiler;
         };
         parse.prototype.parseChar = function () {
             if (_CurrentT_.type === SPACE.type) {
-                _Tree_.addNode("CharListSpace", "branch");
+                _Tree_.addBranchNode("CharListSpace");
                 _Log_.printParseMessage("PARSE - parseChar()");
                 this.matchParse(SPACE.type);
                 this.parseChar();
@@ -254,7 +254,7 @@ var TSCompiler;
             else
                 (_CurrentT_.type === CHAR.type);
             {
-                _Tree_.addNode("CharListChar", "branch");
+                _Tree_.addBranchNode("CharListChar");
                 _Log_.printParseMessage("PARSE - parseChar()");
                 this.matchParse(CHAR.type);
                 // if(_CurrentT_.type === QUOTE.type){
@@ -269,7 +269,7 @@ var TSCompiler;
         parse.prototype.matchParse = function (type) {
             //console.log(_CurrentT_.type);
             if (_CurrentT_.type === type) {
-                _Tree_.addNode(_CurrentT_.value, "leaf");
+                _Tree_.addLeafNode(_CurrentT_);
                 //_Log_.printMessage("Parse: Successfully matched " + type + " token.");
             }
             else {
