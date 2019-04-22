@@ -66,7 +66,7 @@ var TSCompiler;
                 _Tree_.addBranchNode("StatementList");
                 _Log_.printParseMessage("PARSE - parseStatmentL()");
                 this.parseStatments();
-                //this.parseStatmentL();
+                this.parseStatmentL();
                 _Tree_.kick();
             }
             else {
@@ -85,11 +85,7 @@ var TSCompiler;
                     this.parseAssign();
                     break;
                 case STRING.type:
-                    this.parseVar();
-                    break;
                 case INT.type:
-                    this.parseVar();
-                    break;
                 case BOOLEAN.type:
                     this.parseVar();
                     break;
@@ -244,25 +240,18 @@ var TSCompiler;
             _Tree_.kick();
         };
         parse.prototype.parseChar = function () {
-            if (_CurrentT_.type === SPACE.type) {
-                _Tree_.addBranchNode("CharListSpace");
+            if (_CurrentT_.type === CHAR.type) {
+                _Tree_.addBranchNode("Char List");
                 _Log_.printParseMessage("PARSE - parseChar()");
-                this.matchParse(SPACE.type);
+                this.matchParse(CHAR.type);
                 this.parseChar();
                 _Tree_.kick();
             }
-            else
-                (_CurrentT_.type === CHAR.type);
-            {
-                _Tree_.addBranchNode("CharListChar");
+            else if (_CurrentT_.type === SPACE.type) {
+                _Tree_.addBranchNode("Char List");
                 _Log_.printParseMessage("PARSE - parseChar()");
-                this.matchParse(CHAR.type);
-                // if(_CurrentT_.type === QUOTE.type){
-                //     this.parseString();
-                // }
-                // else{
+                this.matchParse(SPACE.type);
                 this.parseChar();
-                // }
                 _Tree_.kick();
             }
         };

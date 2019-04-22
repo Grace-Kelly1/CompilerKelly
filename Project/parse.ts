@@ -69,7 +69,7 @@ module TSCompiler{
                 _Tree_ .addBranchNode("StatementList");
                 _Log_.printParseMessage("PARSE - parseStatmentL()");
                 this.parseStatments();
-                //this.parseStatmentL();
+                this.parseStatmentL();
                 _Tree_ .kick();
             }
             else{
@@ -89,11 +89,7 @@ module TSCompiler{
                     this.parseAssign();
                     break;
                 case STRING.type:
-                    this.parseVar();
-                    break;
                 case INT.type:
-                    this.parseVar();
-                    break;
                 case BOOLEAN.type:
                     this.parseVar();
                     break;
@@ -257,27 +253,20 @@ module TSCompiler{
         }
 
         public parseChar(){
-            if (_CurrentT_.type === SPACE.type) 
-            {
-                _Tree_ .addBranchNode("CharListSpace");
+            if (_CurrentT_.type === CHAR.type) {
+                _Tree_.addBranchNode("Char List");
+                _Log_.printParseMessage("PARSE - parseChar()");
+                this.matchParse(CHAR.type);
+                this.parseChar();
+                _Tree_.kick();
+            } else if (_CurrentT_.type === SPACE.type) {
+                _Tree_.addBranchNode("Char List");
                 _Log_.printParseMessage("PARSE - parseChar()");
                 this.matchParse(SPACE.type);
                 this.parseChar();
-                _Tree_ .kick();
-            } 
-            else(_CurrentT_.type === CHAR.type) 
-            {
-                _Tree_ .addBranchNode("CharListChar");
-                _Log_.printParseMessage("PARSE - parseChar()");
-                this.matchParse(CHAR.type);
-                // if(_CurrentT_.type === QUOTE.type){
-                //     this.parseString();
-                // }
-                // else{
-                this.parseChar();
-                // }
-                _Tree_ .kick();
+                _Tree_.kick();
             }
+            
         }
 
         public matchParse(type){
