@@ -118,6 +118,7 @@ var TSCompiler;
                                 //Not defined?
                                 //_AST_.Ast();
                                 _SA_.performAnalysis();
+                                // _codeGen_.generateCode();
                                 // _Log_.printCST();
                                 programCount++;
                             }

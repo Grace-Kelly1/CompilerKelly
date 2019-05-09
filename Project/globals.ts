@@ -11,6 +11,11 @@
 /// <reference path="ast.ts"/>
 ///<reference path='symbol.ts' />
 ///<reference path='scope.ts' />
+///<reference path='codeGen.ts' />
+///<reference path='codeTable.ts' />
+///<reference path='staticTable.ts' />
+///<reference path='jumpTable.ts' />
+
 
 
 
@@ -28,6 +33,10 @@ var _AST_: TSCompiler.ast;
 var _SA_: TSCompiler.sa;
 var _Symbol_: TSCompiler.Symbol;
 var _Scope_: TSCompiler.Scope;
+var _codeGen_: TSCompiler.CodeGenerator;
+var _codeTable_:TSCompiler.CodeTable;
+var _staticTable_: TSCompiler.StaticTable;
+var _jumpTable_: TSCompiler.JumpTable;
 
 
 //Types of keywords

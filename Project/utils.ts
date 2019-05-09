@@ -34,6 +34,8 @@ module TSCompiler{
              
              _AST_ = new TSCompiler.ast();
              _SA_ = new TSCompiler.sa();
+             _codeGen_ = new TSCompiler.CodeGenerator();
+            
              
              //_Symbol_ = new TSCompiler.Symbol();
              //_SymbolTree_ = new TSCompiler.symbolTree();
@@ -70,6 +72,16 @@ module TSCompiler{
         // Used in some places but specifically typed out in others. (TODO: Be consistent about this.)
         public static trim(words) {
             return words.replace(/^\s+ | \s+$/g, "");
+        }
+
+        public static leftPad(string: string, length: number): string {
+            if (string.length === 2) {
+                return string;
+            }
+            for (var i = 1; i < length; i++) {
+                string = "0" + string;
+            }
+            return string;
         }
     }
 }

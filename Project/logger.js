@@ -118,6 +118,10 @@ var TSCompiler;
                 }
             }
         };
+        logger.prototype.logCodeTable = function (codeTable) {
+            var log = document.getElementById('codeG_output');
+            log.value = codeTable.toString();
+        };
         return logger;
     }());
     TSCompiler.logger = logger;

@@ -7,6 +7,7 @@
 ///<reference path='parse.ts' />
 ///<reference path='logger.ts' />
 ///<reference path='token.ts' />
+///<reference path='codeGen.ts' />
 var TSCompiler;
 (function (TSCompiler) {
     var sa = /** @class */ (function () {
@@ -22,6 +23,7 @@ var TSCompiler;
             console.log("Trying to print scope table!!" + this.scopes.length);
             _Log_.printSymbolTable(this.scopes);
             _Log_.printMessage("Semantic Analysis complete.");
+            _codeGen_.generateCode(this.astTree.getRoot(), this.scopes[0]);
         };
         sa.prototype.build = function (root) {
             this.analyzeProgram(root);

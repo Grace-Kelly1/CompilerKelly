@@ -16,6 +16,10 @@
 <script type="text/javascript" src="scope.js"></script>
 <script type="text/javascript" src="node.js"></script>
 <script type="text/javascript" src="symbol.js"></script>
+<script type="text/javascript" src="codeGen.js"></script>
+<script type="text/javascript" src="codeTable.js"></script>
+<script type="text/javascript" src="jumpTable.js"></script>
+<script type="text/javascript" src="staticTable.js"></script>
 
 <body onload="init()">
 	<div class="container py-2">
@@ -48,7 +52,7 @@
 		<div class="row">
 			<div class="col">
 				<div class="panel panel-default">
-					<textarea id="inputTA" class="form-control" rows="15" autofocus placeholder="Enter Code Here..."></textarea>
+					<textarea id="inputTA" class="form-control" rows="15" autofocus></textarea>
 				</div>
 			</div>
 			<div class="col">
@@ -109,6 +113,12 @@
 										</table>
 									</div>
 								</div>
+								<div class="col">
+									<h3>Code Gen </h3> 
+									<div class="panel panel-default">
+										<textarea readonly id="godeG_output" class="form-control" rows="15"></textarea>
+									</div>
+								</div>
 		</div>
 
 		<div class="row">
@@ -126,7 +136,7 @@
 	function init() {
 	        // Clear the message box.
 			document.getElementById("outputTA").value = "";
-			document.getElementById("inputTA").value = "";
+			document.getElementById("inputTA").value = "Enter Code Here...";
 			document.getElementById("cst_output").value = "";
 	        // Set the initial values for our globals.
 	        tokens = "";

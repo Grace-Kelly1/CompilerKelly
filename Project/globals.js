@@ -11,6 +11,10 @@
 /// <reference path="ast.ts"/>
 ///<reference path='symbol.ts' />
 ///<reference path='scope.ts' />
+///<reference path='codeGen.ts' />
+///<reference path='codeTable.ts' />
+///<reference path='staticTable.ts' />
+///<reference path='jumpTable.ts' />
 var _Lexer_; // Remember to construct this later.
 var _Log_; // Remember to construct this later.
 var _Tokens_ = [];
@@ -25,6 +29,10 @@ var _AST_;
 var _SA_;
 var _Symbol_;
 var _Scope_;
+var _codeGen_;
+var _codeTable_;
+var _staticTable_;
+var _jumpTable_;
 //Types of keywords
 var PRINT = { type: 'PRINT', value: 'print' };
 var WHILE = { type: 'WHILE', value: 'while' };

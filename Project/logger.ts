@@ -136,5 +136,10 @@ module TSCompiler{
                 }
             }
         }
+
+        public logCodeTable(codeTable: CodeTable) {
+            var log = <HTMLTextAreaElement> document.getElementById('codeG_output');
+            log.value = codeTable.toString();
+        }
     }
 }

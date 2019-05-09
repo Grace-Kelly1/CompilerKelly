@@ -7,6 +7,7 @@
 ///<reference path='parse.ts' />
 ///<reference path='logger.ts' />
 ///<reference path='token.ts' />
+///<reference path='codeGen.ts' />
 
 
 module TSCompiler{
@@ -27,6 +28,7 @@ module TSCompiler{
             console.log("Trying to print scope table!!" + this.scopes.length);
             _Log_.printSymbolTable(this.scopes);
             _Log_.printMessage("Semantic Analysis complete.");
+            _codeGen_.generateCode(this.astTree.getRoot(), this.scopes[0]);
         }
 
         public build(root: Node) {

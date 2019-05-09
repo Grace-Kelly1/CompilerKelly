@@ -30,6 +30,7 @@ var TSCompiler;
             _Tree_ = new TSCompiler.Tree();
             _AST_ = new TSCompiler.ast();
             _SA_ = new TSCompiler.sa();
+            _codeGen_ = new TSCompiler.CodeGenerator();
             //_Symbol_ = new TSCompiler.Symbol();
             //_SymbolTree_ = new TSCompiler.symbolTree();
             var log = document.getElementById("outputTA");
@@ -57,6 +58,15 @@ var TSCompiler;
         // Used in some places but specifically typed out in others. (TODO: Be consistent about this.)
         utils.trim = function (words) {
             return words.replace(/^\s+ | \s+$/g, "");
+        };
+        utils.leftPad = function (string, length) {
+            if (string.length === 2) {
+                return string;
+            }
+            for (var i = 1; i < length; i++) {
+                string = "0" + string;
+            }
+            return string;
         };
         return utils;
     }());
