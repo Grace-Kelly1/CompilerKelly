@@ -73,8 +73,6 @@ module TSCompiler {
             var jumpItem = new JumpTableItem(jumpTemp);
             this.jumpTable.addItem(jumpItem);
             this.branch(utils.leftPad(this.codeTable.getCurrentAddress().toString(16), 2));
-
-            console.log(node);
             this.generateCodeForBlock(node.children[1], scope);
             
             this.loadAccumulatorWithC("00");
@@ -87,16 +85,14 @@ module TSCompiler {
             this.branch(leftPadded);
         }
         
+        //If does not really owrk at the moment 
+        //How to fix???
         public  generateCodeForIfStatement(node: Node, scope: Scope){   
-              
             if (node.children[0].children[0].getIdentifier() && node.children[0].children[1].getIdentifier()) {
                 var firstTableEntry = this.StaticTable.findItemWithIdentifier(node.children[0].children[0].getType());
                 this.loadXRegisterFromMem(firstTableEntry.getTemp(), "XX");
-            
                 var secondTableEntry = this.StaticTable.findItemWithIdentifier(node.children[0].children[1].getType());
-            
                 this.compareByte(secondTableEntry.getTemp(), "XX");
-                
                 var jumpEntry = new JumpTableItem(this.jumpTable.getCurrentTemp());
                 this.jumpTable.addItem(jumpEntry);
                 var start = this.codeTable.getCurrentAddress();
@@ -104,7 +100,8 @@ module TSCompiler {
                 this.jumpTable.incrementTemp();
                 this.generateCodeForBlock(node.children[1], scope);
                 this.jumpTable.setDistanceForItem(jumpEntry, this.codeTable.getCurrentAddress() - start + 1)
-            } else if (node.children.length === 1 && node.children[0].getType() === "true") {
+            } 
+            else if (node.children.length === 1 && node.children[0].getType() === "true") {
                 this.generateCodeForBlock(node.children[1], scope);
             }
             
@@ -158,15 +155,15 @@ module TSCompiler {
         }
 
         public  generateCodeForBooleanExpression(node: Node, scope: Scope) {
-            console.log(node);
+            //Booleans print weird 
+            //Waht to do here????
+            console.log("hmmmmm");
             switch (node.getType()) {
                 case "==":
                     break;
                 case "!=":
-                    console.log("!=");
                     break;
                 case "true":
-                    console.log("true");
                     break;
                 case "false":
                     this.loadXRegisterWithC("01");

@@ -66,7 +66,6 @@ var TSCompiler;
             var jumpItem = new TSCompiler.JumpTableItem(jumpTemp);
             this.jumpTable.addItem(jumpItem);
             this.branch(TSCompiler.utils.leftPad(this.codeTable.getCurrentAddress().toString(16), 2));
-            console.log(node);
             this.generateCodeForBlock(node.children[1], scope);
             this.loadAccumulatorWithC("00");
             this.storeAccumulatorInMem("00", "00");
@@ -76,6 +75,8 @@ var TSCompiler;
             var leftPadded = TSCompiler.utils.leftPad(toLeftPad.toString(16), 2);
             this.branch(leftPadded);
         };
+        //If does not really owrk at the moment 
+        //How to fix???
         CodeGenerator.prototype.generateCodeForIfStatement = function (node, scope) {
             if (node.children[0].children[0].getIdentifier() && node.children[0].children[1].getIdentifier()) {
                 var firstTableEntry = this.StaticTable.findItemWithIdentifier(node.children[0].children[0].getType());
@@ -142,15 +143,15 @@ var TSCompiler;
             }
         };
         CodeGenerator.prototype.generateCodeForBooleanExpression = function (node, scope) {
-            console.log(node);
+            //Booleans print weird 
+            //Waht to do here????
+            console.log("hmmmmm");
             switch (node.getType()) {
                 case "==":
                     break;
                 case "!=":
-                    console.log("!=");
                     break;
                 case "true":
-                    console.log("true");
                     break;
                 case "false":
                     this.loadXRegisterWithC("01");
