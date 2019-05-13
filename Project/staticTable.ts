@@ -1,3 +1,13 @@
+///<reference path='scope.ts' />
+///<reference path='node.ts' />
+///<reference path='globals.ts' />
+///<reference path='utils.ts' />
+///<reference path='logger.ts' />
+///<reference path='sa.ts' />
+///<reference path='codeTable.ts' />
+///<reference path='codeGen.ts' />
+///<reference path='jumpTable.ts' />
+
 module TSCompiler {
     export class StaticTable {
         private items: StaticTableItem[] = [];
@@ -57,8 +67,6 @@ module TSCompiler {
                 var current = codeTable.table[i];
                 if (current.match(regex)) {
                     var item: StaticTableItem = this.getItemWithId(current.match(regex)[1]);
-                    console.log("current address");
-                    console.log(codeTable.getCurrentAddress());
                     codeTable.addByteAtAddress((parseInt(item.getTemp()[1]) + codeTable.getCurrentAddress() + 1).toString(16), i.toString());
                     codeTable.addByteAtAddress("00", (i + 1).toString());
                 }

@@ -1,3 +1,12 @@
+///<reference path='scope.ts' />
+///<reference path='node.ts' />
+///<reference path='globals.ts' />
+///<reference path='utils.ts' />
+///<reference path='logger.ts' />
+///<reference path='sa.ts' />
+///<reference path='codeGen.ts' />
+///<reference path='statictable.ts' />
+///<reference path='jumpTable.ts' />
 var TSCompiler;
 (function (TSCompiler) {
     var CodeTable = /** @class */ (function () {

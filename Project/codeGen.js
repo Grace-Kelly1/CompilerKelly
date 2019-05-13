@@ -1,6 +1,3 @@
-///<reference path='codeTable.ts' />
-///<reference path='staticTable.ts' />
-///<reference path='jumpTable.ts' />
 ///<reference path='scope.ts' />
 ///<reference path='node.ts' />
 ///<reference path='globals.ts' />
@@ -22,6 +19,7 @@ var TSCompiler;
             this.jumpTable = new TSCompiler.JumpTable();
             this.generateCodeFromNode(node, scope);
             this["break"]();
+            //need to fill empty spots with 00
             this.codeTable.zeroOutEmptySlots();
             this.StaticTable.removeTempsInCodeTable(this.codeTable);
             this.jumpTable.removeTempsInCodeTable(this.codeTable);
@@ -70,9 +68,9 @@ var TSCompiler;
             this.branch(TSCompiler.utils.leftPad(this.codeTable.getCurrentAddress().toString(16), 2));
             console.log(node);
             this.generateCodeForBlock(node.children[1], scope);
-            this.loadAccumulatorWithConstant("00");
-            this.storeAccumulatorInMemory("00", "00");
-            this.loadXRegisterWithConstant("01");
+            this.loadAccumulatorWithC("00");
+            this.storeAccumulatorInMem("00", "00");
+            this.loadXRegisterWithC("01");
             this.compareByte("00", "00");
             var toLeftPad = (256 - (this.codeTable.getCurrentAddress() - current + 2));
             var leftPadded = TSCompiler.utils.leftPad(toLeftPad.toString(16), 2);
@@ -80,9 +78,8 @@ var TSCompiler;
         };
         CodeGenerator.prototype.generateCodeForIfStatement = function (node, scope) {
             if (node.children[0].children[0].getIdentifier() && node.children[0].children[1].getIdentifier()) {
-                console.log(node);
                 var firstTableEntry = this.StaticTable.findItemWithIdentifier(node.children[0].children[0].getType());
-                this.loadXRegisterFromMemory(firstTableEntry.getTemp(), "XX");
+                this.loadXRegisterFromMem(firstTableEntry.getTemp(), "XX");
                 var secondTableEntry = this.StaticTable.findItemWithIdentifier(node.children[0].children[1].getType());
                 this.compareByte(secondTableEntry.getTemp(), "XX");
                 var jumpEntry = new TSCompiler.JumpTableItem(this.jumpTable.getCurrentTemp());
@@ -91,43 +88,42 @@ var TSCompiler;
                 this.branch(jumpEntry.getTemp());
                 this.jumpTable.incrementTemp();
                 this.generateCodeForBlock(node.children[1], scope);
-                console.log(this.codeTable.getCurrentAddress() - start + 1);
                 this.jumpTable.setDistanceForItem(jumpEntry, this.codeTable.getCurrentAddress() - start + 1);
             }
             else if (node.children.length === 1 && node.children[0].getType() === "true") {
                 this.generateCodeForBlock(node.children[1], scope);
             }
         };
+        //scope isnt used 
         CodeGenerator.prototype.generateCodeForPrintStatement = function (node, scope) {
-            console.log(node);
             if (node.children[0].getIdentifier()) {
                 var tableEntry = this.StaticTable.findItemWithIdentifier(node.children[0].getType());
-                this.loadYRegisterFromMemory(tableEntry.getTemp(), "XX");
+                this.loadYRegisterFromMem(tableEntry.getTemp(), "XX");
                 if (tableEntry.getType() === "int") {
-                    this.loadXRegisterWithConstant("01");
+                    this.loadXRegisterWithC("01");
                 }
                 else {
-                    this.loadXRegisterWithConstant("02");
+                    this.loadXRegisterWithC("02");
                 }
-                this.systemCall();
+                this.end();
             }
             else if (node.children[0].getInt()) {
-                this.generateCodeForIntExpression(node.children[0], scope);
-                this.storeAccumulatorInMemory("00", "00");
-                this.loadXRegisterWithConstant("01");
-                this.loadYRegisterFromMemory("00", "00");
-                this.systemCall();
+                this.storeAccumulatorInMem("00", "00");
+                this.loadXRegisterWithC("01");
+                this.loadYRegisterFromMem("00", "00");
+                this.end();
             }
             else if (node.children[0].checkBoolean()) {
             }
             else {
-                // write it to the heap
+                // push to heap
                 var heapPosition = this.codeTable.writeStringToHeap(node.children[0].getType());
-                this.loadAccumulatorWithConstant(heapPosition.toString(16).toUpperCase());
-                this.storeAccumulatorInMemory("00", "00");
-                this.loadXRegisterWithConstant("02");
-                this.loadYRegisterFromMemory("00", "00");
-                this.systemCall();
+                this.loadAccumulatorWithC(heapPosition.toString(16).toUpperCase());
+                this.storeAccumulatorInMem("00", "00");
+                this.loadXRegisterWithC("02");
+                this.loadYRegisterFromMem("00", "00");
+                //end
+                this.end();
             }
         };
         CodeGenerator.prototype.generateCodeForVariableDeclaration = function (node, scope) {
@@ -145,9 +141,30 @@ var TSCompiler;
                     _Log_.printError("Variable type undefined. Line: " + node.getLineNumber());
             }
         };
+        CodeGenerator.prototype.generateCodeForBooleanExpression = function (node, scope) {
+            console.log(node);
+            switch (node.getType()) {
+                case "==":
+                    break;
+                case "!=":
+                    console.log("!=");
+                    break;
+                case "true":
+                    console.log("true");
+                    break;
+                case "false":
+                    this.loadXRegisterWithC("01");
+                    this.loadAccumulatorWithC("00");
+                    this.storeAccumulatorInMem("00", "00");
+                    this.compareByte("00", "00");
+                    break;
+                default:
+                    _Log_.printError("Undefined boolean type. Line: " + node.getLineNumber());
+            }
+        };
         CodeGenerator.prototype.generateCodeForIntDeclaration = function (node, scope) {
-            this.loadAccumulatorWithConstant("00");
-            this.storeAccumulatorInMemory(this.StaticTable.getCurrentTemp(), "XX");
+            this.loadAccumulatorWithC("00");
+            this.storeAccumulatorInMem(this.StaticTable.getCurrentTemp(), "XX");
             var item = new TSCompiler.StaticTableItem(this.StaticTable.getCurrentTemp(), node.children[1].getType(), scope.getNameAsInt(), this.StaticTable.getOffset(), "int");
             this.StaticTable.addItem(item);
             this.StaticTable.incrementTemp();
@@ -161,66 +178,44 @@ var TSCompiler;
             this.StaticTable.addItem(item);
             this.StaticTable.incrementTemp();
         };
-        CodeGenerator.prototype.generateCodeForBooleanExpression = function (node, scope) {
-            console.log(node);
-            switch (node.getType()) {
-                case "==":
-                    console.log("==");
-                    this.generateCodeForEquivalencyStatement(node, scope);
-                    break;
-                case "!=":
-                    console.log("!=");
-                    break;
-                case "true":
-                    console.log("true");
-                    break;
-                case "false":
-                    this.loadXRegisterWithConstant("01");
-                    this.loadAccumulatorWithConstant("00");
-                    this.storeAccumulatorInMemory("00", "00");
-                    this.compareByte("00", "00");
-                    break;
-                default:
-                    _Log_.printError("Undefined boolean type. Line: " + node.getLineNumber());
-            }
-        };
+        //scope not used 
         CodeGenerator.prototype.generateCodeForAssignmentStatement = function (node, scope) {
-            console.log(node);
             if (node.children[1].getIdentifier()) {
                 var firstTableEntry = this.StaticTable.findItemWithIdentifier(node.children[1].getType());
                 var secondTableEntry = this.StaticTable.findItemWithIdentifier(node.children[0].getType());
-                this.loadAccumulatorFromMemory(firstTableEntry.getTemp(), "XX");
-                this.storeAccumulatorInMemory(secondTableEntry.getTemp(), "XX");
+                this.loadAccumulatorFromMem(firstTableEntry.getTemp(), "XX");
+                this.storeAccumulatorInMem(secondTableEntry.getTemp(), "XX");
             }
             else if (node.children[1].getInt()) {
                 var tableEntry = this.StaticTable.findItemWithIdentifier(node.children[0].getType());
                 var value = TSCompiler.utils.leftPad(node.children[1].getType(), 2);
-                this.loadAccumulatorWithConstant(value);
-                this.storeAccumulatorInMemory(tableEntry.getTemp(), "XX");
+                this.loadAccumulatorWithC(value);
+                this.storeAccumulatorInMem(tableEntry.getTemp(), "XX");
             }
             else if (node.children[1].checkBoolean()) {
             }
             else {
                 var entry = this.StaticTable.findItemWithIdentifier(node.children[0].getType());
                 var pointer = this.codeTable.writeStringToHeap(node.children[1].getType());
-                this.loadAccumulatorWithConstant(pointer.toString(16).toUpperCase());
-                this.storeAccumulatorInMemory(entry.getTemp(), "XX");
+                this.loadAccumulatorWithC(pointer.toString(16).toUpperCase());
+                this.storeAccumulatorInMem(entry.getTemp(), "XX");
             }
         };
-        CodeGenerator.prototype.generateCodeForEquivalencyStatement = function (node, scope) {
+        //end
+        CodeGenerator.prototype.end = function () {
+            this.codeTable.addByte('FF');
         };
-        CodeGenerator.prototype.generateCodeForIntExpression = function (node, scope) {
-        };
-        CodeGenerator.prototype.loadAccumulatorWithConstant = function (constant) {
+        CodeGenerator.prototype.loadAccumulatorWithC = function (constant) {
             this.codeTable.addByte('A9');
             this.codeTable.addByte(constant);
         };
-        CodeGenerator.prototype.loadAccumulatorFromMemory = function (atAddress, fromAddress) {
+        CodeGenerator.prototype.loadAccumulatorFromMem = function (atAddress, fromAddress) {
+            console.log("HERE For Mem");
             this.codeTable.addByte('AD');
             this.codeTable.addByte(atAddress);
             this.codeTable.addByte(fromAddress);
         };
-        CodeGenerator.prototype.storeAccumulatorInMemory = function (atAddress, fromAddress) {
+        CodeGenerator.prototype.storeAccumulatorInMem = function (atAddress, fromAddress) {
             this.codeTable.addByte('8D');
             this.codeTable.addByte(atAddress);
             this.codeTable.addByte(fromAddress);
@@ -230,26 +225,23 @@ var TSCompiler;
             this.codeTable.addByte(atAddress);
             this.codeTable.addByte(fromAddress);
         };
-        CodeGenerator.prototype.loadXRegisterWithConstant = function (constant) {
+        CodeGenerator.prototype.loadXRegisterWithC = function (constant) {
             this.codeTable.addByte('A2');
             this.codeTable.addByte(constant);
         };
-        CodeGenerator.prototype.loadXRegisterFromMemory = function (atAddress, fromAddress) {
+        CodeGenerator.prototype.loadXRegisterFromMem = function (atAddress, fromAddress) {
             this.codeTable.addByte('AE');
             this.codeTable.addByte(atAddress);
             this.codeTable.addByte(fromAddress);
         };
-        CodeGenerator.prototype.loadYRegisterWithConstant = function (constant) {
+        CodeGenerator.prototype.loadYRegisterWithC = function (constant) {
             this.codeTable.addByte('A0');
             this.codeTable.addByte(constant);
         };
-        CodeGenerator.prototype.loadYRegisterFromMemory = function (atAddress, fromAddress) {
+        CodeGenerator.prototype.loadYRegisterFromMem = function (atAddress, fromAddress) {
             this.codeTable.addByte('AC');
             this.codeTable.addByte(atAddress);
             this.codeTable.addByte(fromAddress);
-        };
-        CodeGenerator.prototype.noOperation = function () {
-            this.codeTable.addByte('EA');
         };
         CodeGenerator.prototype["break"] = function () {
             this.codeTable.addByte('00');
@@ -262,9 +254,6 @@ var TSCompiler;
         CodeGenerator.prototype.branch = function (comparisonByte) {
             this.codeTable.addByte('D0');
             this.codeTable.addByte(comparisonByte);
-        };
-        CodeGenerator.prototype.systemCall = function () {
-            this.codeTable.addByte('FF');
         };
         return CodeGenerator;
     }());

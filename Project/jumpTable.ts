@@ -1,3 +1,13 @@
+///<reference path='scope.ts' />
+///<reference path='node.ts' />
+///<reference path='globals.ts' />
+///<reference path='utils.ts' />
+///<reference path='logger.ts' />
+///<reference path='sa.ts' />
+///<reference path='codeTable.ts' />
+///<reference path='statictable.ts' />
+///<reference path='codeGen.ts' />
+
 module TSCompiler {
     export class JumpTable {
         private items: JumpTableItem[] = [];

@@ -1,7 +1,3 @@
-    
-///<reference path='codeTable.ts' />
-///<reference path='staticTable.ts' />
-///<reference path='jumpTable.ts' />
 ///<reference path='scope.ts' />
 ///<reference path='node.ts' />
 ///<reference path='globals.ts' />
@@ -15,9 +11,9 @@
 module TSCompiler {
     export class CodeGenerator {
         
-        private  StaticTable: StaticTable;
-        private  codeTable: CodeTable;
-        private  jumpTable: JumpTable;
+        private StaticTable: StaticTable;
+        private codeTable: CodeTable;
+        private jumpTable: JumpTable;
         
         public  generateCode(node: Node, scope: Scope){
             _Log_.printMessage("\nBeginning Code Generation.");
@@ -26,6 +22,7 @@ module TSCompiler {
             this.jumpTable = new JumpTable();
             this.generateCodeFromNode(node, scope);
             this.break();
+            //need to fill empty spots with 00
             this.codeTable.zeroOutEmptySlots();
             this.StaticTable.removeTempsInCodeTable(this.codeTable);
             this.jumpTable.removeTempsInCodeTable(this.codeTable);
@@ -80,9 +77,9 @@ module TSCompiler {
             console.log(node);
             this.generateCodeForBlock(node.children[1], scope);
             
-            this.loadAccumulatorWithConstant("00");
-            this.storeAccumulatorInMemory("00", "00");
-            this.loadXRegisterWithConstant("01");
+            this.loadAccumulatorWithC("00");
+            this.storeAccumulatorInMem("00", "00");
+            this.loadXRegisterWithC("01");
             this.compareByte("00", "00");
             
             var toLeftPad = (256 - (this.codeTable.getCurrentAddress() - current + 2));
@@ -93,9 +90,8 @@ module TSCompiler {
         public  generateCodeForIfStatement(node: Node, scope: Scope){   
               
             if (node.children[0].children[0].getIdentifier() && node.children[0].children[1].getIdentifier()) {
-                console.log(node);
                 var firstTableEntry = this.StaticTable.findItemWithIdentifier(node.children[0].children[0].getType());
-                this.loadXRegisterFromMemory(firstTableEntry.getTemp(), "XX");
+                this.loadXRegisterFromMem(firstTableEntry.getTemp(), "XX");
             
                 var secondTableEntry = this.StaticTable.findItemWithIdentifier(node.children[0].children[1].getType());
             
@@ -107,43 +103,41 @@ module TSCompiler {
                 this.branch(jumpEntry.getTemp());
                 this.jumpTable.incrementTemp();
                 this.generateCodeForBlock(node.children[1], scope);
-                console.log(this.codeTable.getCurrentAddress() - start + 1);
                 this.jumpTable.setDistanceForItem(jumpEntry, this.codeTable.getCurrentAddress() - start + 1)
             } else if (node.children.length === 1 && node.children[0].getType() === "true") {
                 this.generateCodeForBlock(node.children[1], scope);
             }
             
         }
-        
+        //scope isnt used 
         public  generateCodeForPrintStatement(node: Node, scope: Scope){
-            console.log(node);
             if (node.children[0].getIdentifier()) {
                 var tableEntry = this.StaticTable.findItemWithIdentifier(node.children[0].getType());
-                this.loadYRegisterFromMemory(tableEntry.getTemp(), "XX");
+                this.loadYRegisterFromMem(tableEntry.getTemp(), "XX");
                 
                 if (tableEntry.getType() === "int") {
-                    this.loadXRegisterWithConstant("01");
+                    this.loadXRegisterWithC("01");
                 } else {
-                    this.loadXRegisterWithConstant("02");
+                    this.loadXRegisterWithC("02");
                 }
                 
-                this.systemCall();
+                this.end();
             } else if (node.children[0].getInt()) {
-                this.generateCodeForIntExpression(node.children[0], scope);
-                this.storeAccumulatorInMemory("00", "00");
-                this.loadXRegisterWithConstant("01");
-                this.loadYRegisterFromMemory("00", "00");
-                this.systemCall();
+                this.storeAccumulatorInMem("00", "00");
+                this.loadXRegisterWithC("01");
+                this.loadYRegisterFromMem("00", "00");
+                this.end();
             } else if (node.children[0].checkBoolean()) {
                 
             } else {
-                // write it to the heap
+                // push to heap
                 var heapPosition = this.codeTable.writeStringToHeap(node.children[0].getType());
-                this.loadAccumulatorWithConstant(heapPosition.toString(16).toUpperCase());
-                this.storeAccumulatorInMemory("00", "00");
-                this.loadXRegisterWithConstant("02");
-                this.loadYRegisterFromMemory("00", "00");
-                this.systemCall();
+                this.loadAccumulatorWithC(heapPosition.toString(16).toUpperCase());
+                this.storeAccumulatorInMem("00", "00");
+                this.loadXRegisterWithC("02");
+                this.loadYRegisterFromMem("00", "00");
+                //end
+                this.end();
             }            
         }
         
@@ -162,17 +156,38 @@ module TSCompiler {
                     _Log_.printError("Variable type undefined. Line: " + node.getLineNumber());
             }
         }
+
+        public  generateCodeForBooleanExpression(node: Node, scope: Scope) {
+            console.log(node);
+            switch (node.getType()) {
+                case "==":
+                    break;
+                case "!=":
+                    console.log("!=");
+                    break;
+                case "true":
+                    console.log("true");
+                    break;
+                case "false":
+                    this.loadXRegisterWithC("01");
+                    this.loadAccumulatorWithC("00");
+                    this.storeAccumulatorInMem("00", "00");
+                    this.compareByte("00", "00");
+                    break;
+                default:
+                    _Log_.printError("Undefined boolean type. Line: " + node.getLineNumber());
+            }
+        }
         
         public  generateCodeForIntDeclaration(node: Node, scope: Scope){
-            this.loadAccumulatorWithConstant("00");
-            this.storeAccumulatorInMemory(this.StaticTable.getCurrentTemp(), "XX");
+            this.loadAccumulatorWithC("00");
+            this.storeAccumulatorInMem(this.StaticTable.getCurrentTemp(), "XX");
             var item = new StaticTableItem(this.StaticTable.getCurrentTemp(), node.children[1].getType(), scope.getNameAsInt(), this.StaticTable.getOffset(), "int");
             this.StaticTable.addItem(item);
             this.StaticTable.incrementTemp();
         }
         
         public  generateCodeForStringDeclaration(node: Node, scope: Scope){
-            
             var item = new StaticTableItem(this.StaticTable.getNextTemp(), node.children[1].getType(), scope.getNameAsInt(), this.StaticTable.getOffset() + 1, "string");
             this.StaticTable.addItem(item);
         }
@@ -182,75 +197,48 @@ module TSCompiler {
             this.StaticTable.addItem(item);
             this.StaticTable.incrementTemp();
         }
-        
-        public  generateCodeForBooleanExpression(node: Node, scope: Scope) {
-            console.log(node);
-            switch (node.getType()) {
-                case "==":
-                    console.log("==");
-                    this.generateCodeForEquivalencyStatement(node, scope);
-                    break;
-                case "!=":
-                    console.log("!=");
-                    break;
-                case "true":
-                    console.log("true");
-                    break;
-                case "false":
-                    this.loadXRegisterWithConstant("01");
-                    this.loadAccumulatorWithConstant("00");
-                    this.storeAccumulatorInMemory("00", "00");
-                    this.compareByte("00", "00");
-                    break;
-                default:
-                    _Log_.printError("Undefined boolean type. Line: " + node.getLineNumber());
-            }
-        }
-        
+        //scope not used 
         public  generateCodeForAssignmentStatement(node: Node, scope: Scope){
-            console.log(node);
             if (node.children[1].getIdentifier()) {
                 var firstTableEntry = this.StaticTable.findItemWithIdentifier(node.children[1].getType());
                 var secondTableEntry = this.StaticTable.findItemWithIdentifier(node.children[0].getType())
-                this.loadAccumulatorFromMemory(firstTableEntry.getTemp(), "XX");
-                this.storeAccumulatorInMemory(secondTableEntry.getTemp(), "XX");
+                this.loadAccumulatorFromMem(firstTableEntry.getTemp(), "XX");
+                this.storeAccumulatorInMem(secondTableEntry.getTemp(), "XX");
             } else if (node.children[1].getInt()) {  
                 var tableEntry = this.StaticTable.findItemWithIdentifier(node.children[0].getType());
                 var value = utils.leftPad(node.children[1].getType(), 2);
             
-                this.loadAccumulatorWithConstant(value);
-                this.storeAccumulatorInMemory(tableEntry.getTemp(), "XX"); 
-            } else if (node.children[1].checkBoolean()) {   
-            } else {
+                this.loadAccumulatorWithC(value);
+                this.storeAccumulatorInMem(tableEntry.getTemp(), "XX"); 
+            } 
+            else if (node.children[1].checkBoolean()) {   
+            } 
+            else {
                 var entry = this.StaticTable.findItemWithIdentifier(node.children[0].getType());
-
                 var pointer = this.codeTable.writeStringToHeap(node.children[1].getType());
-                this.loadAccumulatorWithConstant(pointer.toString(16).toUpperCase());
-                
-                this.storeAccumulatorInMemory(entry.getTemp(), "XX");
+                this.loadAccumulatorWithC(pointer.toString(16).toUpperCase());
+                this.storeAccumulatorInMem(entry.getTemp(), "XX");
             }
         }
-        
-        public  generateCodeForEquivalencyStatement(node: Node, scope: Scope){
-            
+
+        //end
+        public  end(){
+            this.codeTable.addByte('FF');
         }
         
-        public  generateCodeForIntExpression(node: Node, scope: Scope){
-            
-        }
-        
-        public  loadAccumulatorWithConstant(constant: string){
+        public  loadAccumulatorWithC(constant: string){
             this.codeTable.addByte('A9');
             this.codeTable.addByte(constant);
         }
         
-        public  loadAccumulatorFromMemory(atAddress: string, fromAddress: string){
+        public  loadAccumulatorFromMem(atAddress: string, fromAddress: string){
+            console.log("HERE For Mem");
             this.codeTable.addByte('AD');
             this.codeTable.addByte(atAddress);
             this.codeTable.addByte(fromAddress);
         }
         
-        public  storeAccumulatorInMemory(atAddress: string, fromAddress: string){
+        public  storeAccumulatorInMem(atAddress: string, fromAddress: string){
             this.codeTable.addByte('8D');
             this.codeTable.addByte(atAddress);
             this.codeTable.addByte(fromAddress);
@@ -262,30 +250,26 @@ module TSCompiler {
             this.codeTable.addByte(fromAddress);
         }
         
-        public  loadXRegisterWithConstant(constant: string){
+        public  loadXRegisterWithC(constant: string){
             this.codeTable.addByte('A2');
             this.codeTable.addByte(constant);
         }
         
-        public  loadXRegisterFromMemory(atAddress: string, fromAddress: string){
+        public  loadXRegisterFromMem(atAddress: string, fromAddress: string){
             this.codeTable.addByte('AE');
             this.codeTable.addByte(atAddress);
             this.codeTable.addByte(fromAddress);
         }
         
-        public  loadYRegisterWithConstant(constant: string){
+        public  loadYRegisterWithC(constant: string){
             this.codeTable.addByte('A0');
             this.codeTable.addByte(constant);
         }
         
-        public  loadYRegisterFromMemory(atAddress: string, fromAddress: string){
+        public  loadYRegisterFromMem(atAddress: string, fromAddress: string){
             this.codeTable.addByte('AC');
             this.codeTable.addByte(atAddress);
             this.codeTable.addByte(fromAddress);
-        }
-        
-        public  noOperation(){
-            this.codeTable.addByte('EA');
         }
         
         public  break(){
@@ -302,10 +286,6 @@ module TSCompiler {
             this.codeTable.addByte('D0');
             this.codeTable.addByte(comparisonByte)
         }
-        
-        
-        public  systemCall(){
-            this.codeTable.addByte('FF');
-        }
+    
     }
 }
