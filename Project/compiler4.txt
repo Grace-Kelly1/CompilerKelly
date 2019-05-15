@@ -1,0 +1,63 @@
+{
+  int a
+  a = 5
+  print(a)
+}$
+
+{
+string a 
+a = "compilers"
+print(a)
+}$
+
+//breaks lexer
+{
+string a 
+a = compilers
+print(a)
+}$
+
+{
+  int a
+  print(a)
+}$
+
+{
+  int a
+  boolean b
+  string c
+  a = 5
+  b = true
+  c = "yes"
+  /* is lex still working */
+  print(c)
+  print(b)
+  print(a)
+}$
+
+{
+while "not a bool"{
+print("oh my")
+}
+print("done")
+}$
+
+
+//this pritns somethign weird right now
+{
+int b
+b = 2
+if (b == 2) {
+print(b)
+}
+while (b != 3) {
+b = 3
+}
+} $
+
+//Doesnt work having problems with booleans
+{
+boolean a 
+a = true 
+print(a)
+}$

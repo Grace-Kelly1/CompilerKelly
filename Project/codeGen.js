@@ -152,6 +152,10 @@ var TSCompiler;
                 case "!=":
                     break;
                 case "true":
+                    this.loadXRegisterWithC("00");
+                    this.loadAccumulatorWithC("00");
+                    this.storeAccumulatorInMem("00", "00");
+                    this.compareByte("00", "00");
                     break;
                 case "false":
                     this.loadXRegisterWithC("01");
